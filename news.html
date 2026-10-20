@@ -678,11 +678,12 @@
                   margin-top 0.3s ease;
     }
 
+    /* ИСПРАВЛЕНИЕ: Центрирование картинок */
     .news-content-detailed img {
       max-width: 100%;
       height: auto;
       border-radius: 12px;
-      margin: 12px 0;
+      margin: 20px auto; /* auto по бокам центрирует картинку */
       border: 1px solid rgba(220, 90, 50, 0.2);
       display: block;
       cursor: pointer;
@@ -992,8 +993,7 @@
   <script src="news.js"></script>
   <script>
     // ============================================================
-    // ОСНОВНАЯ ЛОГИКА НОВОСТЕЙ
-    // ============================================================
+    // ОСНОВНАЯ ЛОГИКА НОВОСТЕЙ    // ============================================================
 
     function formatDate(dateString) {
       const options = { 
@@ -1070,10 +1070,12 @@
           .replace(/- /g, '• ')
           .replace(/• /g, '<span style="margin-left: 20px; display: inline-block;">• </span>');
         
-        // ИСПРАВЛЕННОЕ РЕГУЛЯРНОЕ ВЫРАЖЕНИЕ:
-        // Захватывает последовательности заглавных букв, пробелов и тире, чтобы фразы вроде "БОЛЬШЕ САМОЗВАНЦЕВ —" выделялись целиком.
-        formattedContent = formattedContent.replace(/([А-ЯЁA-Z][А-ЯЁA-Z\s\-—]+[А-ЯЁA-Z]|[А-ЯЁA-Z]{2,})/g, function(match) {
-          if (match.indexOf('<') !== -1) return match; // Пропускаем HTML-теги
+        // ВЫДЕЛЕНИЕ ТОЛЬКО ЗАГОЛОВКОВ (ПОЛНОСТЬЮ КАПСОМ)
+        // Регулярное выражение ищет от 3-х и более заглавных букв, включая пробелы и дефисы между ними.
+        // Захватывает кавычки по краям.
+        formattedContent = formattedContent.replace(/([«"]?[А-ЯЁA-Z]{2,}(?:[ \t\-–—]+[А-ЯЁA-Z]{2,})*[»"]?)/g, function(match) {
+          // Проверка, чтобы не затронуть уже существующие HTML-теги (на всякий случай)
+          if (match.indexOf('<') !== -1 || match.indexOf('>') !== -1) return match;
           return '<strong>' + match + '</strong>';
         });
         
