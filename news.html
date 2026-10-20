@@ -1070,8 +1070,10 @@
           .replace(/- /g, '• ')
           .replace(/• /g, '<span style="margin-left: 20px; display: inline-block;">• </span>');
         
-        formattedContent = formattedContent.replace(/([А-ЯЁA-Z]{3,})/g, function(match) {
-          if (match.indexOf('<') !== -1) return match;
+        // ИСПРАВЛЕННОЕ РЕГУЛЯРНОЕ ВЫРАЖЕНИЕ:
+        // Захватывает последовательности заглавных букв, пробелов и тире, чтобы фразы вроде "БОЛЬШЕ САМОЗВАНЦЕВ —" выделялись целиком.
+        formattedContent = formattedContent.replace(/([А-ЯЁA-Z][А-ЯЁA-Z\s\-—]+[А-ЯЁA-Z]|[А-ЯЁA-Z]{2,})/g, function(match) {
+          if (match.indexOf('<') !== -1) return match; // Пропускаем HTML-теги
           return '<strong>' + match + '</strong>';
         });
         
