@@ -22,13 +22,17 @@
         }
 
         .background-video {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover; z-index: -2;
         }
 
         body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.78); z-index: -1;
+            content: "";
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.78);
+            z-index: -1;
         }
 
         @keyframes fadeInScale {
@@ -46,16 +50,22 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .container { max-width: 1400px; margin: 0 auto; padding: 1rem 1.8rem; position: relative; z-index: 10; }
-
-        .header {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-            padding: 0.8rem 2rem; background: rgba(8, 6, 15, 0.6); backdrop-filter: blur(16px);
-            border-radius: 80px; margin-bottom: 2rem; gap: 1rem;
-            border: 1px solid rgba(220, 90, 50, 0.2); transition: all 0.3s;
-            animation: fadeInScale 0.6s ease-out;
+        .container {
+            max-width: 1400px; margin: 0 auto;
+            padding: 1rem 1.8rem;
+            position: relative; z-index: 10;
         }
 
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; padding: 0.8rem 2rem;
+            background: rgba(8, 6, 15, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 80px; margin-bottom: 2rem; gap: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.2);
+            transition: all 0.3s;
+            animation: fadeInScale 0.6s ease-out;
+        }
         .header:hover { border-color: rgba(220, 90, 50, 0.4); }
 
         .logo { display: flex; align-items: center; gap: 0.8rem; }
@@ -63,38 +73,51 @@
         .logo .logo-text {
             font-size: 1.4rem; font-weight: 800;
             background: linear-gradient(135deg, #fbc2a0, #e25d32);
-            -webkit-background-clip: text; background-clip: text; color: transparent; white-space: nowrap;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            white-space: nowrap;
         }
         .logo p { font-size: 0.65rem; color: #7a6a8a; margin-top: 0px; }
 
         .nav-links {
-            display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
-            background: rgba(15, 10, 20, 0.4); backdrop-filter: blur(8px);
-            padding: 0.4rem 0.8rem; border-radius: 60px;
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 0.4rem;
+            background: rgba(15, 10, 20, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
             border: 1px solid rgba(210, 100, 55, 0.15);
         }
 
         .nav-btn {
-            background: transparent; border: none; padding: 0.5rem 0.9rem;
-            border-radius: 50px; font-weight: 600; font-size: 0.78rem;
-            cursor: pointer; color: #b5a8c8; transition: all 0.3s;
-            font-family: inherit; display: inline-flex; align-items: center;
-            gap: 5px; text-decoration: none;
+            background: transparent; border: none;
+            padding: 0.5rem 0.9rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem;
+            cursor: pointer; color: #b5a8c8;
+            transition: all 0.3s; font-family: inherit;
+            display: inline-flex; align-items: center; gap: 5px;
+            text-decoration: none;
         }
-
         .nav-btn:hover { color: white; text-shadow: 0 0 8px rgba(220,90,50,0.3); }
-        .nav-btn.active { background: linear-gradient(135deg, #bc4627, #e25d32); color: white; box-shadow: 0 3px 12px rgba(188, 70, 39, 0.25); }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            color: white;
+            box-shadow: 0 3px 12px rgba(188, 70, 39, 0.25);
+        }
 
         .escalation-wrapper {
             max-width: 1100px; margin: 0 auto;
-            background: rgba(18, 12, 28, 0.6); backdrop-filter: blur(16px);
-            border-radius: 40px; border: 2px solid rgba(220, 90, 50, 0.3);
-            padding: 2.5rem; animation: fadeInScale 0.6s ease-out;
+            background: rgba(18, 12, 28, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            padding: 2.5rem;
+            animation: fadeInScale 0.6s ease-out;
             position: relative; overflow: hidden;
         }
 
         .escalation-wrapper::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: url('images/фон эскалация.webp') center/cover no-repeat;
             opacity: 0.25; z-index: 0;
         }
@@ -105,9 +128,9 @@
             font-size: 2.2rem; text-align: center;
             background: linear-gradient(135deg, #fff, #e25d32, #ffbc9a);
             -webkit-background-clip: text; background-clip: text; color: transparent;
-            margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 15px;
+            margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: center; gap: 15px;
         }
-
         .escalation-wrapper h1 i { color: #e16d48; }
 
         .weekly-info {
@@ -116,457 +139,851 @@
             border: 1px solid rgba(220, 90, 50, 0.25); margin-bottom: 1rem;
             display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
         }
-
         .weekly-info .weekly-label { color: #888; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px; }
         .weekly-info .weekly-variator { color: #f1c40f; font-weight: 700; font-size: 1rem; text-transform: uppercase; }
         .weekly-info .weekly-variator i { color: #f1c40f; margin-right: 6px; }
         .weekly-info .weekly-hint { color: #666; font-size: 0.7rem; }
 
         .level-counter {
-            text-align: center; margin-bottom: 1.5rem; padding: 1rem;
-            background: rgba(220, 90, 50, 0.1); border-radius: 20px;
+            text-align: center; margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(220, 90, 50, 0.1);
+            border-radius: 20px;
             border: 1px solid rgba(220, 90, 50, 0.2);
         }
-
         .level-counter .level-number {
             font-size: 2.5rem; font-weight: 800;
             background: linear-gradient(135deg, #e25d32, #ffbc9a);
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-
         .level-counter .level-label { font-size: 0.9rem; color: #888; margin-left: 0.5rem; }
-
         .level-counter .level-difficulty {
-            display: inline-block; margin-left: 1rem; padding: 0.2rem 1.2rem;
-            border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            display: inline-block; margin-left: 1rem;
+            padding: 0.2rem 1.2rem; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600;
         }
-
         .level-difficulty-intro { background: rgba(108, 117, 125, 0.3); color: #6c757d; }
         .level-difficulty-standard { background: rgba(255, 159, 74, 0.3); color: #ff9f4a; }
         .level-difficulty-intensive { background: rgba(46, 204, 113, 0.3); color: #2ecc71; }
         .level-difficulty-psycho { background: rgba(255, 51, 51, 0.3); color: #ff3333; }
 
         .step-container {
-            background: rgba(0, 0, 0, 0.25); border-radius: 28px; padding: 2rem;
-            margin-bottom: 1rem; border: 1px solid rgba(220, 90, 50, 0.15);
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 28px; padding: 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.15);
             animation: fadeInScale 0.5s ease-out;
         }
-
         .step-container.hidden { display: none; }
 
         .step-title {
-            font-size: 1.4rem; color: #e16d48; margin-bottom: 0.8rem;
+            font-size: 1.4rem; color: #e16d48;
+            margin-bottom: 0.8rem;
             display: flex; align-items: center; gap: 14px;
-            border-left: 4px solid #e16d48; padding-left: 18px;
+            border-left: 4px solid #e16d48;
+            padding-left: 18px;
         }
-
         .step-title .step-number {
-            background: rgba(220, 90, 50, 0.2); padding: 0.2rem 0.8rem;
-            border-radius: 30px; font-size: 0.9rem; color: #e16d48;
+            background: rgba(220, 90, 50, 0.2);
+            padding: 0.2rem 0.8rem; border-radius: 30px;
+            font-size: 0.9rem; color: #e16d48;
         }
-
         .step-subtitle {
-            font-size: 0.95rem; color: #c2b9d4; margin-bottom: 1.8rem;
-            padding-left: 10px; text-align: center;
+            font-size: 0.95rem; color: #c2b9d4;
+            margin-bottom: 1.8rem; padding-left: 10px;
+            text-align: center;
         }
 
         .player-count-options {
-            display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center; padding: 0.5rem 0;
+            display: flex; gap: 1.2rem;
+            flex-wrap: wrap; justify-content: center;
+            padding: 0.5rem 0;
         }
-
         .player-count-btn {
-            background: rgba(0, 0, 0, 0.35); border: 2px solid rgba(220, 90, 50, 0.25);
-            border-radius: 24px; padding: 1.2rem 2.8rem; color: #c2b9d4;
-            font-size: 1.6rem; font-weight: 700; cursor: pointer;
-            transition: all 0.3s ease; min-width: 90px; font-family: inherit;
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px solid rgba(220, 90, 50, 0.25);
+            border-radius: 24px;
+            padding: 1.2rem 2.8rem;
+            color: #c2b9d4; font-size: 1.6rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            min-width: 90px; font-family: inherit;
         }
-
         .player-count-btn:hover {
-            border-color: #e16d48; color: white; transform: scale(1.05);
+            border-color: #e16d48; color: white;
+            transform: scale(1.05);
             box-shadow: 0 0 30px rgba(220, 90, 50, 0.1);
         }
-
         .player-count-btn.selected {
-            border-color: #e16d48; background: rgba(220, 90, 50, 0.2);
-            color: white; box-shadow: 0 0 40px rgba(220, 90, 50, 0.15);
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.2);
+            color: white;
+            box-shadow: 0 0 40px rgba(220, 90, 50, 0.15);
         }
 
         .player-name-inputs {
-            display: flex; flex-direction: column; gap: 1rem;
-            max-width: 550px; margin: 0 auto; padding: 0.5rem 0;
+            display: flex; flex-direction: column;
+            gap: 1rem; max-width: 550px;
+            margin: 0 auto; padding: 0.5rem 0;
         }
-
         .player-name-inputs .input-row {
-            display: flex; align-items: center; gap: 1.2rem;
-            background: rgba(0, 0, 0, 0.2); padding: 0.3rem 1rem 0.3rem 1.5rem;
-            border-radius: 18px; border: 1px solid rgba(220, 90, 50, 0.1);
+            display: flex; align-items: center;
+            gap: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem 1rem 0.3rem 1.5rem;
+            border-radius: 18px;
+            border: 1px solid rgba(220, 90, 50, 0.1);
             transition: border-color 0.3s;
         }
-
         .player-name-inputs .input-row:hover { border-color: rgba(220, 90, 50, 0.3); }
-        .player-name-inputs .input-row label { min-width: 80px; color: #c2b9d4; font-weight: 600; font-size: 0.95rem; }
+        .player-name-inputs .input-row label {
+            min-width: 80px; color: #c2b9d4;
+            font-weight: 600; font-size: 0.95rem;
+        }
         .player-name-inputs .input-row input {
-            flex: 1; background: transparent; border: none; padding: 0.7rem 0.5rem;
-            color: #f0eef7; font-size: 1rem; font-family: inherit; outline: none;
+            flex: 1; background: transparent; border: none;
+            padding: 0.7rem 0.5rem;
+            color: #f0eef7; font-size: 1rem;
+            font-family: inherit; outline: none;
         }
         .player-name-inputs .input-row input::placeholder { color: #555; }
 
+        /* ============================================================
+           КАРТОЧКИ СНАРЯЖЕНИЯ (НОВЫЙ ВИД)
+           ============================================================ */
+        .equip-card {
+            position: relative;
+            width: 140px;
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border-radius: 16px;
+            background: rgba(20, 15, 28, 0.8);
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .equip-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #e16d48;
+            box-shadow: 0 10px 25px rgba(220, 90, 50, 0.4);
+            z-index: 50;
+        }
+
+        .equip-card.selected {
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.15);
+            box-shadow: 0 0 0 3px #ffbc9a, 0 0 30px rgba(220, 90, 50, 0.8);
+        }
+
+        .equip-card img {
+            width: 70px; height: 70px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+        }
+
+        .equip-card .equip-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffbc9a;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .equip-card .equip-category {
+            font-size: 0.55rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           КАРТОЧКИ АМФ
+           ============================================================ */
+        .amp-card {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: rgba(20, 15, 28, 0.8);
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .amp-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #e16d48;
+            box-shadow: 0 10px 25px rgba(220, 90, 50, 0.4);
+            z-index: 50;
+        }
+
+        .amp-card.selected {
+            border-color: #e16d48;
+            box-shadow: 0 0 0 3px #ffbc9a, 0 0 30px rgba(220, 90, 50, 0.8);
+        }
+
+        .amp-card img {
+            width: 80px; height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+        }
+
+        .amp-card .amp-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffbc9a;
+            text-transform: uppercase;
+        }
+
+        .amp-card .amp-category {
+            font-size: 0.55rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           ТУЛТИПЫ (Всплывающая информация)
+           ============================================================ */
+        .tooltip-box {
+            position: absolute;
+            top: 105%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background: rgba(10, 8, 15, 0.95);
+            border: 1px solid rgba(220, 90, 50, 0.5);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.75rem;
+            color: #c2b9d4;
+            line-height: 1.4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: left;
+        }
+
+        .equip-card:hover .tooltip-box,
+        .amp-card:hover .tooltip-box {
+            opacity: 1;
+            transform: translateX(-50%) translateY(5px);
+        }
+
+        .tooltip-box .tt-type {
+            font-size: 0.6rem;
+            color: #e16d48;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-box .tt-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .tooltip-box .tt-desc {
+            font-size: 0.7rem;
+            color: #a09baf;
+        }
+
+        /* ============================================================
+           ОСТАЛЬНЫЕ СТИЛИ
+           ============================================================ */
         .selection-item {
-            background: rgba(0, 0, 0, 0.3); border: 2px solid rgba(220, 90, 50, 0.2);
-            border-radius: 16px; padding: 0.8rem 0.6rem; text-align: center;
-            cursor: pointer; transition: all 0.3s ease; position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(220, 90, 50, 0.2);
+            border-radius: 16px;
+            padding: 0.8rem 0.6rem;
+            text-align: center; cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
             display: flex; flex-direction: column; align-items: center;
         }
-
         .selection-item:hover {
-            border-color: #e16d48; transform: translateY(-2px);
+            border-color: #e16d48;
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
-
         .selection-item.selected {
-            border-color: #e16d48; background: rgba(220, 90, 50, 0.15);
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.15);
             box-shadow: 0 0 40px rgba(220, 90, 50, 0.08);
         }
-
         .selection-item img {
-            width: 70px; height: 70px; object-fit: contain; margin-bottom: 0.3rem;
-            border-radius: 12px; background: rgba(0, 0, 0, 0.2); padding: 6px; transition: transform 0.3s;
+            width: 70px; height: 70px;
+            object-fit: contain;
+            margin-bottom: 0.3rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            transition: transform 0.3s;
         }
-
         .selection-item:hover img { transform: scale(1.05); }
-
-        .selection-item .item-name { font-size: 0.8rem; color: #c2b9d4; font-weight: 500; line-height: 1.2; }
-        .selection-item .item-category { font-size: 0.55rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.1rem; }
-
-        .selection-item .check-mark {
-            position: absolute; top: 6px; right: 8px; color: #4c9aff;
-            font-size: 1.2rem; display: none;
+        .selection-item .item-name {
+            font-size: 0.8rem; color: #c2b9d4;
+            font-weight: 500; line-height: 1.2;
         }
-
+        .selection-item .item-category {
+            font-size: 0.55rem; color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.1rem;
+        }
+        .selection-item .check-mark {
+            position: absolute; top: 6px; right: 8px;
+            color: #4c9aff; font-size: 1.2rem;
+            display: none;
+        }
         .selection-item.selected .check-mark { display: block; }
 
         .step-actions {
-            display: flex; justify-content: center; gap: 1.2rem; margin-top: 2rem; flex-wrap: wrap;
+            display: flex; justify-content: center;
+            gap: 1.2rem; margin-top: 2rem;
+            flex-wrap: wrap;
         }
 
         .next-btn {
             background: linear-gradient(135deg, #bc4627, #e25d32);
-            border: none; padding: 0.9rem 3rem; border-radius: 50px;
-            font-size: 1.05rem; font-weight: 700; color: white; cursor: pointer;
-            transition: all 0.3s ease; font-family: inherit; min-width: 160px;
+            border: none;
+            padding: 0.9rem 3rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 700;
+            color: white; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            min-width: 160px;
         }
-
-        .next-btn:hover:not(:disabled) { transform: scale(1.04); box-shadow: 0 8px 35px rgba(188, 74, 40, 0.4); }
-        .next-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .next-btn:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 8px 35px rgba(188, 74, 40, 0.4);
+        }
+        .next-btn:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none;
+        }
 
         .back-btn {
-            background: rgba(220, 90, 50, 0.15); border: 1px solid rgba(220, 90, 50, 0.25);
-            padding: 0.9rem 2.2rem; border-radius: 50px; font-size: 1.05rem;
-            font-weight: 600; color: #c2b9d4; cursor: pointer;
-            transition: all 0.3s ease; font-family: inherit;
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #c2b9d4; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
-
-        .back-btn:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+        .back-btn:hover:not(:disabled) {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+        .back-btn:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
 
         .exit-btn {
-            background: rgba(255, 51, 51, 0.15); border: 1px solid rgba(255, 51, 51, 0.3);
-            padding: 0.9rem 2.2rem; border-radius: 50px; font-size: 1.05rem;
-            font-weight: 600; color: #ff6666; cursor: pointer;
-            transition: all 0.3s ease; font-family: inherit;
+            background: rgba(255, 51, 51, 0.15);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #ff6666; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .exit-btn:hover {
+            background: rgba(255, 51, 51, 0.25);
+            color: #ff3333;
         }
 
-        .exit-btn:hover { background: rgba(255, 51, 51, 0.25); color: #ff3333; }
+        .save-btn {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #2ecc71; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .save-btn:hover {
+            background: rgba(46, 204, 113, 0.25);
+            color: #27ae60;
+        }
 
-        .escalation-result { display: none; animation: resultAppear 0.6s ease-out; }
+        .escalation-result {
+            display: none;
+            animation: resultAppear 0.6s ease-out;
+        }
         .escalation-result.active { display: block; }
 
-        .result-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; }
-
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
         .result-card {
-            background: rgba(0, 0, 0, 0.25); border-radius: 24px; padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 1.5rem;
             border: 1px solid rgba(220, 90, 50, 0.15);
         }
-
         .result-card h3 {
-            color: #e16d48; font-size: 1rem; margin-bottom: 1.2rem;
+            color: #e16d48; font-size: 1rem;
+            margin-bottom: 1.2rem;
             display: flex; align-items: center; gap: 10px;
-            border-bottom: 1px solid rgba(220, 90, 50, 0.15); padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.15);
+            padding-bottom: 0.8rem;
         }
 
-        .result-map-row { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+        .result-map-row {
+            display: flex; gap: 1.5rem;
+            align-items: flex-start; flex-wrap: wrap;
+        }
         .result-map-row .map-image {
-            width: 160px; height: 160px; object-fit: cover; border-radius: 16px;
-            border: 2px solid rgba(220, 90, 50, 0.3); flex-shrink: 0;
+            width: 160px; height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            flex-shrink: 0;
         }
-
         .result-map-info { flex: 1; min-width: 200px; }
-        .result-map-info .map-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .result-map-info .map-name { font-size: 1.4rem; color: #e16d48; font-weight: 700; margin: 0.2rem 0 0.3rem; }
-        .result-map-info .trial-name { font-size: 1.1rem; color: #ffbc9a; font-weight: 600; margin-bottom: 0.3rem; }
-        .result-map-info .trial-desc { color: #c2b9d4; font-size: 0.85rem; line-height: 1.5; }
-
+        .result-map-info .map-label {
+            font-size: 0.75rem; color: #888;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .result-map-info .map-name {
+            font-size: 1.4rem; color: #e16d48;
+            font-weight: 700; margin: 0.2rem 0 0.3rem;
+        }
+        .result-map-info .trial-name {
+            font-size: 1.1rem; color: #ffbc9a;
+            font-weight: 600; margin-bottom: 0.3rem;
+        }
+        .result-map-info .trial-desc {
+            color: #c2b9d4; font-size: 0.85rem;
+            line-height: 1.5;
+        }
         .result-map-info .map-meta {
             display: flex; flex-wrap: wrap; gap: 1rem;
-            margin-top: 0.8rem; padding-top: 0.8rem;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
             border-top: 1px solid rgba(220, 90, 50, 0.15);
         }
+        .result-map-info .map-meta-item {
+            font-size: 0.8rem; color: #888;
+        }
+        .result-map-info .map-meta-item strong {
+            color: #ffbc9a; font-weight: 600;
+        }
 
-        .result-map-info .map-meta-item { font-size: 0.8rem; color: #888; }
-        .result-map-info .map-meta-item strong { color: #ffbc9a; font-weight: 600; }
-
-        .variator-list { display: flex; gap: 1rem; flex-wrap: wrap; }
-
+        .variator-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
         .variator-list .var-item {
-            display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+            display: flex; flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
         }
-
         .variator-list .var-item img {
-            width: 60px; height: 60px; object-fit: contain; border-radius: 12px;
-            background: rgba(0, 0, 0, 0.3); padding: 6px; border: 1px solid rgba(220, 90, 50, 0.15);
+            width: 60px; height: 60px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px;
+            border: 1px solid rgba(220, 90, 50, 0.15);
         }
-
         .variator-list .var-item .var-name {
-            font-size: 0.65rem; color: #c2b9d4; text-align: center;
-            max-width: 75px; line-height: 1.2;
-        }
-
-        .variator-list .var-item.weekly {
-            border: 2px solid #f1c40f; border-radius: 12px; padding: 4px;
-            background: rgba(241, 196, 15, 0.1);
-        }
-
-        .variator-list .var-item.weekly .var-name { color: #f1c40f; }
-        .variator-list .var-item .weekly-badge {
-            font-size: 0.5rem; color: #f1c40f; background: rgba(241, 196, 15, 0.2);
-            padding: 0.1rem 0.5rem; border-radius: 10px; margin-top: 0.1rem;
+            font-size: 0.65rem;
+            color: #c2b9d4;
+            text-align: center;
+            max-width: 75px;
+            line-height: 1.2;
         }
 
         .player-result {
-            background: rgba(0, 0, 0, 0.2); border-radius: 16px; padding: 1.2rem;
-            margin-bottom: 1rem; border: 1px solid rgba(220, 90, 50, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.1);
             transition: border-color 0.3s;
         }
-
         .player-result:hover { border-color: rgba(220, 90, 50, 0.3); }
         .player-result:last-child { margin-bottom: 0; }
-
         .player-result .player-name {
-            font-weight: 700; color: #fff; font-size: 1.1rem; margin-bottom: 0.6rem;
+            font-weight: 700; color: #fff;
+            font-size: 1.1rem; margin-bottom: 0.6rem;
             display: flex; align-items: center; gap: 10px;
         }
-
-        .player-result .player-name i { color: #e16d48; font-size: 1.2rem; }
-
+        .player-result .player-name i {
+            color: #e16d48; font-size: 1.2rem;
+        }
         .player-result .player-equip {
-            display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;
-            background: rgba(0, 0, 0, 0.15); padding: 0.4rem 0.8rem; border-radius: 12px;
+            display: flex; align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
         }
-
         .player-result .player-equip img {
-            width: 36px; height: 36px; object-fit: contain; border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3); padding: 4px;
+            width: 36px; height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px;
         }
-
-        .player-result .player-equip .label { color: #888; font-size: 0.75rem; font-weight: 500; }
-        .player-result .player-equip .value { color: #ffbc9a; font-size: 0.9rem; font-weight: 500; }
+        .player-result .player-equip .label {
+            color: #888; font-size: 0.75rem; font-weight: 500;
+        }
+        .player-result .player-equip .value {
+            color: #ffbc9a; font-size: 0.9rem; font-weight: 500;
+        }
 
         .player-amps-categories {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-top: 0.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
         }
 
         .amp-category-block {
-            background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 0.6rem 0.8rem;
-            border: 1px solid rgba(220, 90, 50, 0.1); transition: border-color 0.3s; position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid rgba(220, 90, 50, 0.1);
+            transition: border-color 0.3s;
+            position: relative;
         }
-
         .amp-category-block:hover { border-color: rgba(220, 90, 50, 0.25); }
-
         .amp-category-block .category-header {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
         }
-
         .amp-category-block .category-name {
-            font-size: 0.7rem; font-weight: 600; color: #e16d48;
-            text-transform: uppercase; letter-spacing: 0.5px;
+            font-size: 0.7rem; font-weight: 600;
+            color: #e16d48; text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
         .amp-category-block .category-change-btn {
-            background: rgba(220, 90, 50, 0.2); border: 1px solid rgba(220, 90, 50, 0.3);
-            border-radius: 50%; width: 24px; height: 24px; color: #c2b9d4;
-            font-size: 0.6rem; cursor: pointer; transition: all 0.3s;
+            background: rgba(220, 90, 50, 0.2);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            color: #c2b9d4; font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex; align-items: center; justify-content: center;
         }
-
         .amp-category-block .category-change-btn:hover {
-            background: rgba(220, 90, 50, 0.4); color: white; transform: scale(1.1);
+            background: rgba(220, 90, 50, 0.4);
+            color: white; transform: scale(1.1);
         }
-
         .amp-category-block .category-amp-name {
-            font-size: 0.8rem; color: #ffbc9a; font-weight: 500; text-align: center; padding: 0.2rem 0;
+            font-size: 0.8rem; color: #ffbc9a;
+            font-weight: 500; text-align: center;
+            padding: 0.2rem 0;
         }
-
         .amp-category-block .category-amp-empty {
-            font-size: 0.65rem; color: #666; text-align: center; padding: 0.2rem 0; font-style: italic;
+            font-size: 0.65rem; color: #666;
+            text-align: center;
+            padding: 0.2rem 0;
+            font-style: italic;
         }
-
-        .amp-category-block .category-complete { font-size: 0.6rem; color: #2ecc71; text-align: center; }
+        .amp-category-block .category-complete {
+            font-size: 0.6rem; color: #2ecc71;
+            text-align: center;
+        }
 
         .result-actions {
-            display: flex; justify-content: center; gap: 1.2rem; margin-top: 2rem; flex-wrap: wrap;
+            display: flex; justify-content: center;
+            gap: 1.2rem; margin-top: 2rem;
+            flex-wrap: wrap;
         }
-
         .result-actions .next-btn { min-width: 200px; }
 
         .amp-modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center;
-            align-items: center; backdrop-filter: blur(10px);
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
         }
-
         .amp-modal-overlay.active { display: flex; }
 
         .amp-modal {
-            background: rgba(18, 12, 28, 0.95); backdrop-filter: blur(16px);
-            border-radius: 30px; border: 2px solid rgba(220, 90, 50, 0.4);
-            padding: 2rem; max-width: 700px; width: 90%; max-height: 80vh;
-            overflow-y: auto; animation: modalFadeIn 0.3s ease-out;
+            background: rgba(18, 12, 28, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease-out;
         }
-
         .amp-modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            display: flex; justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid rgba(220, 90, 50, 0.2);
         }
-
         .amp-modal-header h2 {
-            font-size: 1.3rem; color: #e16d48; display: flex; align-items: center; gap: 10px;
+            font-size: 1.3rem; color: #e16d48;
+            display: flex; align-items: center; gap: 10px;
         }
-
         .amp-modal-close {
-            background: none; border: none; color: #c2b9d4;
-            font-size: 2rem; cursor: pointer; transition: color 0.3s;
+            background: none; border: none;
+            color: #c2b9d4; font-size: 2rem;
+            cursor: pointer; transition: color 0.3s;
         }
-
         .amp-modal-close:hover { color: #e16d48; }
 
         .amp-modal-category-tabs {
-            display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;
+            display: flex; gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap; justify-content: center;
         }
-
         .amp-modal-category-tabs button {
-            background: rgba(220, 90, 50, 0.15); border: 1px solid rgba(220, 90, 50, 0.25);
-            border-radius: 30px; padding: 0.5rem 1.5rem; color: #c2b9d4;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            transition: all 0.3s; font-family: inherit;
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            color: #c2b9d4;
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            font-family: inherit;
         }
-
-        .amp-modal-category-tabs button:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+        .amp-modal-category-tabs button:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
         .amp-modal-category-tabs button.active {
-            background: rgba(220, 90, 50, 0.3); border-color: #e16d48; color: #e16d48;
+            background: rgba(220, 90, 50, 0.3);
+            border-color: #e16d48;
+            color: #e16d48;
         }
 
         .amp-modal-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
         }
-
         .amp-modal-item {
-            background: rgba(0, 0, 0, 0.3); border: 2px solid rgba(220, 90, 50, 0.2);
-            border-radius: 16px; padding: 1rem; text-align: center;
-            cursor: pointer; transition: all 0.3s; position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(220, 90, 50, 0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
         }
-
-        .amp-modal-item:hover:not(.locked) { border-color: #e16d48; transform: scale(1.05); }
-        .amp-modal-item.selected { border-color: #4c9aff; background: rgba(76, 154, 255, 0.1); }
-        .amp-modal-item.locked { opacity: 0.5; cursor: not-allowed; }
-        .amp-modal-item.locked:hover { transform: none; border-color: rgba(220, 90, 50, 0.2); }
-
+        .amp-modal-item:hover:not(.locked) {
+            border-color: #e16d48;
+            transform: scale(1.05);
+        }
+        .amp-modal-item.selected {
+            border-color: #4c9aff;
+            background: rgba(76, 154, 255, 0.1);
+        }
+        .amp-modal-item.locked {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .amp-modal-item.locked:hover {
+            transform: none;
+            border-color: rgba(220, 90, 50, 0.2);
+        }
         .amp-modal-item img {
-            width: 65px; height: 65px; object-fit: contain;
-            border-radius: 12px; background: rgba(0, 0, 0, 0.2); padding: 6px;
+            width: 65px; height: 65px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
         }
-
-        .amp-modal-item .amp-name { font-size: 0.85rem; color: #c2b9d4; margin-top: 0.3rem; font-weight: 500; }
-        .amp-modal-item .amp-category-label { font-size: 0.6rem; color: #666; margin-top: 0.1rem; }
-        .amp-modal-item .amp-status { font-size: 0.6rem; margin-top: 0.2rem; }
+        .amp-modal-item .amp-name {
+            font-size: 0.85rem; color: #c2b9d4;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+        .amp-modal-item .amp-category-label {
+            font-size: 0.6rem; color: #666;
+            margin-top: 0.1rem;
+        }
+        .amp-modal-item .amp-status {
+            font-size: 0.6rem; margin-top: 0.2rem;
+        }
         .amp-modal-item .amp-status.available { color: #4c9aff; }
         .amp-modal-item .amp-status.locked { color: #888; }
         .amp-modal-item .amp-status.current { color: #2ecc71; }
 
         .amp-modal-item .lock-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(0, 0, 0, 0.6); border-radius: 14px;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 14px;
+        }
+        .amp-modal-item .lock-overlay i {
+            font-size: 2rem; color: #888;
+        }
+        .amp-modal-item .lock-overlay span {
+            font-size: 0.7rem; color: #888;
+            margin-top: 0.3rem;
         }
 
-        .amp-modal-item .lock-overlay i { font-size: 2rem; color: #888; }
-        .amp-modal-item .lock-overlay span { font-size: 0.7rem; color: #888; margin-top: 0.3rem; }
-
-        .amp-modal-confirm { margin-top: 1.5rem; text-align: center; }
-
+        .amp-modal-confirm {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
         .amp-modal-confirm button {
             background: linear-gradient(135deg, #bc4627, #e25d32);
-            border: none; padding: 0.7rem 2.5rem; border-radius: 40px;
-            font-size: 1rem; font-weight: 700; color: white; cursor: pointer;
-            transition: all 0.3s; font-family: inherit;
+            border: none;
+            padding: 0.7rem 2.5rem;
+            border-radius: 40px;
+            font-size: 1rem; font-weight: 700;
+            color: white; cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
         }
-
-        .amp-modal-confirm button:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4); }
-        .amp-modal-confirm button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .amp-modal-confirm button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
+        .amp-modal-confirm button:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
 
         .confirm-modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); z-index: 2000; justify-content: center;
-            align-items: center; backdrop-filter: blur(10px);
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
         }
-
         .confirm-modal-overlay.active { display: flex; }
 
         .confirm-modal {
-            background: rgba(18, 12, 28, 0.95); backdrop-filter: blur(16px);
-            border-radius: 30px; border: 2px solid rgba(255, 51, 51, 0.4);
-            padding: 2.5rem; max-width: 450px; width: 90%; text-align: center;
+            background: rgba(18, 12, 28, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 51, 51, 0.4);
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
             animation: modalFadeIn 0.3s ease-out;
         }
-
-        .confirm-modal .icon { font-size: 3rem; color: #ff3333; margin-bottom: 1rem; }
-        .confirm-modal h2 { color: #ff3333; font-size: 1.5rem; margin-bottom: 0.8rem; }
-        .confirm-modal p { color: #c2b9d4; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
-        .confirm-modal .confirm-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
+        .confirm-modal .icon {
+            font-size: 3rem; color: #ff3333;
+            margin-bottom: 1rem;
+        }
+        .confirm-modal h2 {
+            color: #ff3333; font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .confirm-modal p {
+            color: #c2b9d4; font-size: 0.95rem;
+            line-height: 1.6; margin-bottom: 1.5rem;
+        }
+        .confirm-modal .confirm-actions {
+            display: flex; gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
         .confirm-modal .confirm-actions button {
-            padding: 0.7rem 2rem; border-radius: 40px; font-size: 1rem;
-            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
             font-family: inherit; border: none;
         }
-
         .confirm-modal .confirm-actions .btn-confirm {
-            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            color: white;
         }
-
-        .confirm-modal .confirm-actions .btn-confirm:hover { transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4); }
-
+        .confirm-modal .confirm-actions .btn-confirm:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
         .confirm-modal .confirm-actions .btn-cancel {
-            background: rgba(220, 90, 50, 0.15); border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            color: #c2b9d4;
         }
-
-        .confirm-modal .confirm-actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+        .confirm-modal .confirm-actions .btn-cancel:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
 
         .back-to-roulette {
-            display: inline-flex; align-items: center; gap: 10px; margin-top: 2rem;
-            color: #e16d48; text-decoration: none; font-weight: 600; font-size: 1rem;
-            transition: all 0.3s; padding: 0.6rem 1.5rem; border-radius: 40px;
-            background: rgba(220, 90, 50, 0.1); border: 1px solid rgba(220, 90, 50, 0.15);
+            display: inline-flex; align-items: center;
+            gap: 10px; margin-top: 2rem;
+            color: #e16d48;
+            text-decoration: none;
+            font-weight: 600; font-size: 1rem;
+            transition: all 0.3s;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            background: rgba(220, 90, 50, 0.1);
+            border: 1px solid rgba(220, 90, 50, 0.15);
         }
-
-        .back-to-roulette:hover { color: #ffbc9a; background: rgba(220, 90, 50, 0.2); transform: translateX(-5px); }
+        .back-to-roulette:hover {
+            color: #ffbc9a;
+            background: rgba(220, 90, 50, 0.2);
+            transform: translateX(-5px);
+        }
 
         footer {
-            margin-top: 3rem; text-align: center; padding: 1.5rem 0;
-            border-top: 1px solid rgba(105, 58, 40, 0.3); font-size: 0.75rem;
-            background: rgba(8, 6, 15, 0.3); backdrop-filter: blur(8px); border-radius: 50px;
+            margin-top: 3rem;
+            text-align: center;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(105, 58, 40, 0.3);
+            font-size: 0.75rem;
+            background: rgba(8, 6, 15, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 50px;
         }
-
-        .footer-logo { max-height: 32px; width: auto; margin-bottom: 0.5rem; }
+        .footer-logo {
+            max-height: 32px;
+            width: auto;
+            margin-bottom: 0.5rem;
+        }
 
         /* ============================================================
            МОДАЛКА СБОРА ИНФОРМАЦИИ
@@ -576,7 +993,6 @@
             background: rgba(0, 0, 0, 0.9); z-index: 1700; justify-content: center;
             align-items: flex-start; backdrop-filter: blur(12px); overflow-y: auto; padding: 30px 15px;
         }
-
         .info-modal-overlay.active { display: flex; }
 
         .info-modal {
@@ -585,54 +1001,53 @@
             padding: 30px 35px; max-width: 900px; width: 100%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
             animation: modalFadeIn 0.3s ease-out; margin: auto;
+            position: relative; overflow: hidden;
         }
+
+        .info-modal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/фон сбор-таблица.webp') center/cover no-repeat;
+            opacity: 0.15; z-index: 0;
+        }
+
+        .info-modal > * { position: relative; z-index: 1; }
 
         .info-modal-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 1.5rem; padding-bottom: 1rem;
             border-bottom: 1px solid rgba(220, 90, 50, 0.2);
         }
-
         .info-modal-header h2 {
             font-size: 1.5rem; color: #e16d48;
             display: flex; align-items: center; gap: 12px;
         }
-
         .info-modal-header h2 i { color: #e16d48; }
-
         .info-modal-close {
             background: none; border: none; color: #c2b9d4;
             font-size: 2rem; cursor: pointer; transition: color 0.3s;
         }
-
         .info-modal-close:hover { color: #e16d48; }
 
         .info-form-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem;
         }
-
         .info-form-group {
             display: flex; flex-direction: column; gap: 6px; position: relative;
         }
-
         .info-form-group.full-width { grid-column: 1 / -1; }
 
         .info-form-group label {
             font-size: 0.8rem; color: #e16d48; font-weight: 600;
             text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .info-form-group input[type="text"],
-        .info-form-group input[type="number"],
-        .info-form-group input[type="time"] {
+        .info-form-group input[type="text"] {
             background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(220, 90, 50, 0.25);
             border-radius: 12px; padding: 12px 16px; color: #f0eef7;
             font-size: 0.95rem; font-family: inherit; outline: none;
             transition: border-color 0.3s;
         }
-
         .info-form-group input:focus { border-color: #e16d48; }
-
         .info-form-group input::placeholder { color: #555; }
 
         .info-form-group input.readonly-field {
@@ -646,74 +1061,42 @@
             border-color: #ff3333;
             box-shadow: 0 0 8px rgba(255, 51, 51, 0.3);
         }
-
         .info-form-group input.input-valid {
             border-color: #2ecc71;
             box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
         }
 
         .info-form-hint {
-            font-size: 0.7rem;
-            color: #666;
-            margin-top: 2px;
-            font-style: italic;
+            font-size: 0.7rem; color: #666;
+            margin-top: 2px; font-style: italic;
         }
+        .info-form-hint.error { color: #ff6666; }
+        .info-form-hint.valid { color: #2ecc71; }
 
-        .info-form-hint.error {
-            color: #ff6666;
-        }
-
-        .info-form-hint.valid {
-            color: #2ecc71;
-        }
-
-        /* Список вариаторов (только для чтения) */
         .readonly-variators {
             background: rgba(0, 0, 0, 0.25);
             border: 1px dashed rgba(220, 90, 50, 0.25);
             border-radius: 12px;
             padding: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            max-height: 260px;
-            overflow-y: auto;
+            display: flex; flex-wrap: wrap; gap: 10px;
+            max-height: 260px; overflow-y: auto;
             min-height: 60px;
         }
-
         .readonly-variator-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-flex; align-items: center; gap: 8px;
             padding: 6px 12px;
             background: rgba(220, 90, 50, 0.15);
             border: 1px solid rgba(220, 90, 50, 0.3);
             border-radius: 20px;
-            font-size: 0.8rem;
-            color: #ffbc9a;
-            white-space: nowrap;
+            font-size: 0.8rem; color: #ffbc9a; white-space: nowrap;
         }
-
-        .readonly-variator-item.weekly {
-            background: rgba(241, 196, 15, 0.15);
-            border-color: #f1c40f;
-            color: #f1c40f;
-        }
-
         .readonly-variator-item img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2px;
+            width: 20px; height: 20px;
+            object-fit: contain; border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3); padding: 2px;
         }
-
         .readonly-variators-empty {
-            color: #666;
-            font-size: 0.8rem;
-            font-style: italic;
-            padding: 4px;
+            color: #666; font-size: 0.8rem; font-style: italic; padding: 4px;
         }
 
         .info-modal-actions {
@@ -721,28 +1104,22 @@
             margin-top: 1.5rem; padding-top: 1.2rem;
             border-top: 1px solid rgba(220, 90, 50, 0.2); flex-wrap: wrap;
         }
-
         .info-modal-actions button {
             padding: 0.8rem 2rem; border-radius: 40px;
             font-size: 0.95rem; font-weight: 600; cursor: pointer;
             transition: all 0.3s; font-family: inherit; border: none;
         }
-
         .info-modal-actions .btn-primary {
             background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
         }
-
         .info-modal-actions .btn-primary:hover:not(:disabled) {
             transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
         }
-
         .info-modal-actions .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
         .info-modal-actions .btn-secondary {
             background: rgba(220, 90, 50, 0.15);
             border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
         }
-
         .info-modal-actions .btn-secondary:hover {
             background: rgba(220, 90, 50, 0.25); color: white;
         }
@@ -756,7 +1133,6 @@
             align-items: flex-start; backdrop-filter: blur(14px);
             overflow-y: auto; padding: 40px 20px;
         }
-
         .summary-modal-overlay.active { display: flex; }
 
         .summary-modal {
@@ -765,78 +1141,69 @@
             padding: 30px 35px; max-width: 1300px; width: 100%;
             box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
             animation: modalFadeIn 0.3s ease-out; margin: auto;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(220, 90, 50, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(220, 90, 50, 0.03) 0%, transparent 50%);
+            position: relative; overflow: hidden;
         }
+
+        .summary-modal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/фон эскалация.webp') center/cover no-repeat;
+            opacity: 0.15; z-index: 0;
+        }
+
+        .summary-modal > * { position: relative; z-index: 1; }
 
         .summary-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding-bottom: 15px;
             border-bottom: 2px solid rgba(220, 90, 50, 0.4);
         }
-
         .summary-header h2 {
             font-size: 2rem; font-weight: 300; color: #fff;
             letter-spacing: 3px; text-transform: uppercase;
             display: flex; align-items: center; gap: 15px;
         }
-
         .summary-header h2 i { color: #e16d48; font-size: 1.8rem; }
-
         .summary-close {
             background: none; border: none; color: #c2b9d4;
             font-size: 2rem; cursor: pointer; transition: color 0.3s;
         }
-
         .summary-close:hover { color: #e16d48; }
 
         .summary-table {
             width: 100%; border-collapse: collapse;
         }
-
         .summary-table thead th {
             text-align: left; padding: 12px 10px;
             font-size: 0.75rem; font-weight: 600;
             color: #888; text-transform: uppercase; letter-spacing: 1.5px;
             border-bottom: 1px solid rgba(220, 90, 50, 0.3);
         }
-
         .summary-table thead th.col-time { text-align: center; width: 90px; }
-
         .summary-table tbody tr {
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             transition: background 0.2s;
         }
-
         .summary-table tbody tr:hover { background: rgba(220, 90, 50, 0.05); }
-
         .summary-table tbody td {
             padding: 12px 10px; vertical-align: middle;
             color: #f0eef7; font-size: 0.95rem;
         }
-
         .summary-cell-number {
             font-weight: 700; color: #e16d48; font-size: 1rem;
             width: 60px; text-align: center;
         }
-
-        .summary-cell-thumb {
-            width: 100px; padding: 6px 10px;
-        }
-
+        .summary-cell-thumb { width: 100px; padding: 6px 10px; }
         .summary-cell-thumb img {
             width: 90px; height: 55px; object-fit: cover;
             border-radius: 8px; border: 1px solid rgba(220, 90, 50, 0.3);
             display: block;
         }
-
         .summary-cell-name {
             font-weight: 600; color: #fff; text-transform: uppercase;
             font-size: 0.95rem; letter-spacing: 0.5px;
             min-width: 220px;
         }
-
         .summary-cell-variators {
             display: flex;
             flex-wrap: wrap;
@@ -845,7 +1212,6 @@
             padding: 4px 0;
             max-width: 520px;
         }
-
         .summary-var-icon {
             width: 52px;
             height: 52px;
@@ -858,7 +1224,6 @@
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
             cursor: help;
         }
-
         .summary-var-icon:hover {
             transform: scale(1.12);
             border-color: #e16d48;
@@ -866,87 +1231,142 @@
             z-index: 5;
             position: relative;
         }
-
-        .summary-var-icon.weekly {
-            border: 2px solid #f1c40f;
-            background: rgba(241, 196, 15, 0.18);
-            box-shadow: 0 0 10px rgba(241, 196, 15, 0.45);
-        }
-
-        .summary-var-icon.weekly:hover {
-            box-shadow: 0 0 18px rgba(241, 196, 15, 0.7);
-            transform: scale(1.12);
-        }
-
         .summary-cell-time {
             text-align: center; font-size: 1.2rem; font-weight: 700;
             color: #ffbc9a; font-family: 'Courier New', monospace;
             letter-spacing: 1px;
         }
-
         .summary-empty {
             text-align: center; padding: 40px; color: #888;
             font-size: 1rem; font-style: italic;
         }
-
         .summary-total-row td {
             padding: 16px 10px 6px 10px;
             border-top: 2px solid rgba(220, 90, 50, 0.4);
             font-weight: 700;
         }
-
         .summary-total-label {
             text-align: right; color: #e16d48;
             font-size: 0.95rem; letter-spacing: 1.5px;
             text-transform: uppercase;
         }
-
         .summary-total-value {
             text-align: center; color: #f1c40f;
             font-family: 'Courier New', monospace;
             font-size: 1.4rem; letter-spacing: 2px;
             text-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
         }
-
         .summary-footer {
             margin-top: 20px; padding-top: 15px;
             border-top: 1px solid rgba(220, 90, 50, 0.2);
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 15px;
         }
-
         .summary-footer .stats {
             font-size: 0.8rem; color: #888;
         }
-
         .summary-footer .stats strong { color: #ffbc9a; }
-
-        .summary-actions {
-            display: flex; gap: 10px; flex-wrap: wrap;
-        }
-
+        .summary-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .summary-actions button {
             padding: 0.7rem 1.6rem; border-radius: 40px;
             font-size: 0.85rem; font-weight: 600; cursor: pointer;
             transition: all 0.3s; font-family: inherit; border: none;
         }
-
         .summary-actions .btn-close {
             background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
         }
-
         .summary-actions .btn-close:hover { transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4); }
-
         .summary-actions .btn-copy {
             background: rgba(220, 90, 50, 0.15);
             border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
         }
-
         .summary-actions .btn-copy:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+
+        /* ============================================================
+           МОДАЛКА СОХРАНЕНИЯ / ВОССТАНОВЛЕНИЯ
+           ============================================================ */
+        .save-load-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 3000; justify-content: center;
+            align-items: center; backdrop-filter: blur(14px); padding: 20px;
+        }
+        .save-load-modal-overlay.active { display: flex; }
+
+        .save-load-modal {
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            border-radius: 24px; border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 30px 35px; max-width: 560px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out; text-align: center;
+        }
+
+        .save-load-modal .icon-wrap {
+            width: 70px; height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: rgba(220, 90, 50, 0.15);
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .save-load-modal .icon-wrap i {
+            font-size: 2rem; color: #e16d48;
+        }
+        .save-load-modal h2 {
+            font-size: 1.4rem; color: #ffbc9a;
+            margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+        .save-load-modal p {
+            color: #c2b9d4; font-size: 0.95rem;
+            line-height: 1.6; margin-bottom: 10px;
+        }
+        .save-load-modal .save-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(220, 90, 50, 0.2);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin: 16px 0 22px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #c2b9d4;
+        }
+        .save-load-modal .save-info .row {
+            display: flex; justify-content: space-between;
+            padding: 3px 0;
+        }
+        .save-load-modal .save-info .row strong {
+            color: #ffbc9a; font-weight: 600;
+        }
+        .save-load-modal .actions {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+        }
+        .save-load-modal .actions button {
+            padding: 0.8rem 1.8rem; border-radius: 40px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+            min-width: 140px;
+        }
+        .save-load-modal .btn-continue {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        .save-load-modal .btn-continue:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(46, 204, 113, 0.4);
+        }
+        .save-load-modal .btn-restart {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            color: #c2b9d4;
+        }
+        .save-load-modal .btn-restart:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
 
         @media (max-width: 992px) {
             .result-grid { grid-template-columns: 1fr; }
             .info-form-grid { grid-template-columns: 1fr; }
+            .equip-card { width: 130px; height: 190px; }
         }
 
         @media (max-width: 850px) {
@@ -956,24 +1376,17 @@
             .nav-btn { padding: 0.35rem 0.7rem; font-size: 0.7rem; }
             .logo .logo-img { max-height: 40px; }
             .logo .logo-text { font-size: 1.1rem; }
-
             .escalation-wrapper { padding: 1.5rem; margin: 0 0.5rem; }
             .escalation-wrapper h1 { font-size: 1.6rem; }
-
             .step-container { padding: 1.5rem; }
             .step-title { font-size: 1.1rem; }
-
             .player-count-btn { padding: 1rem 2rem; font-size: 1.3rem; min-width: 70px; }
             .selection-item img { width: 60px; height: 60px; }
-
             .result-map-row { flex-direction: column; text-align: left; }
             .result-map-row .map-image { width: 130px; height: 130px; }
-
             .player-name-inputs .input-row { flex-direction: column; align-items: stretch; padding: 0.5rem 1rem; }
             .player-name-inputs .input-row label { min-width: auto; }
-
             .player-amps-categories { grid-template-columns: 1fr; gap: 0.5rem; }
-
             .summary-table thead { display: none; }
             .summary-table tbody tr { display: block; padding: 12px 0; }
             .summary-table tbody td { display: block; padding: 4px 10px; }
@@ -985,42 +1398,36 @@
         @media (max-width: 600px) {
             .escalation-wrapper { padding: 1rem; }
             .escalation-wrapper h1 { font-size: 1.3rem; flex-wrap: wrap; }
-
             .step-container { padding: 1rem; }
             .step-title { font-size: 1rem; padding-left: 12px; gap: 8px; }
             .step-title .step-number { font-size: 0.7rem; padding: 0.1rem 0.6rem; }
-
             .player-count-btn { padding: 0.8rem 1.2rem; font-size: 1.1rem; min-width: 55px; }
             .player-count-options { gap: 0.5rem; }
-
             .selection-item img { width: 50px; height: 50px; }
             .selection-item .item-name { font-size: 0.7rem; }
-
             .result-map-row .map-image { width: 100px; height: 100px; }
             .variator-list { gap: 0.5rem; }
             .variator-list .var-item img { width: 50px; height: 50px; }
             .variator-list .var-item .var-name { font-size: 0.55rem; max-width: 60px; }
-
             .step-actions { flex-direction: column; align-items: center; }
             .next-btn, .back-btn, .exit-btn { width: 100%; justify-content: center; }
-
             .back-to-roulette { font-size: 0.85rem; padding: 0.5rem 1rem; }
-
             .amp-modal { padding: 1rem; }
             .amp-modal-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
             .amp-modal-item img { width: 50px; height: 50px; }
             .amp-modal-item .amp-name { font-size: 0.7rem; }
-
             .player-amps-categories { grid-template-columns: 1fr; gap: 0.4rem; }
             .amp-category-block .category-name { font-size: 0.6rem; }
             .amp-category-block .category-amp-name { font-size: 0.7rem; }
-
             .info-modal { padding: 20px 15px; }
             .info-modal-header h2 { font-size: 1.1rem; }
             .summary-modal { padding: 20px 15px; }
             .summary-header h2 { font-size: 1.3rem; letter-spacing: 1px; }
             .summary-cell-time { font-size: 1rem; }
             .summary-var-icon { width: 40px; height: 40px; }
+            .save-load-modal { padding: 25px 20px; }
+            .save-load-modal h2 { font-size: 1.15rem; }
+            .save-load-modal .actions button { width: 100%; }
         }
     </style>
 </head>
@@ -1099,12 +1506,8 @@
                 <span class="step-number">Шаг 3</span>
                 <i class="fas fa-backpack"></i> Выбор снаряжения
             </div>
-            <div class="step-subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
+            <div class="step-subtitle" id="escStep3Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
             <div id="escStep3Content"></div>
-            <div class="step-actions">
-                <button class="back-btn" id="escStep3Back">← Назад</button>
-                <button class="next-btn" id="escStep3Next" disabled>Далее →</button>
-            </div>
         </div>
 
         <div class="step-container hidden" id="escStep4">
@@ -1112,12 +1515,8 @@
                 <span class="step-number">Шаг 4</span>
                 <i class="fas fa-capsules"></i> Выбор амф
             </div>
-            <div class="step-subtitle">Каждому игроку предлагается 3 случайных амфы на выбор</div>
+            <div class="step-subtitle" id="escStep4Subtitle">Каждому игроку предлагается 3 случайных амфы на выбор (нужно выбрать 1)</div>
             <div id="escStep4Content"></div>
-            <div class="step-actions">
-                <button class="back-btn" id="escStep4Back">← Назад</button>
-                <button class="next-btn" id="escStep4Next" disabled>Далее →</button>
-            </div>
         </div>
 
         <div class="escalation-result" id="escResult">
@@ -1263,7 +1662,6 @@
 <script src="maps.js"></script>
 <script src="variators.js"></script>
 <script src="variators-all.js"></script>
-<script src="amps.js"></script>
 <script src="equipment.js"></script>
 <script src="trials.js"></script>
 
@@ -1334,6 +1732,63 @@ var infoFormState = {
 };
 
 var collectedRecords = [];
+
+// ============================================================
+// ПОЛНЫЙ СПИСОК АМФ (Встроен, чтобы работали описания)
+// ============================================================
+var ampCategories = ["Инструмент", "Навык", "Лекарство"];
+
+var ampsData = [
+    // ===== ИНСТРУМЕНТЫ =====
+    { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
+    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
+    { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
+    { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
+    { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
+    { name: "Вторичное использование", image: "../images/амфа-использование.webp", category: "Инструмент", desc: "Бутылки из-под использованного лекарства можно бросать." },
+    { name: "Мастер-взломщик", image: "../images/амфа-мастер.webp", category: "Инструмент", desc: "Отмычка гарантировано открывает с первой попытки и используется дважды." },
+    { name: "Рюкзак", image: "../images/амфа-рюкзак.webp", category: "Инструмент", desc: "Расширяет инвентарь на 1 слот." },
+    { name: "Замыкание", image: "../images/амфа-замыкание.webp", category: "Инструмент", desc: "При использовании батареи частично восстанавливается перезарядка снаряжения." },
+
+    // ===== НАВЫКИ =====
+    { name: "Прячься и дыши", image: "../images/амфа-дыши.webp", category: "Навык", desc: "Найдите укрытие, чтобы сразу же восстановить выносливость и получить заряд адреналина. (Короткое время перезарядки перед использованием)." },
+    { name: "Прячься и исцеляйся", image: "../images/амфа-прячься.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы восстановить здоровье на одно деление, регенерация начинается сразу." },
+    { name: "Прятки с пользой", image: "../images/амфа-прятки.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы ускорить зарядку снаряжения." },
+    { name: "Быстрый побег", image: "../images/амфа-побег.webp", category: "Навык", desc: "Получение урона временно увеличивает вашу скорость." },
+    { name: "Невидимый", image: "../images/амфа-невидимый.webp", category: "Навык", desc: "Враги не могут найти вас в укрытии, даже если вы выглядываете оттуда.\nВТОРЖЕНИЕ: вторгшиеся игроки не увидят, как вы выглядываете из укрытий." },
+    { name: "Взломщик дверных ловушек", image: "../images/амфа-взломщик.webp", category: "Навык", desc: "Дверные ловушки ломаются при обычном открывании двери, а при медленном обезвреживаются." },
+    { name: "Вдребезги", image: "../images/амфа-вдребезги.webp", category: "Навык", desc: "Вышибайте двери (в т.ч. совместные двери) и доски одним ударом." },
+    { name: "Сильная рука", image: "../images/амфа-рука.webp", category: "Навык", desc: "Кирпичи и бутылки наносят больший урон, попадая по врагу, но кирпич сразу ломается.\nВТОРЖЕНИЕ: кирпич, попавший в самозванца, не ломается сразу." },
+    { name: "Манёвр уклонения", image: "../images/амфа-манёвр.webp", category: "Навык", desc: "Моментально спасает от вражеской хватки и снимает получаемый урон (требет краткого восстановления перед повторным использованием).\nВТОРЖЕНИЕ: вам проще сопротивляться вторгшимся игрокам." },
+
+    // ===== ЛЕКАРСТВА =====
+    { name: "Двойные дозы", image: "../images/амфа-дозы.webp", category: "Лекарство", desc: "Шприцы можно использовать дважды, а таблетки возрождения дают 2 оживления." },
+    { name: "Антитоксин", image: "../images/амфа-антитоксин.webp", category: "Лекарство", desc: "Через некоторое время восстанавливает полный рассудок, а психоз длится в два раза меньше." },
+    { name: "Задел", image: "../images/амфа-задел.webp", category: "Лекарство", desc: "Начните испытание со случайным предметом в инвентаре (лекарством, антидотом, бутылкой или кирпичом)." },
+    { name: "Последний шанс", image: "../images/амфа-шанс.webp", category: "Лекарство", desc: "Последний урон сокращает ваше здоровье до 1 ОЗ, но не даёт умереть (срабатывает раз в 5 минут).\nВТОРЖЕНИЕ: позволяет один раз за испытание пережить фатальный удар от вторгшегося игрока." },
+    { name: "Инкогнито", image: "../images/амфа-инкогнито.webp", category: "Лекарство", desc: "Ваша скорость ходьбы в приседе увеличена." },
+    { name: "Отличная работа", image: "../images/амфа-работа.webp", category: "Лекарство", desc: "Выполнение задания восстанавливает часть вашего здоровья. (Короткий период перезарядки перед повторным использованием)." },
+    { name: "Усиление", image: "../images/амфа-усиление.webp", category: "Лекарство", desc: "Начните испытание со случайным бустером в инвентаре (бустер здоровья, выносливости или батареи)." },
+    { name: "Самооживление", image: "../images/амфа-самооживление.webp", category: "Лекарство", desc: "Воскресни после смерти (один раз за испытание).\nВТОРЖЕНИЕ: самооживление после того, как вас убьёт вторгшийся игрок, один раз за испытание." },
+    { name: "Эксперт по бинтам", image: "../images/амфа-эксперт.webp", category: "Лекарство", desc: "Бинты применяются быстрее, их можно использовать дважды." }
+];
+
+// ============================================================
+// БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ СНАРЯЖЕНИЯ
+// ============================================================
+if (typeof equipmentData !== 'undefined' && Array.isArray(equipmentData)) {
+    var equipDescs = {
+        "Оглушение": "Мощное метательное оружие, поражающее электрическим током, которое временно оглушает и дезориентирует врагов.",
+        "Завеса": "Мина, испускающая временно ослепляющую дымовую завесу, если на неё наступили враги.",
+        "Исцеление": "Аэрозольный газ, который восстанавливает ваше здоровье, а также здоровье ваших друзей поблизости.",
+        "Рентген": "Устройство, позволяющее видеть сквозь стены, выявляя местоположение врагов и предметов.",
+        "Баррикада": "Устройство, позволяющее баррикадировать двери или коридоры, чтобы временно заблокировать или задержать врагов.",
+        "Глушилка": "Устройство, позволяющее оглушать врагов, отключать электронные устройства или открывать запертые двери и контейнеры."
+    };
+    equipmentData.forEach(function(eq) {
+        if (equipDescs[eq.name]) eq.desc = equipDescs[eq.name];
+    });
+}
 
 // ============================================================
 // ПРОВЕРКА ЗАГРУЗКИ ДАННЫХ
@@ -1965,6 +2420,9 @@ function buildPlayerRows(players, renderPlayerBlock) {
     return container;
 }
 
+// ============================================================
+// ШАГ 3 — СНАРЯЖЕНИЕ (Карточки с новым видом)
+// ============================================================
 function renderEscEquipment() {
     var container = document.getElementById('escStep3Content');
     if (!container) return;
@@ -1975,78 +2433,58 @@ function renderEscEquipment() {
         return;
     }
 
-    var equipColors = {
-        'Оглушение': { bg: 'rgba(231, 76, 60, 0.2)', border: '#e74c3c' },
-        'Завеса': { bg: 'rgba(155, 89, 182, 0.2)', border: '#9b59b6' },
-        'Исцеление': { bg: 'rgba(26, 188, 156, 0.2)', border: '#1abc9c' },
-        'Глушилка': { bg: 'rgba(243, 156, 18, 0.2)', border: '#f39c12' },
-        'Рентген': { bg: 'rgba(46, 204, 113, 0.2)', border: '#2ecc71' },
-        'Баррикада': { bg: 'rgba(241, 196, 15, 0.2)', border: '#f1c40f' }
-    };
-
     var header = document.createElement('div');
     header.style.cssText = 'text-align: center; margin-bottom: 20px;';
     header.innerHTML = `
         <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;">Шаг 3</div>
         <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор снаряжения</div>
-        <div style="font-size: 0.85rem; color: #888; margin-top: 4px;">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
+        <div style="font-size: 0.85rem; color: #888; margin-top: 4px;">Нажмите на карточку, чтобы подтвердить выбор</div>
     `;
     container.appendChild(header);
 
     function renderPlayerBlock(player, idx) {
         var section = document.createElement('div');
         section.className = 'player-block';
-        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 420px; flex: 0 0 420px; display: flex; flex-direction: column;';
+        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
 
         var title = document.createElement('div');
-        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 12px; text-align: center; font-size: 0.95rem; letter-spacing: 0.5px;';
+        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
         title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + player;
         section.appendChild(title);
 
         var grid = document.createElement('div');
         grid.className = 'player-equip-grid';
-        grid.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;';
+        grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
 
-        var shuffled = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
-        var selectedEquip = shuffled.slice(0, 3);
+        var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
+        var sel = shuf.slice(0, 3);
 
-        selectedEquip.forEach(function(eq) {
+        sel.forEach(function(eq) {
             var item = document.createElement('div');
-            item.className = 'selection-item';
-            item.dataset.player = idx;
-            item.dataset.equip = eq.name;
-            var isSelected = escState.equipSelections[idx] === eq.name;
-            var colors = equipColors[eq.name] || { bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.06)' };
+            item.className = 'equip-card';
+            item.dataset.eq = eq.name;
 
-            item.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.3s ease; position: relative;';
-            if (isSelected) { item.style.borderColor = colors.border; item.style.background = colors.bg; }
-
-            item.innerHTML = `
-                <img src="${eq.image}" alt="${eq.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'" style="width:80px; height:80px; object-fit:contain; border-radius:10px; background:rgba(0,0,0,0.3); padding:4px;">
-                <div style="font-size:0.65rem; color:#c2b9d4; text-align:center; font-weight:500; line-height:1.2;">${eq.name}</div>
-                <div class="check-mark" style="position:absolute; top:4px; right:4px; color:#2ecc71; font-size:1rem; ${isSelected ? '' : 'display:none;'}"><i class="fas fa-check-circle"></i></div>
+            var tooltip = document.createElement('div');
+            tooltip.className = 'tooltip-box';
+            tooltip.innerHTML = `
+                <div class="tt-type">[СНАРЯЖЕНИЕ]</div>
+                <div class="tt-name">${eq.name}</div>
+                <div class="tt-desc">${eq.desc || 'Описание снаряжения отсутствует.'}</div>
             `;
 
+            item.innerHTML = `
+                <img src="${eq.image}" alt="${eq.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                <div class="equip-title">${eq.name}</div>
+                <div class="equip-category">Снаряжение</div>
+            `;
+            item.appendChild(tooltip);
+
             item.addEventListener('click', function() {
-                var playerGrid = this.closest('.player-block').querySelector('.player-equip-grid');
-                if (playerGrid) {
-                    playerGrid.querySelectorAll('.selection-item').forEach(function(el) {
-                        el.classList.remove('selected');
-                        el.style.borderColor = 'rgba(255,255,255,0.06)';
-                        el.style.background = 'rgba(255,255,255,0.03)';
-                        var check = el.querySelector('.check-mark');
-                        if (check) check.style.display = 'none';
-                    });
-                }
-                this.classList.add('selected');
-                var eqName = this.dataset.equip;
-                var eqColors = equipColors[eqName] || { bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.06)' };
-                this.style.borderColor = eqColors.border;
-                this.style.background = eqColors.bg;
-                var check = this.querySelector('.check-mark');
-                if (check) check.style.display = 'block';
                 escState.equipSelections[idx] = eq.name;
-                checkEscEquipReady();
+                // Переходим на шаг 4
+                goToEscStep(4);
+                escState.currentAmpPlayerIndex = 0;
+                renderEscAmps();
             });
             grid.appendChild(item);
         });
@@ -2054,19 +2492,27 @@ function renderEscEquipment() {
         return section;
     }
 
-    var rowsContainer = buildPlayerRows(escState.players, renderPlayerBlock);
-    container.appendChild(rowsContainer);
-    checkEscEquipReady();
+    // Показываем по одному игроку за раз (пошагово)
+    if (escState.currentEquipPlayerIndex === undefined) escState.currentEquipPlayerIndex = 0;
+    if (escState.currentEquipPlayerIndex >= escState.playerCount) {
+        // Все игроки выбрали снаряжение
+        goToEscStep(4);
+        escState.currentAmpPlayerIndex = 0;
+        renderEscAmps();
+        return;
+    }
+
+    var currentPlayer = escState.players[escState.currentEquipPlayerIndex];
+    var sub = document.getElementById('escStep3Subtitle');
+    if (sub) {
+        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+    }
+    container.appendChild(renderPlayerBlock(currentPlayer, escState.currentEquipPlayerIndex));
 }
 
-function checkEscEquipReady() {
-    var allSelected = escState.players.every(function(_, idx) {
-        return escState.equipSelections[idx] !== undefined;
-    });
-    var btn = document.getElementById('escStep3Next');
-    if (btn) btn.disabled = !allSelected;
-}
-
+// ============================================================
+// ШАГ 4 — АМФЫ (Пошаговый выбор)
+// ============================================================
 function renderEscAmps() {
     var container = document.getElementById('escStep4Content');
     if (!container) return;
@@ -2077,132 +2523,113 @@ function renderEscAmps() {
         return;
     }
 
-    var header = document.createElement('div');
-    header.style.cssText = 'text-align: center; margin-bottom: 20px;';
-    header.innerHTML = `
-        <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;">Шаг 4</div>
-        <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
-        <div style="font-size: 0.85rem; color: #888; margin-top: 4px;">Каждому игроку предлагается 3 случайных амфы на выбор</div>
-    `;
-    container.appendChild(header);
-
-    function renderPlayerBlock(player, idx) {
-        var section = document.createElement('div');
-        section.className = 'player-block';
-        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 420px; flex: 0 0 420px; display: flex; flex-direction: column;';
-
-        var title = document.createElement('div');
-        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 8px; text-align: center; font-size: 0.95rem; letter-spacing: 0.5px;';
-        title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + player;
-        section.appendChild(title);
-
-        var availableCategories = ampCategories.filter(function(cat) { return !isCategoryComplete(idx, cat); });
-
-        if (availableCategories.length === 0) {
-            var msg = document.createElement('div');
-            msg.style.cssText = 'text-align: center; color: #2ecc71; padding: 0.5rem; font-size: 0.85rem;';
-            msg.innerHTML = '<i class="fas fa-check-circle"></i> Все улучшения применены';
-            section.appendChild(msg);
-            return section;
-        }
-
-        var randomCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-
-        var catLabel = document.createElement('div');
-        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.75rem; margin-bottom: 10px; font-weight: 500; letter-spacing: 0.5px;';
-        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randomCategory;
-        section.appendChild(catLabel);
-
-        var grid = document.createElement('div');
-        grid.className = 'player-amp-grid';
-        grid.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;';
-
-        var availableAmps = getAvailableAmpsByCategory(idx, randomCategory);
-        var shuffled = availableAmps.slice().sort(function() { return Math.random() - 0.5; });
-        var selectedAmps = shuffled.slice(0, 3);
-
-        if (selectedAmps.length === 0) {
-            for (var i = 0; i < 3; i++) {
-                var emptyItem = document.createElement('div');
-                emptyItem.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.05); opacity: 0.4;';
-                emptyItem.innerHTML = `<div style="font-size: 2rem; color: #555;">⛔</div><div style="font-size:0.6rem; color:#555;">ПУСТО</div>`;
-                grid.appendChild(emptyItem);
-            }
-        } else {
-            selectedAmps.forEach(function(amp) {
-                var item = document.createElement('div');
-                item.className = 'selection-item';
-                var currentAmp = escState.ampSelections[idx] ? escState.ampSelections[idx][randomCategory] : null;
-                var isSelected = currentAmp === amp.name;
-
-                item.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.3s ease; position: relative;';
-                if (isSelected) { item.style.borderColor = '#e16d48'; item.style.background = 'rgba(220,90,50,0.1)'; }
-
-                item.innerHTML = `
-                    <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'" style="width:80px; height:80px; object-fit:contain; border-radius:10px; background:rgba(0,0,0,0.3); padding:4px;">
-                    <div style="font-size:0.65rem; color:#c2b9d4; text-align:center; font-weight:500; line-height:1.2;">${amp.name}</div>
-                    <div style="font-size:0.5rem; color:#666;">${amp.category}</div>
-                    <div class="check-mark" style="position:absolute; top:4px; right:4px; color:#2ecc71; font-size:1rem; ${isSelected ? '' : 'display:none;'}"><i class="fas fa-check-circle"></i></div>
-                `;
-
-                item.addEventListener('click', function() {
-                    var playerGrid = this.closest('.player-block').querySelector('.player-amp-grid');
-                    if (playerGrid) {
-                        playerGrid.querySelectorAll('.selection-item').forEach(function(el) {
-                            el.classList.remove('selected');
-                            el.style.borderColor = 'rgba(255,255,255,0.06)';
-                            el.style.background = 'rgba(255,255,255,0.03)';
-                            var check = el.querySelector('.check-mark');
-                            if (check) check.style.display = 'none';
-                        });
-                    }
-                    this.classList.add('selected');
-                    this.style.borderColor = '#e16d48';
-                    this.style.background = 'rgba(220,90,50,0.1)';
-                    var check = this.querySelector('.check-mark');
-                    if (check) check.style.display = 'block';
-                    if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
-                    escState.ampSelections[idx][randomCategory] = amp.name;
-                    unlockAmpForPlayer(idx, amp.name);
-                    checkEscAmpsReady();
-                });
-                grid.appendChild(item);
-            });
-        }
-        section.appendChild(grid);
-        return section;
+    if (escState.currentAmpPlayerIndex >= escState.playerCount) {
+        generateEscResult();
+        return;
     }
 
-    var rowsContainer = buildPlayerRows(escState.players, renderPlayerBlock);
-    container.appendChild(rowsContainer);
-    checkEscAmpsReady();
+    var currentPlayer = escState.players[escState.currentAmpPlayerIndex];
+
+    var sub = document.getElementById('escStep4Subtitle');
+    if (sub) {
+        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+    }
+
+    var section = document.createElement('div');
+    section.className = 'player-block';
+    section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
+
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    section.appendChild(title);
+
+    var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(escState.currentAmpPlayerIndex, c); });
+    if (availCats.length === 0) {
+        escState.currentAmpPlayerIndex++;
+        renderEscAmps();
+        return;
+    }
+
+    var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+
+    var catLabel = document.createElement('div');
+    catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
+    catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
+    section.appendChild(catLabel);
+
+    var grid = document.createElement('div');
+    grid.className = 'player-amp-grid';
+    grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+
+    var available = getAvailableAmpsByCategory(escState.currentAmpPlayerIndex, randCat);
+    var shuf = available.slice().sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    if (sel.length === 0) {
+        escState.currentAmpPlayerIndex++;
+        renderEscAmps();
+        return;
+    }
+
+    sel.forEach(function(amp) {
+        var item = document.createElement('div');
+        item.className = 'amp-card';
+
+        var tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-box';
+        tooltip.innerHTML = `
+            <div class="tt-type">[АМФА]</div>
+            <div class="tt-name">${amp.name}</div>
+            <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+        `;
+
+        item.innerHTML = `
+            <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+            <div class="amp-title">${amp.name}</div>
+            <div class="amp-category">${amp.category}</div>
+        `;
+        item.appendChild(tooltip);
+
+        item.addEventListener('click', function() {
+            if (!escState.ampSelections[escState.currentAmpPlayerIndex]) escState.ampSelections[escState.currentAmpPlayerIndex] = {};
+            escState.ampSelections[escState.currentAmpPlayerIndex][randCat] = amp.name;
+            unlockAmpForPlayer(escState.currentAmpPlayerIndex, amp.name);
+
+            if (!escState.usedAmps[escState.currentAmpPlayerIndex]) escState.usedAmps[escState.currentAmpPlayerIndex] = [];
+            if (escState.usedAmps[escState.currentAmpPlayerIndex].indexOf(amp.name) === -1) {
+                escState.usedAmps[escState.currentAmpPlayerIndex].push(amp.name);
+            }
+
+            escState.currentAmpPlayerIndex++;
+            renderEscAmps();
+        });
+        grid.appendChild(item);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
 }
 
-function checkEscAmpsReady() {
-    var btn = document.getElementById('escStep4Next');
-    if (btn) btn.disabled = false;
-}
-
+// ============================================================
+// ПРЕВЬЮ-МОДАЛКА
+// ============================================================
 function showPreviewModal(trialName, mapName, variators, level) {
-    var oldModal = document.getElementById('previewModal');
-    if (oldModal) oldModal.remove();
+    var old = document.getElementById('previewModal');
+    if (old) old.remove();
 
     var overlay = document.createElement('div');
     overlay.id = 'previewModal';
-    overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    overlay.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center;
-        z-index: 2000; cursor: pointer; animation: fadeInPreview 0.5s ease;
-    `;
+        z-index: 2000; cursor: pointer; animation: fadeInPreview 0.5s ease;`;
 
     var modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-        background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+    modalContent.style.cssText = `background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
         border-radius: 24px; padding: 35px 45px; max-width: 1000px; width: 96%;
         text-align: center; border: 1px solid rgba(220, 90, 50, 0.3);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        animation: slideUpPreview 0.6s ease;
-    `;
+        animation: slideUpPreview 0.6s ease;`;
 
     var style = document.createElement('style');
     style.textContent = `
@@ -2210,24 +2637,31 @@ function showPreviewModal(trialName, mapName, variators, level) {
         @keyframes slideUpPreview { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes slideDownPreview { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(40px) scale(0.95); } }
         .preview-variator-item {
-            display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
             animation: variatorAppear 0.4s ease forwards; opacity: 0; transform: scale(0.8);
-            margin: 0 5px; max-width: 110px; min-width: 70px; flex: 0 1 auto;
+            margin: 0; flex: 1 1 0; min-width: 0; max-width: 100px;
         }
-        .preview-variator-item.weekly {
-            border: 2px solid #f1c40f; border-radius: 14px; padding: 4px;
-            background: rgba(241, 196, 15, 0.1);
-        }
-        .preview-variator-item.weekly .preview-variator-name { color: #f1c40f; }
         @keyframes variatorAppear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        .preview-variator-name { font-weight: 700; color: #ffbc9a; text-align: center; max-width: 110px; line-height: 1.2; display: block; text-transform: uppercase; }
-        .preview-variator-img { width: 70px; height: 70px; object-fit: contain; border-radius: 12px; background: rgba(0,0,0,0.3); padding: 6px; border: 1px solid rgba(220,90,50,0.15); }
+        .preview-variator-name {
+            font-weight: 700; color: #ffbc9a; text-align: center;
+            width: 100%; line-height: 1.15; display: block;
+            text-transform: uppercase; letter-spacing: 0.2px;
+            word-break: break-word;
+        }
+        .preview-variator-img {
+            width: 55px; height: 55px; object-fit: contain;
+            padding: 6px;
+            background: rgba(20, 15, 28, 0.7);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            border-radius: 10px;
+        }
         .preview-variators-container {
             display: flex; flex-wrap: nowrap; justify-content: center; align-items: flex-start;
-            gap: 8px 14px; padding: 16px 0 12px 0;
+            gap: 8px; padding: 16px 0 12px 0;
             border-top: 1px solid rgba(220,90,50,0.15);
             border-bottom: 1px solid rgba(220,90,50,0.15);
-            margin-bottom: 18px; min-height: 110px; overflow-x: auto;
+            margin-bottom: 18px; min-height: 80px;
+            overflow: hidden;
         }
         .preview-level-number { font-size: 3rem; font-weight: 900; color: #e16d48; letter-spacing: 2px; margin-bottom: 8px; }
         .preview-trial-name { font-size: 2rem; font-weight: 900; color: #ffbc9a; letter-spacing: 2px; margin-bottom: 4px; }
@@ -2237,31 +2671,15 @@ function showPreviewModal(trialName, mapName, variators, level) {
     `;
     document.head.appendChild(style);
 
-    var weeklyVarName = escState.weeklyVariator ? escState.weeklyVariator.name : null;
-
-    var variatorFontSizes = {
-        'ПСИХОХИРУРГИЯ': '0.63rem',
-        'ДВОЙНЫЕ ЗАДАНИЯ': '0.65rem',
-        'ГАЛЛЮЦИНАЦИИ': '0.65rem'
-    };
-
     var variatorsHtml = variators.map(function(v, index) {
         var nameUpper = v.name.toUpperCase();
         var delay = index * 0.05;
-        var isWeekly = weeklyVarName && v.name === weeklyVarName;
-        var weeklyClass = isWeekly ? 'preview-variator-item weekly' : 'preview-variator-item';
-        var weeklyBadge = isWeekly ? '<div style="font-size:0.45rem; color:#f1c40f; font-weight:700; letter-spacing:0.5px; margin-top:2px;"><i class="fas fa-star"></i> НЕДЕЛЯ</div>' : '';
-
-        var fontSize;
-        if (variatorFontSizes[nameUpper]) fontSize = variatorFontSizes[nameUpper];
-        else if (v.name.length > 14) fontSize = '0.6rem';
-        else fontSize = '0.75rem';
+        var fontSize = '0.5rem';
 
         return `
-            <div class="${weeklyClass}" style="animation-delay: ${delay}s; max-width: 110px;">
-                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/70x70/1a1a2e/e16d48?text=?'">
+            <div class="preview-variator-item" style="animation-delay: ${delay}s;">
+                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
                 <span class="preview-variator-name" style="font-size:${fontSize};">${nameUpper}</span>
-                ${weeklyBadge}
             </div>
         `;
     }).join('');
@@ -2280,10 +2698,7 @@ function showPreviewModal(trialName, mapName, variators, level) {
 
     overlay.addEventListener('click', function() {
         modalContent.style.animation = 'slideDownPreview 0.3s ease forwards';
-        setTimeout(function() {
-            overlay.remove();
-            showFullResult();
-        }, 350);
+        setTimeout(function() { overlay.remove(); showFullResult(); }, 350);
     });
 }
 
@@ -2521,11 +2936,9 @@ function openInfoModal() {
 
     infoFormState = { levelNum: escState.level, trialName: null, trialObj: null, variatorNames: [], time: '' };
 
-    // Номер эскалации — readonly
     var levelInput = document.getElementById('infoLevelNum');
     levelInput.value = escState.level;
 
-    // Время — пустое, только его заполняет пользователь
     var timeInput = document.getElementById('infoTime');
     timeInput.value = '';
     timeInput.classList.remove('input-error', 'input-valid');
@@ -2534,7 +2947,6 @@ function openInfoModal() {
     timeHint.textContent = 'Введите время в формате ММ:СС (например 02:46)';
     timeHint.className = 'info-form-hint';
 
-    // Испытание — readonly, автоматически
     var trialInput = document.getElementById('infoTrialInput');
     if (escState.trial && escState.trial.name) {
         trialInput.value = escState.trial.name;
@@ -2544,7 +2956,6 @@ function openInfoModal() {
         trialInput.value = '—';
     }
 
-    // Вариаторы — readonly, автоматически
     var preselected = [];
     if (escState.variators && escState.variators.length > 0) {
         escState.variators.forEach(function(v) {
@@ -2578,28 +2989,21 @@ function renderReadonlyVariators() {
         var vObj = typeof allVariatorsData !== 'undefined'
             ? allVariatorsData.find(function(x) { return x.name === vName; })
             : null;
-        var isWeekly = vName === WEEKLY_VARIATOR_NAME;
 
         var item = document.createElement('div');
-        item.className = 'readonly-variator-item' + (isWeekly ? ' weekly' : '');
+        item.className = 'readonly-variator-item';
 
         var imgSrc = vObj && vObj.image ? vObj.image : '';
         item.innerHTML = `
             ${imgSrc ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="">` : ''}
             <span>${vName}</span>
-            ${isWeekly ? '<i class="fas fa-star" style="font-size:0.7rem;"></i>' : ''}
         `;
         container.appendChild(item);
     });
 }
 
-// ============================================================
-// ПРОВЕРКА ФОРМАТА ВРЕМЕНИ ММ:СС
-// ============================================================
 function isValidTimeFormat(str) {
     if (!str) return false;
-    // Строгий формат: ровно 5 символов, MM:SS
-    // MM от 00 до 99, SS от 00 до 59
     var match = /^(\d{2}):(\d{2})$/.exec(str);
     if (!match) return false;
     var mm = parseInt(match[1], 10);
@@ -2686,9 +3090,8 @@ function buildSummaryTable() {
                 var vObj = typeof allVariatorsData !== 'undefined'
                     ? allVariatorsData.find(function(x) { return x.name === vName; })
                     : null;
-                var isWeekly = vName === WEEKLY_VARIATOR_NAME;
                 var imgEl = document.createElement('img');
-                imgEl.className = 'summary-var-icon' + (isWeekly ? ' weekly' : '');
+                imgEl.className = 'summary-var-icon';
                 imgEl.src = vObj && vObj.image ? vObj.image : '';
                 imgEl.alt = vName;
                 imgEl.title = vName;
@@ -2709,9 +3112,7 @@ function buildSummaryTable() {
     });
 
     var totalSeconds = 0;
-    sorted.forEach(function(rec) {
-        totalSeconds += timeToSeconds(rec.time);
-    });
+    sorted.forEach(function(rec) { totalSeconds += timeToSeconds(rec.time); });
 
     var trTotal = document.createElement('tr');
     trTotal.className = 'summary-total-row';
@@ -2775,10 +3176,6 @@ function doInit() {
     var step1Next = document.getElementById('escStep1Next');
     var step2Back = document.getElementById('escStep2Back');
     var step2Next = document.getElementById('escStep2Next');
-    var step3Back = document.getElementById('escStep3Back');
-    var step3Next = document.getElementById('escStep3Next');
-    var step4Back = document.getElementById('escStep4Back');
-    var step4Next = document.getElementById('escStep4Next');
     var nextLevelBtn = document.getElementById('escNextLevelBtn');
     var exitBtn = document.getElementById('escExitBtn');
 
@@ -2815,38 +3212,10 @@ function doInit() {
                 if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
                 escState.allAmpsUsed[idx] = false;
             });
+
+            escState.currentEquipPlayerIndex = 0;
             goToEscStep(3);
             renderEscEquipment();
-        });
-    }
-
-    if (step3Back) step3Back.addEventListener('click', function() { goToEscStep(2); });
-
-    if (step3Next) {
-        step3Next.addEventListener('click', function() {
-            goToEscStep(4);
-            renderEscAmps();
-        });
-    }
-
-    if (step4Back) step4Back.addEventListener('click', function() { goToEscStep(3); });
-
-    if (step4Next) {
-        step4Next.addEventListener('click', function() {
-            escState.players.forEach(function(_, idx) {
-                var selected = escState.ampSelections[idx] || {};
-                Object.keys(selected).forEach(function(category) {
-                    var ampName = selected[category];
-                    if (ampName) {
-                        if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
-                        if (escState.usedAmps[idx].indexOf(ampName) === -1) {
-                            escState.usedAmps[idx].push(ampName);
-                        }
-                        unlockAmpForPlayer(idx, ampName);
-                    }
-                });
-            });
-            generateEscResult();
         });
     }
 
@@ -2871,24 +3240,16 @@ function doInit() {
     if (infoModalClose) infoModalClose.addEventListener('click', closeInfoModal);
     if (infoModalCancel) infoModalCancel.addEventListener('click', closeInfoModal);
 
-    // ============================================================
-    // ВВОД ВРЕМЕНИ С АВТОМАТИЧЕСКИМ ДВОЕТОЧИЕМ И ВАЛИДАЦИЕЙ
-    // ============================================================
     if (infoTime) {
         infoTime.addEventListener('input', function() {
-            // Оставляем только цифры
             var digits = this.value.replace(/\D/g, '').slice(0, 4);
-
-            // Автоматически вставляем двоеточие после 2 цифр
             var formatted = digits;
             if (digits.length > 2) {
                 formatted = digits.slice(0, 2) + ':' + digits.slice(2);
             }
-
             this.value = formatted;
             infoFormState.time = formatted;
 
-            // Валидация: разрешаем только если формат ММ:СС корректен
             var isValid = isValidTimeFormat(formatted);
 
             if (formatted.length === 0) {
@@ -2914,23 +3275,17 @@ function doInit() {
             updateInfoModalSaveButton();
         });
 
-        // Блокируем ввод посторонних символов
         infoTime.addEventListener('keypress', function(e) {
             var char = String.fromCharCode(e.which);
-            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) {
-                e.preventDefault();
-            }
+            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) e.preventDefault();
         });
 
-        // Запрещаем вставку нецифровых символов
         infoTime.addEventListener('paste', function(e) {
             e.preventDefault();
             var pasted = (e.clipboardData || window.clipboardData).getData('text');
             var digits = pasted.replace(/\D/g, '').slice(0, 4);
             var formatted = digits;
-            if (digits.length > 2) {
-                formatted = digits.slice(0, 2) + ':' + digits.slice(2);
-            }
+            if (digits.length > 2) formatted = digits.slice(0, 2) + ':' + digits.slice(2);
             this.value = formatted;
             infoFormState.time = formatted;
             this.dispatchEvent(new Event('input'));
@@ -2939,7 +3294,6 @@ function doInit() {
 
     if (infoModalSave) {
         infoModalSave.addEventListener('click', function() {
-            // Финальная проверка перед сохранением
             if (!isValidTimeFormat(infoFormState.time)) {
                 alert('Пожалуйста, введите корректное время в формате ММ:СС (например 02:46)');
                 return;
@@ -2959,6 +3313,9 @@ function doInit() {
 
             escState.level++;
             updateLevelCounter();
+
+            escState.currentEquipPlayerIndex = 0;
+            // Снаряжение НЕ сбрасываем! Оно сохраняется между уровнями.
 
             var hasAvailable = false;
             escState.players.forEach(function(_, idx) {
@@ -2981,6 +3338,7 @@ function doInit() {
     if (summaryCloseBtn) {
         summaryCloseBtn.addEventListener('click', function() {
             closeSummaryModal();
+            clearSavedEscalation();
             location.reload();
         });
     }
@@ -3202,11 +3560,19 @@ function renderAmpModalGrid(playerIndex, category) {
     if (confirmBtn) confirmBtn.disabled = true;
 }
 
+// ============================================================
+// ПЕРЕРЫВ (Между уровнями) — ИСПРАВЛЕН БЛОК СКРОЛЛА
+// ============================================================
 function showBreakModal() {
     var hasAvailable = false;
-    escState.players.forEach(function(_, idx) { if (!areAllCategoriesComplete(idx)) hasAvailable = true; });
+    escState.players.forEach(function(_, idx) {
+        if (!areAllCategoriesComplete(idx)) hasAvailable = true;
+    });
 
-    if (!hasAvailable) { generateEscResult(); return; }
+    if (!hasAvailable) {
+        generateEscResult();
+        return;
+    }
 
     var oldModal = document.getElementById('breakModal');
     if (oldModal) oldModal.remove();
@@ -3214,163 +3580,113 @@ function showBreakModal() {
     var overlay = document.createElement('div');
     overlay.className = 'amp-modal-overlay active';
     overlay.id = 'breakModal';
-    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 1500; overflow-y: auto; padding: 20px;';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; padding: 20px; box-sizing: border-box;';
 
     var modal = document.createElement('div');
     modal.className = 'amp-modal';
-    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 30px 35px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto;';
+    // Убираем overflow: hidden, чтобы тултипы могли вылезать за края, и делаем окно шире
+    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative;';
 
-    modal.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
-            <div style="font-size: 0.85rem; color: #888; margin-top: 4px;">Каждому игроку нужно выбрать 1 амфу из доступной категории</div>
-        </div>
-        <div id="breakModalContent"></div>
-        <div style="text-align: center; margin-top: 20px;">
-            <button id="breakModalConfirm" disabled style="padding: 12px 40px; border-radius: 30px; border: none; background: rgba(220,90,50,0.2); color: #888; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;">Продолжить →</button>
-        </div>
-    `;
+    // Добавляем фоновую картинку для окна перерыва
+    modal.style.backgroundImage = "url('images/фон эскалация.webp')";
+    modal.style.backgroundSize = "cover";
+    modal.style.backgroundPosition = "center";
+    modal.style.backgroundBlendMode = "overlay";
 
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
+    var content = document.createElement('div');
+    content.style.cssText = 'width: 100%; display: flex; flex-direction: column; align-items: center;';
 
-    var content = document.getElementById('breakModalContent');
-    var breakSelections = {};
-
-    function renderBreakPlayerBlock(player, idx) {
-        var section = document.createElement('div');
-        section.className = 'player-block';
-        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 420px; flex: 0 0 420px; display: flex; flex-direction: column;';
-
-        var title = document.createElement('div');
-        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 8px; text-align: center; font-size: 0.95rem; letter-spacing: 0.5px;';
-        title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + player;
-        section.appendChild(title);
-
-        if (areAllCategoriesComplete(idx)) {
-            var completeMsg = document.createElement('div');
-            completeMsg.style.cssText = 'text-align: center; color: #2ecc71; padding: 0.5rem; font-size: 0.85rem;';
-            completeMsg.innerHTML = '<i class="fas fa-check-circle"></i> Все улучшения применены';
-            section.appendChild(completeMsg);
-            breakSelections[idx] = null;
-            return section;
+    function renderStep() {
+        if (escState.currentBreakPlayerIndex >= escState.players.length) {
+            overlay.remove();
+            generateEscResult();
+            return;
         }
 
-        var availableCategories = ampCategories.filter(function(cat) { return !isCategoryComplete(idx, cat); });
-        var randomCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        var availableAmps = getAvailableAmpsByCategory(idx, randomCategory);
-        var shuffled = availableAmps.slice().sort(function() { return Math.random() - 0.5; });
-        var displayAmps = shuffled.slice(0, 3);
+        var idx = escState.currentBreakPlayerIndex;
+        var player = escState.players[idx];
+
+        if (areAllCategoriesComplete(idx)) {
+            escState.currentBreakPlayerIndex++;
+            renderStep();
+            return;
+        }
+
+        var headerHtml = `
+            <div style="text-align: center; margin-bottom: 24px; width: 100%;">
+                <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-weight: 700; color: #fff; font-size: 1.2rem;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${player}</div>
+            </div>
+        `;
+
+        content.innerHTML = headerHtml;
+
+        var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
+        var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+        var availAmps = getAvailableAmpsByCategory(idx, randCat);
+        var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
+        var display = shuf.slice(0, 3);
 
         var catLabel = document.createElement('div');
-        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.75rem; margin-bottom: 10px; font-weight: 500; letter-spacing: 0.5px;';
-        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randomCategory;
-        section.appendChild(catLabel);
+        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 24px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
+        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
+        content.appendChild(catLabel);
 
         var grid = document.createElement('div');
         grid.className = 'player-break-grid';
-        grid.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;';
+        grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 50px;';
 
-        breakSelections[idx] = null;
+        display.forEach(function(amp) {
+            var item = document.createElement('div');
+            item.className = 'amp-card';
+            item.style.flex = '1 1 0';
+            item.style.maxWidth = '180px';
 
-        if (displayAmps.length === 0) {
-            for (var i = 0; i < 3; i++) {
-                var emptyItem = document.createElement('div');
-                emptyItem.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.05); opacity: 0.4;';
-                emptyItem.innerHTML = `<div style="font-size: 2rem; color: #555;">⛔</div><div style="font-size:0.6rem; color:#555;">ПУСТО</div>`;
-                grid.appendChild(emptyItem);
-            }
-            breakSelections[idx] = 'skip';
-        } else {
-            displayAmps.forEach(function(amp) {
-                var item = document.createElement('div');
-                item.className = 'selection-item';
-                item.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.3s ease; position: relative;';
-                item.innerHTML = `
-                    <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'" style="width:80px; height:80px; object-fit:contain; border-radius:10px; background:rgba(0,0,0,0.3); padding:4px;">
-                    <div style="font-size:0.65rem; color:#c2b9d4; text-align:center; font-weight:500; line-height:1.2;">${amp.name}</div>
-                    <div style="font-size:0.5rem; color:#666;">${amp.category}</div>
-                `;
-                item.addEventListener('click', function() {
-                    var playerGrid = this.closest('.player-block').querySelector('.player-break-grid');
-                    if (playerGrid) {
-                        playerGrid.querySelectorAll('.selection-item').forEach(function(el) {
-                            el.style.borderColor = 'rgba(255,255,255,0.06)';
-                            el.style.background = 'rgba(255,255,255,0.03)';
-                        });
-                    }
-                    this.style.borderColor = '#e16d48';
-                    this.style.background = 'rgba(220,90,50,0.1)';
-                    breakSelections[idx] = amp.name;
-                    unlockAmpForPlayer(idx, amp.name);
-                    checkBreakReady();
+            var tooltip = document.createElement('div');
+            tooltip.className = 'tooltip-box';
+            tooltip.innerHTML = `
+                <div class="tt-type">[АМФА]</div>
+                <div class="tt-name">${amp.name}</div>
+                <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+            `;
+
+            item.innerHTML = `
+                <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                <div class="amp-title">${amp.name}</div>
+                <div class="amp-category">${amp.category}</div>
+            `;
+            item.appendChild(tooltip);
+
+            item.addEventListener('click', function() {
+                var cat = ampCategories.find(function(c) {
+                    var a = ampsData.find(function(x) { return x.name === amp.name; });
+                    return a && a.category === c;
                 });
-                grid.appendChild(item);
-            });
-
-            if (displayAmps.length < 3) {
-                for (var j = displayAmps.length; j < 3; j++) {
-                    var emptyItem2 = document.createElement('div');
-                    emptyItem2.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.05); opacity: 0.4;';
-                    emptyItem2.innerHTML = `<div style="font-size: 2rem; color: #555;">⛔</div><div style="font-size:0.6rem; color:#555;">ПУСТО</div>`;
-                    grid.appendChild(emptyItem2);
+                if (cat) {
+                    if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                    escState.ampSelections[idx][cat] = amp.name;
+                    if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                    if (escState.usedAmps[idx].indexOf(amp.name) === -1) escState.usedAmps[idx].push(amp.name);
+                    unlockAmpForPlayer(idx, amp.name);
                 }
-            }
-        }
-        section.appendChild(grid);
-        return section;
-    }
-
-    var rowsContainer = buildPlayerRows(escState.players, renderBreakPlayerBlock);
-    content.appendChild(rowsContainer);
-
-    function checkBreakReady() {
-        var ready = true;
-        escState.players.forEach(function(_, idx) {
-            if (!areAllCategoriesComplete(idx) && !breakSelections[idx]) ready = false;
-        });
-        var confirmBtn = document.getElementById('breakModalConfirm');
-        if (confirmBtn) {
-            confirmBtn.disabled = !ready;
-            if (ready) {
-                confirmBtn.style.background = 'linear-gradient(135deg, #e16d48, #c0392b)';
-                confirmBtn.style.color = '#fff';
-                confirmBtn.style.cursor = 'pointer';
-            } else {
-                confirmBtn.style.background = 'rgba(220,90,50,0.2)';
-                confirmBtn.style.color = '#888';
-                confirmBtn.style.cursor = 'default';
-            }
-        }
-    }
-    checkBreakReady();
-
-    var confirmBtn = document.getElementById('breakModalConfirm');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            if (this.disabled) return;
-            escState.players.forEach(function(_, idx) {
-                if (breakSelections[idx] && breakSelections[idx] !== 'skip') {
-                    var category = ampCategories.find(function(cat) {
-                        var amp = ampsData.find(function(a) { return a.name === breakSelections[idx]; });
-                        return amp && amp.category === cat;
-                    });
-                    if (category) {
-                        if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
-                        escState.ampSelections[idx][category] = breakSelections[idx];
-                        if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
-                        if (escState.usedAmps[idx].indexOf(breakSelections[idx]) === -1) {
-                            escState.usedAmps[idx].push(breakSelections[idx]);
-                        }
-                        unlockAmpForPlayer(idx, breakSelections[idx]);
-                    }
-                }
+                escState.currentBreakPlayerIndex++;
+                renderStep();
             });
-            overlay.remove();
-            generateEscResult();
+            grid.appendChild(item);
         });
+
+        content.appendChild(grid);
     }
+
+    modal.appendChild(content);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    escState.currentBreakPlayerIndex = 0;
+    renderStep();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
