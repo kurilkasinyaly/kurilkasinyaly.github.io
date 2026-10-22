@@ -256,12 +256,12 @@
         }
 
         /* Указываем пути к картинкам-фонам для каждого снаряжения */
-        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.webp'); }
-        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.webp'); }
-        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.webp'); }
-        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.webp'); }
-        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.webp'); }
-        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.webp'); }
+        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.png'); }
+        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.png'); }
+        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.png'); }
+        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.png'); }
+        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.png'); }
+        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.png'); }
 
         .equip-card:hover {
             transform: translateY(-5px) scale(1.02);
@@ -289,13 +289,13 @@
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
         }
 
-        /* Позиционирование названия по центру (как на скрине) */
+        /* Позиционирование названия по центру (идеально в овале) */
         .ec-title-banner {
             position: absolute;
-            top: 135px;
+            top: 137px; /* Подобрано под центр овала */
             left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
+            transform: translate(-50%, -50%); /* Центрирование по вертикали и горизонтали */
+            width: 100%;
             text-align: center;
             z-index: 6;
         }
@@ -311,13 +311,15 @@
             overflow: hidden;
             text-overflow: ellipsis;
             text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            padding: 0 10px; /* Отступы, чтобы текст не прилипал к завитушкам */
         }
 
-        /* Позиционирование типа снизу (как на скрине) */
+        /* Позиционирование типа снизу (ровно по центру) */
         .ec-footer {
             position: absolute;
-            bottom: 20px;
-            left: 0;
+            bottom: 22px; /* Подобрано под визуальный центр нижней части */
+            left: 50%;
+            transform: translateX(-50%); /* Строгое центрирование по горизонтали */
             width: 100%;
             text-align: center;
             z-index: 5;
@@ -332,6 +334,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
+            text-align: center; /* Дополнительная гарантия центрирования */
         }
 
         .equip-card.selected {
