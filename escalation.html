@@ -1638,16 +1638,64 @@
     </div>
 </div>
 
+<!-- Подключаем данные, кроме amps.js (встраиваем прямо в скрипт) -->
 <script src="maps.js"></script>
 <script src="variators.js"></script>
 <script src="variators-all.js"></script>
-<script src="amps.js"></script>
 <script src="equipment.js"></script>
 <script src="trials.js"></script>
 
 <script>
 // ============================================================
-// БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ (Без объявления переменных!)
+// ПОЛНЫЙ СПИСОК АМФ (Встроен, чтобы работали описания)
+// ============================================================
+var ampCategories = ["Инструмент", "Навык", "Лекарство", "Гаджеты самозванцев"];
+
+var ampsData = [
+    // ===== ИНСТРУМЕНТЫ =====
+    { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
+    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
+    { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
+    { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
+    { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
+    { name: "Вторичное использование", image: "../images/амфа-использование.webp", category: "Инструмент", desc: "Бутылки из-под использованного лекарства можно бросать." },
+    { name: "Мастер-взломщик", image: "../images/амфа-мастер.webp", category: "Инструмент", desc: "Отмычка гарантировано открывает с первой попытки и используется дважды." },
+    { name: "Рюкзак", image: "../images/амфа-рюкзак.webp", category: "Инструмент", desc: "Расширяет инвентарь на 1 слот." },
+    { name: "Замыкание", image: "../images/амфа-замыкание.webp", category: "Инструмент", desc: "При использовании батареи частично восстанавливается перезарядка снаряжения." },
+
+    // ===== НАВЫКИ =====
+    { name: "Прячься и дыши", image: "../images/амфа-дыши.webp", category: "Навык", desc: "Найдите укрытие, чтобы сразу же восстановить выносливость и получить заряд адреналина. (Короткое время перезарядки перед использованием)." },
+    { name: "Прячься и исцеляйся", image: "../images/амфа-прячься.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы восстановить здоровье на одно деление, регенерация начинается сразу." },
+    { name: "Прятки с пользой", image: "../images/амфа-прятки.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы ускорить зарядку снаряжения." },
+    { name: "Быстрый побег", image: "../images/амфа-побег.webp", category: "Навык", desc: "Получение урона временно увеличивает вашу скорость." },
+    { name: "Невидимый", image: "../images/амфа-невидимый.webp", category: "Навык", desc: "Враги не могут найти вас в укрытии, даже если вы выглядываете оттуда.\nВТОРЖЕНИЕ: вторгшиеся игроки не увидят, как вы выглядываете из укрытий." },
+    { name: "Взломщик дверных ловушек", image: "../images/амфа-взломщик.webp", category: "Навык", desc: "Дверные ловушки ломаются при обычном открывании двери, а при медленном обезвреживаются." },
+    { name: "Вдребезги", image: "../images/амфа-вдребезги.webp", category: "Навык", desc: "Вышибайте двери (в т.ч. совместные двери) и доски одним ударом." },
+    { name: "Сильная рука", image: "../images/амфа-рука.webp", category: "Навык", desc: "Кирпичи и бутылки наносят больший урон, попадая по врагу, но кирпич сразу ломается.\nВТОРЖЕНИЕ: кирпич, попавший в самозванца, не ломается сразу." },
+    { name: "Манёвр уклонения", image: "../images/амфа-манёвр.webp", category: "Навык", desc: "Моментально спасает от вражеской хватки и снимает получаемый урон (требет краткого восстановления перед повторным использованием).\nВТОРЖЕНИЕ: вам проще сопротивляться вторгшимся игрокам." },
+
+    // ===== ЛЕКАРСТВА =====
+    { name: "Двойные дозы", image: "../images/амфа-дозы.webp", category: "Лекарство", desc: "Шприцы можно использовать дважды, а таблетки возрождения дают 2 оживления." },
+    { name: "Антитоксин", image: "../images/амфа-антитоксин.webp", category: "Лекарство", desc: "Через некоторое время восстанавливает полный рассудок, а психоз длится в два раза меньше." },
+    { name: "Задел", image: "../images/амфа-задел.webp", category: "Лекарство", desc: "Начните испытание со случайным предметом в инвентаре (лекарством, антидотом, бутылкой или кирпичом)." },
+    { name: "Последний шанс", image: "../images/амфа-шанс.webp", category: "Лекарство", desc: "Последний урон сокращает ваше здоровье до 1 ОЗ, но не даёт умереть (срабатывает раз в 5 минут).\nВТОРЖЕНИЕ: позволяет один раз за испытание пережить фатальный удар от вторгшегося игрока." },
+    { name: "Инкогнито", image: "../images/амфа-инкогнито.webp", category: "Лекарство", desc: "Ваша скорость ходьбы в приседе увеличена." },
+    { name: "Отличная работа", image: "../images/амфа-работа.webp", category: "Лекарство", desc: "Выполнение задания восстанавливает часть вашего здоровья. (Короткий период перезарядки перед повторным использованием)." },
+    { name: "Усиление", image: "../images/амфа-усиление.webp", category: "Лекарство", desc: "Начните испытание со случайным бустером в инвентаре (бустер здоровья, выносливости или батареи)." },
+    { name: "Самооживление", image: "../images/амфа-самооживление.webp", category: "Лекарство", desc: "Воскресни после смерти (один раз за испытание).\nВТОРЖЕНИЕ: самооживление после того, как вас убьёт вторгшийся игрок, один раз за испытание." },
+    { name: "Эксперт по бинтам", image: "../images/амфа-эксперт.webp", category: "Лекарство", desc: "Бинты применяются быстрее, их можно использовать дважды." },
+
+    // ===== ГАДЖЕТЫ САМОЗВАНЦЕВ =====
+    { name: "Мимик", image: "../images/амфа-мимик.webp", category: "Гаджеты самозванцев", desc: "Примите обличье реагента. Вы сможете тише передвигаться и бесшумнее готовиться пырнуть врага ножом. Держите фальшивый предмет, чтобы слиться с окружением и не отображаться на отметках." },
+    { name: "Стимулятор", image: "../images/амфа-стимулятор.webp", category: "Гаджеты самозванцев", desc: "Вколите мощный стимулятор - он временно повышает скорость, выносливость и невосприимчивость к снарядам." },
+    { name: "Нейрошок", image: "../images/амфа-нейрошок.webp", category: "Гаджеты самозванцев", desc: "Снаряд, ненадолго дезориентирующий реагента и отключающий его снаряжение. Длительность эффекта зависит от расстояния, пройденного до попадания." },
+    { name: "Стальная ловушка", image: "../images/амфа-стальная-ловушка.webp", category: "Гаджеты самозванцев", desc: "Ловушка, временно обездвиживающая любого реагента, попавшегося в неё." },
+    { name: "Датчик движения", image: "../images/амфа-датчик-движения.webp", category: "Гаджеты самозванцев", desc: "Устанавливаемое устройство, засекающее передвижения реагентов в радиусе действия." },
+    { name: "Приманка для экс-попа", image: "../images/амфа-приманка-экс-поп.webp", category: "Гаджеты самозванцев", desc: "Приманка, которую можно бросить, чтобы побудить экс-попа ВРЕМЯННО патрулировать место её попадания." }
+];
+
+// ============================================================
+// БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ СНАРЯЖЕНИЯ
 // ============================================================
 if (typeof equipmentData !== 'undefined' && Array.isArray(equipmentData)) {
     var equipDescs = {
@@ -1661,47 +1709,6 @@ if (typeof equipmentData !== 'undefined' && Array.isArray(equipmentData)) {
     equipmentData.forEach(function(eq) {
         if (equipDescs[eq.name]) eq.desc = equipDescs[eq.name];
     });
-}
-
-if (typeof ampsData !== 'undefined' && Array.isArray(ampsData)) {
-    // Если файл amps.js почему-то пустой, создаем базовые данные (или можно просто довериться файлу)
-    if (ampsData.length === 0) {
-        ampsData.push(
-            { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
-            { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
-            { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
-            { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
-            { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
-            { name: "Вторичное использование", image: "../images/амфа-использование.webp", category: "Инструмент", desc: "Бутылки из-под использованного лекарства можно бросать." },
-            { name: "Мастер-взломщик", image: "../images/амфа-мастер.webp", category: "Инструмент", desc: "Отмычка гарантировано открывает с первой попытки и используется дважды." },
-            { name: "Рюкзак", image: "../images/амфа-рюкзак.webp", category: "Инструмент", desc: "Расширяет инвентарь на 1 слот." },
-            { name: "Замыкание", image: "../images/амфа-замыкание.webp", category: "Инструмент", desc: "При использовании батареи частично восстанавливается перезарядка снаряжения." },
-            { name: "Прячься и дыши", image: "../images/амфа-дыши.webp", category: "Навык", desc: "Найдите укрытие, чтобы сразу же восстановить выносливость и получить заряд адреналина. (Короткое время перезарядки перед использованием)." },
-            { name: "Прячься и исцеляйся", image: "../images/амфа-прячься.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы восстановить здоровье на одно деление, регенерация начинается сразу." },
-            { name: "Прятки с пользой", image: "../images/амфа-прятки.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы ускорить зарядку снаряжения." },
-            { name: "Быстрый побег", image: "../images/амфа-побег.webp", category: "Навык", desc: "Получение урона временно увеличивает вашу скорость." },
-            { name: "Невидимый", image: "../images/амфа-невидимый.webp", category: "Навык", desc: "Враги не могут найти вас в укрытии, даже если вы выглядываете оттуда.\nВТОРЖЕНИЕ: вторгшиеся игроки не увидят, как вы выглядываете из укрытий." },
-            { name: "Взломщик дверных ловушек", image: "../images/амфа-взломщик.webp", category: "Навык", desc: "Дверные ловушки ломаются при обычном открывании двери, а при медленном обезвреживаются." },
-            { name: "Вдребезги", image: "../images/амфа-вдребезги.webp", category: "Навык", desc: "Вышибайте двери (в т.ч. совместные двери) и доски одним ударом." },
-            { name: "Сильная рука", image: "../images/амфа-рука.webp", category: "Навык", desc: "Кирпичи и бутылки наносят больший урон, попадая по врагу, но кирпич сразу ломается.\nВТОРЖЕНИЕ: кирпич, попавший в самозванца, не ломается сразу." },
-            { name: "Манёвр уклонения", image: "../images/амфа-манёвр.webp", category: "Навык", desc: "Моментально спасает от вражеской хватки и снимает получаемый урон (требет краткого восстановления перед повторным использованием).\nВТОРЖЕНИЕ: вам проще сопротивляться вторгшимся игрокам." },
-            { name: "Двойные дозы", image: "../images/амфа-дозы.webp", category: "Лекарство", desc: "Шприцы можно использовать дважды, а таблетки возрождения дают 2 оживления." },
-            { name: "Антитоксин", image: "../images/амфа-антитоксин.webp", category: "Лекарство", desc: "Через некоторое время восстанавливает полный рассудок, а психоз длится в два раза меньше." },
-            { name: "Задел", image: "../images/амфа-задел.webp", category: "Лекарство", desc: "Начните испытание со случайным предметом в инвентаре (лекарством, антидотом, бутылкой или кирпичом)." },
-            { name: "Последний шанс", image: "../images/амфа-шанс.webp", category: "Лекарство", desc: "Последний урон сокращает ваше здоровье до 1 ОЗ, но не даёт умереть (срабатывает раз в 5 минут).\nВТОРЖЕНИЕ: позволяет один раз за испытание пережить фатальный удар от вторгшегося игрока." },
-            { name: "Инкогнито", image: "../images/амфа-инкогнито.webp", category: "Лекарство", desc: "Ваша скорость ходьбы в приседе увеличена." },
-            { name: "Отличная работа", image: "../images/амфа-работа.webp", category: "Лекарство", desc: "Выполнение задания восстанавливает часть вашего здоровья. (Короткий период перезарядки перед повторным использованием)." },
-            { name: "Усиление", image: "../images/амфа-усиление.webp", category: "Лекарство", desc: "Начните испытание со случайным бустером в инвентаре (бустер здоровья, выносливости или батареи)." },
-            { name: "Самооживление", image: "../images/амфа-самооживление.webp", category: "Лекарство", desc: "Воскресни после смерти (один раз за испытание).\nВТОРЖЕНИЕ: самооживление после того, как вас убьёт вторгшийся игрок, один раз за испытание." },
-            { name: "Эксперт по бинтам", image: "../images/амфа-эксперт.webp", category: "Лекарство", desc: "Бинты применяются быстрее, их можно использовать дважды." },
-            { name: "Мимик", image: "../images/амфа-мимик.webp", category: "Гаджеты самозванцев", desc: "Примите обличье реагента. Вы сможете тише передвигаться и бесшумнее готовиться пырнуть врага ножом. Держите фальшивый предмет, чтобы слиться с окружением и не отображаться на отметках." },
-            { name: "Стимулятор", image: "../images/амфа-стимулятор.webp", category: "Гаджеты самозванцев", desc: "Вколите мощный стимулятор - он временно повышает скорость, выносливость и невосприимчивость к снарядам." },
-            { name: "Нейрошок", image: "../images/амфа-нейрошок.webp", category: "Гаджеты самозванцев", desc: "Снаряд, ненадолго дезориентирующий реагента и отключающий его снаряжение. Длительность эффекта зависит от расстояния, пройденного до попадания." },
-            { name: "Стальная ловушка", image: "../images/амфа-стальная-ловушка.webp", category: "Гаджеты самозванцев", desc: "Ловушка, временно обездвиживающая любого реагента, попавшегося в неё." },
-            { name: "Датчик движения", image: "../images/амфа-датчик-движения.webp", category: "Гаджеты самозванцев", desc: "Устанавливаемое устройство, засекающее передвижения реагентов в радиусе действия." },
-            { name: "Приманка для экс-попа", image: "../images/амфа-приманка-экс-поп.webp", category: "Гаджеты самозванцев", desc: "Приманка, которую можно бросить, чтобы побудить экс-попа ВРЕМЯННО патрулировать место её попадания." }
-        );
-    }
 }
 
 // ============================================================
@@ -1755,9 +1762,9 @@ function checkDataLoaded() {
     if (typeof mapsData === 'undefined') return false;
     if (typeof allVariatorsData === 'undefined') return false;
     if (typeof equipmentData === 'undefined') return false;
-    if (typeof ampsData === 'undefined') return false;
     if (typeof trialsData === 'undefined') return false;
     if (typeof ampCategories === 'undefined') return false;
+    if (typeof ampsData === 'undefined') return false;
     return true;
 }
 
@@ -3016,7 +3023,7 @@ function hideSaveLoadModal() {
 }
 
 // ============================================================
-// ПЕРЕРЫВ (Между уровнями)
+// ПЕРЕРЫВ (Между уровнями) — ИСПРАВЛЕН БЛОК СКРОЛЛА
 // ============================================================
 function showBreakModal() {
     var hasAvailable = false;
@@ -3035,15 +3042,16 @@ function showBreakModal() {
     var overlay = document.createElement('div');
     overlay.className = 'amp-modal-overlay active';
     overlay.id = 'breakModal';
-    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; overflow-y: auto; padding: 20px;';
+    // Убираем padding и настраиваем flex для точного центрирования
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; padding: 20px; box-sizing: border-box;';
 
     var modal = document.createElement('div');
     modal.className = 'amp-modal';
-    // Увеличено окно перерыва, убран скролл внутри
-    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 900px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center;';
+    // Увеличиваем окно, убираем внутренний overflow-y (скролл) и задаем минимальную высоту
+    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 30px 40px; max-width: 1000px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; overflow: hidden;';
 
     var content = document.createElement('div');
-    content.style.cssText = 'width: 100%;';
+    content.style.cssText = 'width: 100%; display: flex; flex-direction: column; align-items: center;';
 
     function renderStep() {
         if (escState.currentBreakPlayerIndex >= escState.players.length) {
@@ -3061,15 +3069,18 @@ function showBreakModal() {
             return;
         }
 
-        content.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px;">
+        // Формируем шапку
+        var headerHtml = `
+            <div style="text-align: center; margin-bottom: 24px; width: 100%;">
                 <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
                 <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
             </div>
-            <div style="text-align: center; margin-bottom: 16px;">
+            <div style="text-align: center; margin-bottom: 20px;">
                 <div style="font-weight: 700; color: #fff; font-size: 1.2rem;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${player}</div>
             </div>
         `;
+
+        content.innerHTML = headerHtml;
 
         var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
         var randCat = availCats[Math.floor(Math.random() * availCats.length)];
@@ -3078,17 +3089,20 @@ function showBreakModal() {
         var display = shuf.slice(0, 3);
 
         var catLabel = document.createElement('div');
-        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
+        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 24px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
         catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
         content.appendChild(catLabel);
 
         var grid = document.createElement('div');
         grid.className = 'player-break-grid';
-        grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; padding-bottom: 20px;';
+        // Располагаем карточки в ряд
+        grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 600px; margin: 0 auto;';
 
         display.forEach(function(amp) {
             var item = document.createElement('div');
             item.className = 'amp-card';
+            item.style.flex = '1 1 0'; // Растягиваем карточки
+            item.style.maxWidth = '180px'; // Но не даем им стать слишком огромными
             
             var tooltip = document.createElement('div');
             tooltip.className = 'tooltip-box';
