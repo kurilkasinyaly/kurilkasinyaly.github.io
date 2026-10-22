@@ -3348,7 +3348,6 @@ function doInit() {
             this.dispatchEvent(new Event('input'));
         });
     }
-
     if (infoModalSave) {
         infoModalSave.addEventListener('click', function() {
             if (!isValidTimeFormat(infoFormState.time)) {
@@ -3372,14 +3371,13 @@ function doInit() {
             updateLevelCounter();
 
             escState.currentEquipPlayerIndex = 0;
-            escState.equipSelections = {};
+            // Строку escState.equipSelections = {}; мы удалили!
 
             var has = false;
             escState.players.forEach(function(_, idx) { if (!areAllCategoriesComplete(idx)) has = true; });
             if (has) showBreakModal(); else generateEscResult();
         });
     }
-
     var summaryClose = document.getElementById('summaryClose');
     var summaryCloseBtn = document.getElementById('summaryCloseBtn');
     var summaryCopy = document.getElementById('summaryCopy');
