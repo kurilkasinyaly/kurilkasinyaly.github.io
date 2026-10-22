@@ -241,8 +241,8 @@
            ============================================================ */
         .equip-card {
             position: relative;
-            width: 180px; /* Увеличенный размер */
-            height: 260px;
+            width: 160px; /* Чуть уменьшен, чтобы 3 карточки влезали без скролла */
+            height: 230px;
             cursor: pointer;
             transition: all 0.3s ease;
             flex-shrink: 0;
@@ -255,13 +255,13 @@
             overflow: hidden;
         }
 
-        /* Пути к картинкам-фонам */
-        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.webp'); }
-        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.webp'); }
-        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.webp'); }
-        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.webp'); }
-        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.webp'); }
-        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.webp'); }
+        /* Указываем пути к картинкам-фонам для каждого снаряжения */
+        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.png'); }
+        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.png'); }
+        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.png'); }
+        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.png'); }
+        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.png'); }
+        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.png'); }
 
         .equip-card:hover {
             transform: translateY(-5px) scale(1.02);
@@ -271,11 +271,11 @@
         /* Позиционирование картинки внутри рамки */
         .ec-image-box {
             position: absolute;
-            top: 55px;
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             z-index: 5;
             display: flex;
             align-items: center;
@@ -289,10 +289,10 @@
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
         }
 
-        /* Позиционирование названия */
+        /* Позиционирование названия по центру (как на скрине) */
         .ec-title-banner {
             position: absolute;
-            top: 155px;
+            top: 135px;
             left: 50%;
             transform: translateX(-50%);
             width: 85%;
@@ -302,21 +302,21 @@
 
         .ec-title {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
 
-        /* Позиционирование типа снизу */
+        /* Позиционирование типа снизу (как на скрине) */
         .ec-footer {
             position: absolute;
-            bottom: 25px;
+            bottom: 20px;
             left: 0;
             width: 100%;
             text-align: center;
@@ -327,8 +327,8 @@
         }
 
         .ec-type {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.7);
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
@@ -1294,10 +1294,10 @@
         @media (max-width: 992px) {
             .result-grid { grid-template-columns: 1fr; }
             .info-form-grid { grid-template-columns: 1fr; }
-            .equip-card { width: 150px; height: 216px; }
+            .equip-card { width: 140px; height: 210px; }
             .ec-image-box { top: 45px; width: 70px; height: 70px; }
-            .ec-title-banner { top: 130px; }
-            .ec-title { font-size: 0.9rem; }
+            .ec-title-banner { top: 125px; }
+            .ec-title { font-size: 0.85rem; }
             .ec-footer { bottom: 15px; }
         }
 
@@ -1437,8 +1437,6 @@
             <div id="escStep3Content"></div>
             <div class="step-actions" id="escStep3Actions">
                 <button class="back-btn" id="escStep3Back">← Назад</button>
-                <!-- Кнопка далее скрыта, так как переход автоматический -->
-                <button class="next-btn hidden" id="escStep3Next" disabled>Далее →</button>
             </div>
         </div>
 
@@ -2252,7 +2250,7 @@ function renderEscEquipment() {
 
     var grid = document.createElement('div');
     grid.className = 'player-equip-grid';
-    grid.style.cssText = 'display: flex; gap: 16px; justify-content: center; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px;';
+    grid.style.cssText = 'display: flex; gap: 16px; justify-content: center; flex-wrap: nowrap; padding-bottom: 10px;';
 
     var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
     var sel = shuf.slice(0, 3);
