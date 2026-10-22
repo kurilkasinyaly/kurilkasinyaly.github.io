@@ -248,61 +248,37 @@
         .player-name-inputs .input-row input::placeholder { color: #555; }
 
         /* ============================================================
-           КАРТОЧКИ СНАРЯЖЕНИЯ (НОВЫЙ ВИД)
+           КАРТОЧКИ СНАРЯЖЕНИЯ (ВОЗВРАЩЕН СТАРЫЙ ВИД)
            ============================================================ */
         .equip-card {
             position: relative;
-            width: 140px;
-            height: 200px;
+            width: 180px;
+            height: 260px;
             cursor: pointer;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            border-radius: 16px;
-            background: rgba(20, 15, 28, 0.8);
-            border: 2px solid rgba(220, 90, 50, 0.3);
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            text-align: center;
         }
+
+        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.png'); }
+        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.png'); }
+        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.png'); }
+        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.png'); }
+        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.png'); }
+        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.png'); }
 
         .equip-card:hover {
             transform: translateY(-5px) scale(1.02);
-            border-color: #e16d48;
-            box-shadow: 0 10px 25px rgba(220, 90, 50, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
             z-index: 50;
         }
 
         .equip-card.selected {
-            border-color: #e16d48;
-            background: rgba(220, 90, 50, 0.15);
             box-shadow: 0 0 0 3px #ffbc9a, 0 0 30px rgba(220, 90, 50, 0.8);
-        }
-
-        .equip-card img {
-            width: 70px; height: 70px;
-            object-fit: contain;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
-        }
-
-        .equip-card .equip-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #ffbc9a;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
-
-        .equip-card .equip-category {
-            font-size: 0.55rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
         }
 
         /* ============================================================
@@ -1366,7 +1342,7 @@
         @media (max-width: 992px) {
             .result-grid { grid-template-columns: 1fr; }
             .info-form-grid { grid-template-columns: 1fr; }
-            .equip-card { width: 130px; height: 190px; }
+            .equip-card { width: 150px; height: 216px; }
         }
 
         @media (max-width: 850px) {
@@ -2421,7 +2397,7 @@ function buildPlayerRows(players, renderPlayerBlock) {
 }
 
 // ============================================================
-// ШАГ 3 — СНАРЯЖЕНИЕ (Карточки с новым видом)
+// ШАГ 3 — СНАРЯЖЕНИЕ (Возвращен старый вид карточек)
 // ============================================================
 function renderEscEquipment() {
     var container = document.getElementById('escStep3Content');
@@ -2442,60 +2418,8 @@ function renderEscEquipment() {
     `;
     container.appendChild(header);
 
-    function renderPlayerBlock(player, idx) {
-        var section = document.createElement('div');
-        section.className = 'player-block';
-        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
-
-        var title = document.createElement('div');
-        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
-        title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + player;
-        section.appendChild(title);
-
-        var grid = document.createElement('div');
-        grid.className = 'player-equip-grid';
-        grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
-
-        var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
-        var sel = shuf.slice(0, 3);
-
-        sel.forEach(function(eq) {
-            var item = document.createElement('div');
-            item.className = 'equip-card';
-            item.dataset.eq = eq.name;
-
-            var tooltip = document.createElement('div');
-            tooltip.className = 'tooltip-box';
-            tooltip.innerHTML = `
-                <div class="tt-type">[СНАРЯЖЕНИЕ]</div>
-                <div class="tt-name">${eq.name}</div>
-                <div class="tt-desc">${eq.desc || 'Описание снаряжения отсутствует.'}</div>
-            `;
-
-            item.innerHTML = `
-                <img src="${eq.image}" alt="${eq.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
-                <div class="equip-title">${eq.name}</div>
-                <div class="equip-category">Снаряжение</div>
-            `;
-            item.appendChild(tooltip);
-
-            item.addEventListener('click', function() {
-                escState.equipSelections[idx] = eq.name;
-                // Переходим на шаг 4
-                goToEscStep(4);
-                escState.currentAmpPlayerIndex = 0;
-                renderEscAmps();
-            });
-            grid.appendChild(item);
-        });
-        section.appendChild(grid);
-        return section;
-    }
-
-    // Показываем по одному игроку за раз (пошагово)
     if (escState.currentEquipPlayerIndex === undefined) escState.currentEquipPlayerIndex = 0;
     if (escState.currentEquipPlayerIndex >= escState.playerCount) {
-        // Все игроки выбрали снаряжение
         goToEscStep(4);
         escState.currentAmpPlayerIndex = 0;
         renderEscAmps();
@@ -2507,7 +2431,47 @@ function renderEscEquipment() {
     if (sub) {
         sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
     }
-    container.appendChild(renderPlayerBlock(currentPlayer, escState.currentEquipPlayerIndex));
+
+    var section = document.createElement('div');
+    section.className = 'player-block';
+    section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
+
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'player-equip-grid';
+    grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+
+    var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    sel.forEach(function(eq) {
+        var item = document.createElement('div');
+        item.className = 'equip-card';
+        item.dataset.eq = eq.name;
+
+        var tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-box';
+        tooltip.innerHTML = `
+            <div class="tt-type">[СНАРЯЖЕНИЕ]</div>
+            <div class="tt-name">${eq.name}</div>
+            <div class="tt-desc">${eq.desc || 'Описание снаряжения отсутствует.'}</div>
+        `;
+        item.appendChild(tooltip);
+
+        item.addEventListener('click', function() {
+            escState.equipSelections[escState.currentEquipPlayerIndex] = eq.name;
+            escState.currentEquipPlayerIndex++;
+            renderEscEquipment();
+        });
+        grid.appendChild(item);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
 }
 
 // ============================================================
