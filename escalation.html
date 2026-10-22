@@ -241,8 +241,8 @@
            ============================================================ */
         .equip-card {
             position: relative;
-            width: 160px;
-            height: 230px;
+            width: 180px; /* Увеличенный размер */
+            height: 260px;
             cursor: pointer;
             transition: all 0.3s ease;
             flex-shrink: 0;
@@ -255,13 +255,13 @@
             overflow: hidden;
         }
 
-        /* Указываем пути к картинкам-фонам для каждого снаряжения */
-        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.webp'); }
-        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.webp'); }
-        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.webp'); }
-        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.webp'); }
-        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.webp'); }
-        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.webp'); }
+        /* Пути к картинкам-фонам */
+        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.png'); }
+        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.png'); }
+        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.png'); }
+        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.png'); }
+        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.png'); }
+        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.png'); }
 
         .equip-card:hover {
             transform: translateY(-5px) scale(1.02);
@@ -271,11 +271,11 @@
         /* Позиционирование картинки внутри рамки */
         .ec-image-box {
             position: absolute;
-            top: 45px;
+            top: 55px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             z-index: 5;
             display: flex;
             align-items: center;
@@ -292,7 +292,7 @@
         /* Позиционирование названия */
         .ec-title-banner {
             position: absolute;
-            top: 130px;
+            top: 155px;
             left: 50%;
             transform: translateX(-50%);
             width: 85%;
@@ -302,11 +302,11 @@
 
         .ec-title {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -327,8 +327,8 @@
         }
 
         .ec-type {
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
@@ -930,6 +930,377 @@
             margin-bottom: 0.5rem;
         }
 
+        /* ============================================================
+           МОДАЛКА СБОРА ИНФОРМАЦИИ
+           ============================================================ */
+        .info-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 1700; justify-content: center;
+            align-items: flex-start; backdrop-filter: blur(12px); overflow-y: auto; padding: 30px 15px;
+        }
+        .info-modal-overlay.active { display: flex; }
+
+        .info-modal {
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            border-radius: 24px; border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 30px 35px; max-width: 900px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out; margin: auto;
+        }
+
+        .info-modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .info-modal-header h2 {
+            font-size: 1.5rem; color: #e16d48;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .info-modal-header h2 i { color: #e16d48; }
+        .info-modal-close {
+            background: none; border: none; color: #c2b9d4;
+            font-size: 2rem; cursor: pointer; transition: color 0.3s;
+        }
+        .info-modal-close:hover { color: #e16d48; }
+
+        .info-form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem;
+        }
+        .info-form-group {
+            display: flex; flex-direction: column; gap: 6px; position: relative;
+        }
+        .info-form-group.full-width { grid-column: 1 / -1; }
+
+        .info-form-group label {
+            font-size: 0.8rem; color: #e16d48; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .info-form-group input[type="text"] {
+            background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(220, 90, 50, 0.25);
+            border-radius: 12px; padding: 12px 16px; color: #f0eef7;
+            font-size: 0.95rem; font-family: inherit; outline: none;
+            transition: border-color 0.3s;
+        }
+        .info-form-group input:focus { border-color: #e16d48; }
+        .info-form-group input::placeholder { color: #555; }
+
+        .info-form-group input.readonly-field {
+            background: rgba(0, 0, 0, 0.15);
+            color: #888;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        .info-form-group input.input-error {
+            border-color: #ff3333;
+            box-shadow: 0 0 8px rgba(255, 51, 51, 0.3);
+        }
+        .info-form-group input.input-valid {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
+        }
+
+        .info-form-hint {
+            font-size: 0.7rem; color: #666;
+            margin-top: 2px; font-style: italic;
+        }
+        .info-form-hint.error { color: #ff6666; }
+        .info-form-hint.valid { color: #2ecc71; }
+
+        .readonly-variators {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px dashed rgba(220, 90, 50, 0.25);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex; flex-wrap: wrap; gap: 10px;
+            max-height: 260px; overflow-y: auto;
+            min-height: 60px;
+        }
+        .readonly-variator-item {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 12px;
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem; color: #ffbc9a; white-space: nowrap;
+        }
+        .readonly-variator-item img {
+            width: 20px; height: 20px;
+            object-fit: contain; border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3); padding: 2px;
+        }
+        .readonly-variators-empty {
+            color: #666; font-size: 0.8rem; font-style: italic; padding: 4px;
+        }
+
+        .info-modal-actions {
+            display: flex; justify-content: flex-end; gap: 1rem;
+            margin-top: 1.5rem; padding-top: 1.2rem;
+            border-top: 1px solid rgba(220, 90, 50, 0.2); flex-wrap: wrap;
+        }
+        .info-modal-actions button {
+            padding: 0.8rem 2rem; border-radius: 40px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+        }
+        .info-modal-actions .btn-primary {
+            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+        }
+        .info-modal-actions .btn-primary:hover:not(:disabled) {
+            transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
+        .info-modal-actions .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .info-modal-actions .btn-secondary {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
+        }
+        .info-modal-actions .btn-secondary:hover {
+            background: rgba(220, 90, 50, 0.25); color: white;
+        }
+
+        /* ============================================================
+           ИТОГОВАЯ ТАБЛИЦА
+           ============================================================ */
+        .summary-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); z-index: 2500; justify-content: center;
+            align-items: flex-start; backdrop-filter: blur(14px);
+            overflow-y: auto; padding: 40px 20px;
+        }
+        .summary-modal-overlay.active { display: flex; }
+
+        .summary-modal {
+            background: #0a0a0f;
+            border-radius: 16px; border: 1px solid rgba(220, 90, 50, 0.3);
+            padding: 30px 35px; max-width: 1300px; width: 100%;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+            animation: modalFadeIn 0.3s ease-out; margin: auto;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(220, 90, 50, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(220, 90, 50, 0.03) 0%, transparent 50%);
+        }
+
+        .summary-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px;
+            border-bottom: 2px solid rgba(220, 90, 50, 0.4);
+        }
+        .summary-header h2 {
+            font-size: 2rem; font-weight: 300; color: #fff;
+            letter-spacing: 3px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .summary-header h2 i { color: #e16d48; font-size: 1.8rem; }
+        .summary-close {
+            background: none; border: none; color: #c2b9d4;
+            font-size: 2rem; cursor: pointer; transition: color 0.3s;
+        }
+        .summary-close:hover { color: #e16d48; }
+
+        .summary-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .summary-table thead th {
+            text-align: left; padding: 12px 10px;
+            font-size: 0.75rem; font-weight: 600;
+            color: #888; text-transform: uppercase; letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.3);
+        }
+        .summary-table thead th.col-time { text-align: center; width: 90px; }
+        .summary-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+        .summary-table tbody tr:hover { background: rgba(220, 90, 50, 0.05); }
+        .summary-table tbody td {
+            padding: 12px 10px; vertical-align: middle;
+            color: #f0eef7; font-size: 0.95rem;
+        }
+        .summary-cell-number {
+            font-weight: 700; color: #e16d48; font-size: 1rem;
+            width: 60px; text-align: center;
+        }
+        .summary-cell-thumb { width: 100px; padding: 6px 10px; }
+        .summary-cell-thumb img {
+            width: 90px; height: 55px; object-fit: cover;
+            border-radius: 8px; border: 1px solid rgba(220, 90, 50, 0.3);
+            display: block;
+        }
+        .summary-cell-name {
+            font-weight: 600; color: #fff; text-transform: uppercase;
+            font-size: 0.95rem; letter-spacing: 0.5px;
+            min-width: 220px;
+        }
+        .summary-cell-variators {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 12px;
+            align-items: center;
+            padding: 4px 0;
+            max-width: 520px;
+        }
+        .summary-var-icon {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border: 1px solid rgba(220, 90, 50, 0.4);
+            flex-shrink: 0;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: help;
+        }
+        .summary-var-icon:hover {
+            transform: scale(1.12);
+            border-color: #e16d48;
+            box-shadow: 0 0 12px rgba(220, 90, 50, 0.5);
+            z-index: 5;
+            position: relative;
+        }
+        .summary-cell-time {
+            text-align: center; font-size: 1.2rem; font-weight: 700;
+            color: #ffbc9a; font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        .summary-empty {
+            text-align: center; padding: 40px; color: #888;
+            font-size: 1rem; font-style: italic;
+        }
+        .summary-total-row td {
+            padding: 16px 10px 6px 10px;
+            border-top: 2px solid rgba(220, 90, 50, 0.4);
+            font-weight: 700;
+        }
+        .summary-total-label {
+            text-align: right; color: #e16d48;
+            font-size: 0.95rem; letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .summary-total-value {
+            text-align: center; color: #f1c40f;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem; letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+        }
+        .summary-footer {
+            margin-top: 20px; padding-top: 15px;
+            border-top: 1px solid rgba(220, 90, 50, 0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
+        }
+        .summary-footer .stats {
+            font-size: 0.8rem; color: #888;
+        }
+        .summary-footer .stats strong { color: #ffbc9a; }
+        .summary-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .summary-actions button {
+            padding: 0.7rem 1.6rem; border-radius: 40px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+        }
+        .summary-actions .btn-close {
+            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+        }
+        .summary-actions .btn-close:hover { transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4); }
+        .summary-actions .btn-copy {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
+        }
+        .summary-actions .btn-copy:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+
+        /* ============================================================
+           МОДАЛКА СОХРАНЕНИЯ / ВОССТАНОВЛЕНИЯ
+           ============================================================ */
+        .save-load-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 3000; justify-content: center;
+            align-items: center; backdrop-filter: blur(14px); padding: 20px;
+        }
+        .save-load-modal-overlay.active { display: flex; }
+
+        .save-load-modal {
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            border-radius: 24px; border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 30px 35px; max-width: 560px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out; text-align: center;
+        }
+
+        .save-load-modal .icon-wrap {
+            width: 70px; height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: rgba(220, 90, 50, 0.15);
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .save-load-modal .icon-wrap i {
+            font-size: 2rem; color: #e16d48;
+        }
+        .save-load-modal h2 {
+            font-size: 1.4rem; color: #ffbc9a;
+            margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+        .save-load-modal p {
+            color: #c2b9d4; font-size: 0.95rem;
+            line-height: 1.6; margin-bottom: 10px;
+        }
+        .save-load-modal .save-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(220, 90, 50, 0.2);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin: 16px 0 22px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #c2b9d4;
+        }
+        .save-load-modal .save-info .row {
+            display: flex; justify-content: space-between;
+            padding: 3px 0;
+        }
+        .save-load-modal .save-info .row strong {
+            color: #ffbc9a; font-weight: 600;
+        }
+        .save-load-modal .actions {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+        }
+        .save-load-modal .actions button {
+            padding: 0.8rem 1.8rem; border-radius: 40px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+            min-width: 140px;
+        }
+        .save-load-modal .btn-continue {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        .save-load-modal .btn-continue:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(46, 204, 113, 0.4);
+        }
+        .save-load-modal .btn-restart {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            color: #c2b9d4;
+        }
+        .save-load-modal .btn-restart:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .result-grid { grid-template-columns: 1fr; }
+            .info-form-grid { grid-template-columns: 1fr; }
+            .equip-card { width: 150px; height: 216px; }
+            .ec-image-box { top: 45px; width: 70px; height: 70px; }
+            .ec-title-banner { top: 130px; }
+            .ec-title { font-size: 0.9rem; }
+            .ec-footer { bottom: 15px; }
+        }
+
         @media (max-width: 850px) {
             .container { padding: 0.8rem; }
             .header { flex-direction: column; padding: 0.8rem 1rem; border-radius: 40px; }
@@ -948,6 +1319,12 @@
             .player-name-inputs .input-row { flex-direction: column; align-items: stretch; padding: 0.5rem 1rem; }
             .player-name-inputs .input-row label { min-width: auto; }
             .player-amps-categories { grid-template-columns: 1fr; gap: 0.5rem; }
+            .summary-table thead { display: none; }
+            .summary-table tbody tr { display: block; padding: 12px 0; }
+            .summary-table tbody td { display: block; padding: 4px 10px; }
+            .summary-cell-thumb img { width: 100%; height: auto; max-width: 200px; }
+            .summary-cell-variators { justify-content: flex-start; max-width: 100%; }
+            .summary-var-icon { width: 44px; height: 44px; }
         }
 
         @media (max-width: 600px) {
@@ -975,6 +1352,15 @@
             .player-amps-categories { grid-template-columns: 1fr; gap: 0.4rem; }
             .amp-category-block .category-name { font-size: 0.6rem; }
             .amp-category-block .category-amp-name { font-size: 0.7rem; }
+            .info-modal { padding: 20px 15px; }
+            .info-modal-header h2 { font-size: 1.1rem; }
+            .summary-modal { padding: 20px 15px; }
+            .summary-header h2 { font-size: 1.3rem; letter-spacing: 1px; }
+            .summary-cell-time { font-size: 1rem; }
+            .summary-var-icon { width: 40px; height: 40px; }
+            .save-load-modal { padding: 25px 20px; }
+            .save-load-modal h2 { font-size: 1.15rem; }
+            .save-load-modal .actions button { width: 100%; }
         }
     </style>
 </head>
@@ -1049,9 +1435,10 @@
             </div>
             <div class="step-subtitle" id="escStep3Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
             <div id="escStep3Content"></div>
-            <div class="step-actions">
+            <div class="step-actions" id="escStep3Actions">
                 <button class="back-btn" id="escStep3Back">← Назад</button>
-                <button class="next-btn" id="escStep3Next" disabled>Далее →</button>
+                <!-- Кнопка далее скрыта, так как переход автоматический -->
+                <button class="next-btn hidden" id="escStep3Next" disabled>Далее →</button>
             </div>
         </div>
 
@@ -1261,7 +1648,8 @@ let escState = {
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-    nostophobiaCount: 0
+    nostophobiaCount: 0,
+    currentEquipPlayerIndex: 0 // Индекс текущего игрока для выбора снаряжения
 };
 
 var infoFormState = {
@@ -1274,6 +1662,7 @@ var infoFormState = {
 
 var collectedRecords = [];
 
+// Ключ localStorage
 var STORAGE_KEY = 'escalation_save_v1';
 
 // ============================================================
@@ -1690,7 +2079,8 @@ function saveEscalation() {
                 difficulty: escState.difficulty,
                 variators: JSON.parse(JSON.stringify(escState.variators || [])),
                 usedBigTrials: escState.usedBigTrials.slice(),
-                usedSmallTrials: escState.usedSmallTrials.slice()
+                usedSmallTrials: escState.usedSmallTrials.slice(),
+                currentEquipPlayerIndex: escState.currentEquipPlayerIndex
             },
             collectedRecords: JSON.parse(JSON.stringify(collectedRecords))
         };
@@ -1747,6 +2137,7 @@ function applySavedEscalation(data) {
     escState.variators = s.variators || [];
     escState.usedBigTrials = s.usedBigTrials || [];
     escState.usedSmallTrials = s.usedSmallTrials || [];
+    escState.currentEquipPlayerIndex = s.currentEquipPlayerIndex || 0;
 
     collectedRecords = (data.collectedRecords || []).slice();
 
@@ -1822,7 +2213,7 @@ function buildPlayerRows(players, renderBlock) {
 }
 
 // ============================================================
-// ШАГ 3 — СНАРЯЖЕНИЕ
+// ШАГ 3 — СНАРЯЖЕНИЕ (Пошаговый выбор)
 // ============================================================
 function renderEscEquipment() {
     var container = document.getElementById('escStep3Content');
@@ -1834,68 +2225,72 @@ function renderEscEquipment() {
         return;
     }
 
-    function renderBlock(player, idx) {
-        var section = document.createElement('div');
-        section.className = 'player-block';
-        section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid rgba(220,90,50,0.08); width: 520px; flex: 0 0 520px; display: flex; flex-direction: column; align-items: center;';
-
-        var title = document.createElement('div');
-        title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 16px; text-align: center; font-size: 0.95rem; letter-spacing: 0.5px;';
-        title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + player;
-        section.appendChild(title);
-
-        var grid = document.createElement('div');
-        grid.className = 'player-equip-grid';
-        grid.style.cssText = 'display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;';
-
-        var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
-        var sel = shuf.slice(0, 3);
-
-        sel.forEach(function(eq) {
-            var item = document.createElement('div');
-            item.className = 'equip-card';
-            item.dataset.eq = eq.name;
-            var isSel = escState.equipSelections[idx] === eq.name;
-            if (isSel) item.classList.add('selected');
-
-            item.innerHTML = `
-                <div class="ec-image-box">
-                    <img src="${eq.image}" alt="${eq.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
-                </div>
-                <div class="ec-title-banner">
-                    <div class="ec-title">${eq.name}</div>
-                </div>
-                <div class="ec-footer">
-                    <div class="ec-type">СНАРЯЖЕНИЕ</div>
-                </div>
-                <div class="check-mark"><i class="fas fa-check-circle"></i></div>
-            `;
-
-            item.addEventListener('click', function() {
-                var pg = this.closest('.player-block').querySelector('.player-equip-grid');
-                if (pg) {
-                    pg.querySelectorAll('.equip-card').forEach(function(el) {
-                        el.classList.remove('selected');
-                    });
-                }
-                this.classList.add('selected');
-                escState.equipSelections[idx] = eq.name;
-                checkEscEquipReady();
-            });
-            grid.appendChild(item);
-        });
-        section.appendChild(grid);
-        return section;
+    // Если все игроки уже выбрали снаряжение, переходим на Шаг 4
+    if (escState.currentEquipPlayerIndex >= escState.playerCount) {
+        goToEscStep(4);
+        renderEscAmps();
+        return;
     }
 
-    container.appendChild(buildPlayerRows(escState.players, renderBlock));
-    checkEscEquipReady();
-}
+    var currentPlayer = escState.players[escState.currentEquipPlayerIndex];
+    
+    // Меняем подзаголовок
+    var sub = document.getElementById('escStep3Subtitle');
+    if (sub) {
+        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+    }
 
-function checkEscEquipReady() {
-    var all = escState.players.every(function(_, idx) { return escState.equipSelections[idx] !== undefined; });
-    var btn = document.getElementById('escStep3Next');
-    if (btn) btn.disabled = !all;
+    // Создаем один блок для текущего игрока
+    var section = document.createElement('div');
+    section.className = 'player-block';
+    section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
+
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'player-equip-grid';
+    grid.style.cssText = 'display: flex; gap: 16px; justify-content: center; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px;';
+
+    var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    sel.forEach(function(eq) {
+        var item = document.createElement('div');
+        item.className = 'equip-card';
+        item.dataset.eq = eq.name;
+        var isSel = escState.equipSelections[escState.currentEquipPlayerIndex] === eq.name;
+        if (isSel) item.classList.add('selected');
+
+        item.innerHTML = `
+            <div class="ec-image-box">
+                <img src="${eq.image}" alt="${eq.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+            </div>
+            <div class="ec-title-banner">
+                <div class="ec-title">${eq.name}</div>
+            </div>
+            <div class="ec-footer">
+                <div class="ec-type">СНАРЯЖЕНИЕ</div>
+            </div>
+            <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+        `;
+
+        item.addEventListener('click', function() {
+            // Записываем выбор
+            escState.equipSelections[escState.currentEquipPlayerIndex] = eq.name;
+            
+            // Переходим к следующему игроку
+            escState.currentEquipPlayerIndex++;
+            
+            // Перерисовываем экран для следующего игрока (или уходим на амфы)
+            renderEscEquipment();
+        });
+        grid.appendChild(item);
+    });
+    section.appendChild(grid);
+    container.appendChild(section);
 }
 
 // ============================================================
@@ -2594,7 +2989,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0
+                    nostophobiaCount: 0, currentEquipPlayerIndex: 0
                 };
                 collectedRecords = [];
                 updateLevelCounter();
@@ -2610,7 +3005,6 @@ function doInit() {
     var s2Back = document.getElementById('escStep2Back');
     var s2Next = document.getElementById('escStep2Next');
     var s3Back = document.getElementById('escStep3Back');
-    var s3Next = document.getElementById('escStep3Next');
     var s4Back = document.getElementById('escStep4Back');
     var s4Next = document.getElementById('escStep4Next');
     var nextLevel = document.getElementById('escNextLevelBtn');
@@ -2639,12 +3033,31 @@ function doInit() {
             if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
             if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
         });
+        
+        // Сброс счетчика игроков для выбора снаряжения
+        escState.currentEquipPlayerIndex = 0;
+        
         goToEscStep(3);
         renderEscEquipment();
     });
-    if (s3Back) s3Back.addEventListener('click', function() { goToEscStep(2); });
-    if (s3Next) s3Next.addEventListener('click', function() { goToEscStep(4); renderEscAmps(); });
-    if (s4Back) s4Back.addEventListener('click', function() { goToEscStep(3); });
+    
+    if (s3Back) {
+        s3Back.addEventListener('click', function() { 
+            // При возврате назад сбрасываем прогресс выбора
+            escState.currentEquipPlayerIndex = 0;
+            escState.equipSelections = {};
+            goToEscStep(2); 
+        });
+    }
+    
+    if (s4Back) s4Back.addEventListener('click', function() { 
+        // Возвращаемся к снаряжению, сбрасывая выбор снаряжения
+        escState.currentEquipPlayerIndex = 0;
+        escState.equipSelections = {};
+        goToEscStep(3); 
+        renderEscEquipment(); 
+    });
+    
     if (s4Next) s4Next.addEventListener('click', function() {
         escState.players.forEach(function(_, idx) {
             var sel = escState.ampSelections[idx] || {};
@@ -2773,6 +3186,10 @@ function doInit() {
 
             escState.level++;
             updateLevelCounter();
+
+            // При переходе на новый уровень сбрасываем выбор снаряжения
+            escState.currentEquipPlayerIndex = 0;
+            escState.equipSelections = {};
 
             var has = false;
             escState.players.forEach(function(_, idx) { if (!areAllCategoriesComplete(idx)) has = true; });
