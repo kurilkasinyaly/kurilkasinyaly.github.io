@@ -248,7 +248,7 @@
         .player-name-inputs .input-row input::placeholder { color: #555; }
 
         /* ============================================================
-           КАРТОЧКИ СНАРЯЖЕНИЯ (ВОЗВРАЩЕН СТАРЫЙ ВИД)
+           КАРТОЧКИ СНАРЯЖЕНИЯ
            ============================================================ */
         .equip-card {
             position: relative;
@@ -578,7 +578,7 @@
         }
 
         /* ============================================================
-           ВАРИАТОРЫ (ФОН ВМЕСТО ОБВОДКИ)
+           ВАРИАТОРЫ (ФОН ВМЕСТО БОРТИКОВ)
            ============================================================ */
         .variator-list {
             display: flex;
@@ -2789,8 +2789,8 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
 
         resultVariators.innerHTML = escState.variators.map(function(v) {
             var isWeekly = weeklyVarName2 && v.name === weeklyVarName2;
-            var borderColor = isWeekly ? '#f1c40f' : 'rgba(220,90,50,0.15)';
-            var bgColor = isWeekly ? 'rgba(241,196,15,0.1)' : 'rgba(0,0,0,0.3)';
+            var borderColor = isWeekly ? '#f1c40f' : 'transparent';
+            var bgColor = isWeekly ? 'rgba(241,196,15,0.1)' : 'transparent';
             var weeklyBadge = isWeekly ? '<div style="font-size:0.5rem; color:#f1c40f; font-weight:700; letter-spacing:0.5px; margin-top:2px;"><i class="fas fa-star"></i> НЕДЕЛЯ</div>' : '';
 
             var nameUpper = v.name.toUpperCase();
