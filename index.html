@@ -512,6 +512,17 @@
         }
         .news-slide-text p { color: #b5a8c8; line-height: 1.6; font-size: 1.05rem; margin-bottom: 1rem; }
 
+        /* ===== ОПИСАНИЕ ВАРИАТОРА В БАННЕРЕ ===== */
+        #weeklySlideDescription {
+            color: #d1cce6;
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+        #weeklySlideDescription strong { color: #ffbc9a; font-weight: 700; }
+        #weeklySlideDescription em { color: #e25d32; font-style: normal; font-weight: 600; }
+
         .news-slider-dots {
             display: flex; justify-content: center;
             gap: 0.8rem; padding: 1rem 0 1.5rem;
@@ -836,6 +847,8 @@
             .news-slider-btn-left { left: 8px; }
             .news-slider-btn-right { right: 8px; }
 
+            #weeklySlideDescription { font-size: 0.92rem; text-align: center; }
+
             .hero-title h2 { font-size: 2.2rem; }
             .top-players-header h2 { font-size: 1.5rem; }
             .player-name { font-size: 1.2rem; }
@@ -878,6 +891,8 @@
             .news-slide-text p { font-size: 0.9rem; }
             .news-slide-image img { min-height: 180px; }
             .news-slider-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+
+            #weeklySlideDescription { font-size: 0.85rem; }
 
             .hero-title h2 { font-size: 1.8rem; }
             .top-players-header h2 { font-size: 1.3rem; }
@@ -1274,7 +1289,8 @@
                             <div class="news-slide-text">
                                 <h2><i class="fas fa-biohazard" style="color:#e25d32;margin-right:10px;"></i>ЕЖЕНЕДЕЛЬНАЯ ЭСКАЛАЦИОННАЯ ТЕРАПИЯ</h2>
                                 <p id="weeklySlidePeriod">Загрузка расписания...</p>
-                                <p id="weeklySlideNext" style="color:#8a7a9a;font-size:0.95rem;"></p>
+                                <p id="weeklySlideDescription"></p>
+                                <p id="weeklySlideNext" style="color:#8a7a9a;font-size:0.95rem;margin-top:1rem;"></p>
                             </div>
                         </div>
 
@@ -1704,6 +1720,7 @@
     function renderBanner() {
         var imgEl    = document.getElementById('weeklySlideImage');
         var periodEl = document.getElementById('weeklySlidePeriod');
+        var descEl   = document.getElementById('weeklySlideDescription');
         var nextEl   = document.getElementById('weeklySlideNext');
         if (!imgEl || !periodEl) return;
 
@@ -1719,9 +1736,11 @@
 
         var current = active || next;
 
-        imgEl.src = current.image || '';
+        // Баннерная картинка (fallback на image)
+        imgEl.src = current.bannerImage || current.image || '';
         imgEl.alt = current.name || 'Эскалация';
 
+        // Период + название
         var startDate = new Date(current.date);
         var endDate = next ? new Date(next.date) : null;
         var periodText;
@@ -1740,6 +1759,18 @@
         }
         periodEl.innerHTML = periodText;
 
+        // Описание вариатора
+        if (descEl) {
+            if (current.description) {
+                descEl.innerHTML = current.description;
+                descEl.style.display = '';
+            } else {
+                descEl.innerHTML = '';
+                descEl.style.display = 'none';
+            }
+        }
+
+        // «Далее: …»
         if (nextEl) {
             if (active && next) {
                 nextEl.textContent = 'Далее: «' + next.name + '» — с ' + formatDate(new Date(next.date));
