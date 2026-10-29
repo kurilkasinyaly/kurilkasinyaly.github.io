@@ -566,6 +566,9 @@
             color: #ffbc9a; font-weight: 600;
         }
 
+        /* ============================================================
+           ВАРИАТОРЫ (ИЗМЕНЕН ФОН КАРТОЧЕК)
+           ============================================================ */
         .variator-list {
             display: flex;
             gap: 0.8rem;
@@ -583,13 +586,13 @@
             width: 70px; height: 70px;
             object-fit: contain;
             padding: 8px;
-            background: rgba(20, 15, 28, 0.7);
-            border: 1px solid rgba(220, 90, 50, 0.25);
+            /* Заменили фон и убрали обводку */
+            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
+            border: none; 
             border-radius: 12px;
             transition: all 0.3s ease;
         }
         .variator-list .var-item:hover img {
-            border-color: rgba(220, 90, 50, 0.6);
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(220, 90, 50, 0.15);
         }
