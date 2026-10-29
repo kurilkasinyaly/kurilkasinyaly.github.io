@@ -577,30 +577,43 @@
             color: #ffbc9a; font-weight: 600;
         }
 
+        /* ============================================================
+           ВАРИАТОРЫ (ФОН ВМЕСТО ОБВОДКИ)
+           ============================================================ */
         .variator-list {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .variator-list .var-item {
             display: flex; flex-direction: column;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            width: 95px;
+            text-align: center;
         }
         .variator-list .var-item img {
-            width: 60px; height: 60px;
+            width: 70px; height: 70px;
             object-fit: contain;
+            padding: 8px;
+            background: url('images/вариант фон.png') center/cover no-repeat; 
+            border: none; 
             border-radius: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px;
-            border: 1px solid rgba(220, 90, 50, 0.15);
+            transition: all 0.3s ease;
+        }
+        .variator-list .var-item:hover img {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.15);
         }
         .variator-list .var-item .var-name {
-            font-size: 0.65rem;
-            color: #c2b9d4;
+            font-size: 0.62rem;
+            color: #ffbc9a;
             text-align: center;
-            max-width: 75px;
             line-height: 1.2;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .player-result {
@@ -1859,11 +1872,14 @@ function shuffleArray(arr) {
     return a;
 }
 
+// ============================================================
+// ВАРИАТОР СЛОЖНОСТИ (ИЗМЕНЕНО: Враги Сильнее II с 16 уровня)
+// ============================================================
 function getDifficultyVariator(level, availableVariators) {
     if (level < 5) return null;
 
     if (level >= 5 && level <= 20) {
-        if (level >= 10) {
+        if (level >= 16) {
             var stronger2 = availableVariators.find(function(v) {
                 return v.name === 'Враги Сильнее II' || v.name === 'Враги сильнее II';
             });
@@ -1875,7 +1891,7 @@ function getDifficultyVariator(level, availableVariators) {
         if (stronger) return stronger;
         return {
             id: 'enemies_stronger_fallback',
-            name: level >= 10 ? 'Враги Сильнее II' : 'Враги сильнее',
+            name: level >= 16 ? 'Враги Сильнее II' : 'Враги сильнее',
             image: 'images/враги сильнее.webp',
             category: 'difficulty'
         };
@@ -1883,6 +1899,9 @@ function getDifficultyVariator(level, availableVariators) {
     return null;
 }
 
+// ============================================================
+// СОВМЕСТИМОСТЬ ВАРИАТОРОВ (ДОПОЛНЕНА НОВЫМИ ПРАВИЛАМИ)
+// ============================================================
 function isVariatorCompatible(variator, selectedVariators, trialName, playerCount, level) {
     var variatorName = variator.name;
     var selectedNames = selectedVariators.map(function(v) { return v.name; });
@@ -1890,6 +1909,37 @@ function isVariatorCompatible(variator, selectedVariators, trialName, playerCoun
 
     if (selectedNames.indexOf(variatorName) !== -1) return false;
 
+    // --- НОВОЕ ПРАВИЛО: Трофейное Снаряжение блокирует Урон Перезапускает, Ограниченное, Без Улучшения ---
+    var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
+    if (variatorName === 'Трофейное Снаряжение') {
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+    if (trophyBlocked.indexOf(variatorName) !== -1) {
+        if (selectedNames.indexOf('Трофейное Снаряжение') !== -1) return false;
+        // Взаимная блокировка этих трех между собой
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (trophyBlocked[i] !== variatorName && selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+
+    // --- НОВОЕ ПРАВИЛО: Психохирургия блокирует Без Имен, Экстремальный Психоз, Враги Сильнее I/II, Повышенная Угроза I/II ---
+    var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
+    if (variatorName === 'Психохирургия') {
+        for (i = 0; i < psychoBlocked.length; i++) {
+            if (selectedNames.indexOf(psychoBlocked[i]) !== -1) return false;
+        }
+    }
+    if (psychoBlocked.indexOf(variatorName) !== -1) {
+        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    // --- НОВОЕ ПРАВИЛО: Не Шумите и Разъяренные Враги взаимоисключающие ---
+    if (variatorName === 'Не Шумите' && selectedNames.indexOf('Разъяренные Враги') !== -1) return false;
+    if (variatorName === 'Разъяренные Враги' && selectedNames.indexOf('Не Шумите') !== -1) return false;
+
+    // --- СТАРЫЕ ПРАВИЛА ---
     var mainLotteryGroup = ['Главная Рулетка', 'Самое Главное'];
     var antiLotteryGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
 
@@ -2107,6 +2157,7 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     var result = [];
     var usedNames = [];
 
+    // Weekly variator goes first
     if (weeklyVar && weeklyVar.name && result.length < MAX_VARIATORS) {
         result.push(weeklyVar);
         usedNames.push(weeklyVar.name);
@@ -2397,7 +2448,7 @@ function buildPlayerRows(players, renderPlayerBlock) {
 }
 
 // ============================================================
-// ШАГ 3 — СНАРЯЖЕНИЕ (Возвращен старый вид карточек)
+// ШАГ 3 — СНАРЯЖЕНИЕ
 // ============================================================
 function renderEscEquipment() {
     var container = document.getElementById('escStep3Content');
@@ -2443,7 +2494,7 @@ function renderEscEquipment() {
 
     var grid = document.createElement('div');
     grid.className = 'player-equip-grid';
-    grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+    grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
 
     var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
     var sel = shuf.slice(0, 3);
@@ -2475,7 +2526,7 @@ function renderEscEquipment() {
 }
 
 // ============================================================
-// ШАГ 4 — АМФЫ (Пошаговый выбор)
+// ШАГ 4 — АМФЫ
 // ============================================================
 function renderEscAmps() {
     var container = document.getElementById('escStep4Content');
@@ -2524,7 +2575,7 @@ function renderEscAmps() {
 
     var grid = document.createElement('div');
     grid.className = 'player-amp-grid';
-    grid.style.cssText = 'display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+    grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
 
     var available = getAvailableAmpsByCategory(escState.currentAmpPlayerIndex, randCat);
     var shuf = available.slice().sort(function() { return Math.random() - 0.5; });
@@ -2615,8 +2666,8 @@ function showPreviewModal(trialName, mapName, variators, level) {
         .preview-variator-img {
             width: 55px; height: 55px; object-fit: contain;
             padding: 6px;
-            background: rgba(20, 15, 28, 0.7);
-            border: 1px solid rgba(220, 90, 50, 0.25);
+            background: url('images/вариант фон.png') center/cover no-repeat; 
+            border: none;
             border-radius: 10px;
         }
         .preview-variators-container {
@@ -3056,6 +3107,8 @@ function buildSummaryTable() {
                     : null;
                 var imgEl = document.createElement('img');
                 imgEl.className = 'summary-var-icon';
+                imgEl.style.background = "url('images/вариант фон.png') center/cover no-repeat";
+                imgEl.style.border = "none";
                 imgEl.src = vObj && vObj.image ? vObj.image : '';
                 imgEl.alt = vName;
                 imgEl.title = vName;
@@ -3525,7 +3578,7 @@ function renderAmpModalGrid(playerIndex, category) {
 }
 
 // ============================================================
-// ПЕРЕРЫВ (Между уровнями) — ИСПРАВЛЕН БЛОК СКРОЛЛА
+// ПЕРЕРЫВ (Между уровнями)
 // ============================================================
 function showBreakModal() {
     var hasAvailable = false;
@@ -3548,10 +3601,8 @@ function showBreakModal() {
 
     var modal = document.createElement('div');
     modal.className = 'amp-modal';
-    // Убираем overflow: hidden, чтобы тултипы могли вылезать за края, и делаем окно шире
     modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative;';
 
-    // Добавляем фоновую картинку для окна перерыва
     modal.style.backgroundImage = "url('images/фон эскалация.webp')";
     modal.style.backgroundSize = "cover";
     modal.style.backgroundPosition = "center";
