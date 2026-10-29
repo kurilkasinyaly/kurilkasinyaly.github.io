@@ -567,7 +567,7 @@
         }
 
         /* ============================================================
-           ВАРИАТОРЫ (ИЗМЕНЕН ФОН КАРТОЧЕК)
+           ВАРИАТОРЫ (ФОН ВМЕСТО БОРТИКОВ)
            ============================================================ */
         .variator-list {
             display: flex;
@@ -586,7 +586,6 @@
             width: 70px; height: 70px;
             object-fit: contain;
             padding: 8px;
-            /* Заменили фон и убрали обводку */
             background: url('images/вариант фон.png') center/cover no-repeat; 
             border: none; 
             border-radius: 12px;
@@ -1669,7 +1668,6 @@
 // ============================================================
 // ПОЛНЫЙ СПИСОК АМФ (Встроен, чтобы работали описания)
 // ============================================================
-// Убрали категорию "Гаджеты самозванцев" из списка
 var ampCategories = ["Инструмент", "Навык", "Лекарство"];
 
 var ampsData = [
@@ -2320,7 +2318,7 @@ function buildPlayerRows(players, renderBlock) {
 }
 
 // ============================================================
-// ШАГ 3 — СНАРЯЖЕНИЕ (Увеличен отступ между карточками)
+// ШАГ 3 — СНАРЯЖЕНИЕ
 // ============================================================
 function renderEscEquipment() {
     var container = document.getElementById('escStep3Content');
@@ -2357,7 +2355,6 @@ function renderEscEquipment() {
 
     var grid = document.createElement('div');
     grid.className = 'player-equip-grid';
-    // УВЕЛИЧЕН ОТСТУП (gap: 30px)
     grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
 
     var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
@@ -2390,7 +2387,7 @@ function renderEscEquipment() {
 }
 
 // ============================================================
-// ШАГ 4 — АМФЫ (Увеличен отступ между карточками)
+// ШАГ 4 — АМФЫ
 // ============================================================
 function renderEscAmps() {
     var container = document.getElementById('escStep4Content');
@@ -2439,7 +2436,6 @@ function renderEscAmps() {
 
     var grid = document.createElement('div');
     grid.className = 'player-amp-grid';
-    // УВЕЛИЧЕН ОТСТУП (gap: 30px)
     grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
 
     var available = getAvailableAmpsByCategory(escState.currentAmpPlayerIndex, randCat);
@@ -2492,7 +2488,7 @@ function renderEscAmps() {
 }
 
 // ============================================================
-// ПРЕВЬЮ-МОДАЛКА (ФОН ЗАМЕНЕН)
+// ПРЕВЬЮ-МОДАЛКА (ФОН ВМЕСТО БОРТИКОВ)
 // ============================================================
 function showPreviewModal(trialName, mapName, variators, level) {
     var old = document.getElementById('previewModal');
@@ -2531,7 +2527,6 @@ function showPreviewModal(trialName, mapName, variators, level) {
         .preview-variator-img {
             width: 55px; height: 55px; object-fit: contain;
             padding: 6px;
-            /* Фон для вариаторов */
             background: url('images/вариант фон.png') center/cover no-repeat; 
             border: none;
             border-radius: 10px;
@@ -2638,7 +2633,6 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
 
     var rv = document.getElementById('escResultVariators');
     if (rv) {
-        // В итоговой таблице тоже заменяем бортики на фон
         rv.innerHTML = escState.variators.map(function(v) {
             return `
                 <div class="var-item">
@@ -2867,7 +2861,7 @@ function updateInfoModalSaveButton() {
 }
 
 // ============================================================
-// ИТОГОВАЯ ТАБЛИЦА (ФОН ЗАМЕНЕН)
+// ИТОГОВАЯ ТАБЛИЦА (ФОН ВМЕСТО БОРТИКОВ)
 // ============================================================
 function timeToSeconds(timeStr) {
     if (!timeStr) return 0;
@@ -2936,7 +2930,6 @@ function buildSummaryTable() {
                     : null;
                 var imgEl = document.createElement('img');
                 imgEl.className = 'summary-var-icon';
-                // Фон для иконок в таблице
                 imgEl.style.background = "url('images/вариант фон.png') center/cover no-repeat";
                 imgEl.style.border = "none";
                 imgEl.src = vObj && vObj.image ? vObj.image : '';
@@ -3043,7 +3036,7 @@ function hideSaveLoadModal() {
 }
 
 // ============================================================
-// ПЕРЕРЫВ (Между уровнями) — ИСПРАВЛЕН БЛОК СКРОЛЛА
+// ПЕРЕРЫВ (Между уровнями)
 // ============================================================
 function showBreakModal() {
     var hasAvailable = false;
@@ -3066,10 +3059,8 @@ function showBreakModal() {
 
     var modal = document.createElement('div');
     modal.className = 'amp-modal';
-    // Убираем overflow: hidden, чтобы тултипы могли вылезать за края, и делаем окно шире
     modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative;';
 
-    // Добавляем фоновую картинку для окна перерыва
     modal.style.backgroundImage = "url('images/фон эскалация.webp')";
     modal.style.backgroundSize = "cover";
     modal.style.backgroundPosition = "center";
@@ -3094,7 +3085,6 @@ function showBreakModal() {
             return;
         }
 
-        // Формируем шапку
         var headerHtml = `
             <div style="text-align: center; margin-bottom: 24px; width: 100%;">
                 <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
@@ -3120,15 +3110,14 @@ function showBreakModal() {
 
         var grid = document.createElement('div');
         grid.className = 'player-break-grid';
-        // Располагаем карточки в ряд, добавляем padding снизу для тултипов
         grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 50px;';
 
         display.forEach(function(amp) {
             var item = document.createElement('div');
             item.className = 'amp-card';
-            item.style.flex = '1 1 0'; // Растягиваем карточки
-            item.style.maxWidth = '180px'; // Но не даем им стать слишком огромными
-            
+            item.style.flex = '1 1 0';
+            item.style.maxWidth = '180px';
+
             var tooltip = document.createElement('div');
             tooltip.className = 'tooltip-box';
             tooltip.innerHTML = `
@@ -3171,6 +3160,466 @@ function showBreakModal() {
 
     escState.currentBreakPlayerIndex = 0;
     renderStep();
+}
+
+// ============================================================
+// ИНИЦИАЛИЗАЦИЯ
+// ============================================================
+function initEscalation() {
+    if (!checkDataLoaded()) {
+        var checkInterval = setInterval(function() {
+            if (checkDataLoaded()) {
+                clearInterval(checkInterval);
+                doInit();
+            }
+        }, 500);
+        setTimeout(function() {
+            clearInterval(checkInterval);
+            doInit();
+        }, 10000);
+        return;
+    }
+    doInit();
+}
+
+function checkSavedOnStart() {
+    var saved = loadSavedEscalation();
+    if (saved) {
+        showSaveLoadModal(saved,
+            function() {
+                applySavedEscalation(saved);
+                updateLevelCounter();
+                if (escState.currentStep === 3) {
+                    goToEscStep(3);
+                    renderEscEquipment();
+                } else if (escState.currentStep === 4) {
+                    goToEscStep(4);
+                    renderEscAmps();
+                } else if (escState.currentStep >= 5 && escState.trial && escState.map) {
+                    showFullResult();
+                    prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
+                } else if (escState.currentStep === 2) {
+                    goToEscStep(2);
+                    renderEscPlayerNames();
+                } else {
+                    goToEscStep(1);
+                }
+            },
+            function() {
+                clearSavedEscalation();
+                escState = {
+                    level: 1, playerCount: 0, players: [],
+                    equipSelections: {}, ampSelections: {}, usedAmps: {},
+                    unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
+                    map: null, trial: null, difficulty: null, variators: [],
+                    isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
+                    nostophobiaCount: 0, currentEquipPlayerIndex: 0,
+                    currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0
+                };
+                collectedRecords = [];
+                updateLevelCounter();
+                goToEscStep(1);
+            }
+        );
+    }
+}
+
+function doInit() {
+    var options = document.querySelectorAll('#escPlayerCountOptions .player-count-btn');
+    var s1Next = document.getElementById('escStep1Next');
+    var s2Back = document.getElementById('escStep2Back');
+    var s2Next = document.getElementById('escStep2Next');
+    var nextLevel = document.getElementById('escNextLevelBtn');
+    var exitBtn = document.getElementById('escExitBtn');
+    var saveBtn = document.getElementById('escSaveBtn');
+
+    if (options) {
+        options.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                options.forEach(function(b) { b.classList.remove('selected'); });
+                this.classList.add('selected');
+                escState.playerCount = parseInt(this.dataset.count);
+                if (s1Next) s1Next.disabled = false;
+            });
+        });
+    }
+
+    if (s1Next) s1Next.addEventListener('click', function() { goToEscStep(2); renderEscPlayerNames(); });
+    if (s2Back) s2Back.addEventListener('click', function() { goToEscStep(1); });
+    if (s2Next) s2Next.addEventListener('click', function() {
+        var inputs = document.querySelectorAll('#escPlayerNameInputs input');
+        escState.players = [];
+        inputs.forEach(function(input, i) { escState.players.push(input.value.trim() || 'Игрок ' + (i + 1)); });
+        escState.players.forEach(function(_, idx) {
+            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+            if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
+        });
+        
+        escState.currentEquipPlayerIndex = 0;
+        
+        goToEscStep(3);
+        renderEscEquipment();
+    });
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            var ok = saveEscalation();
+            if (ok) {
+                var notif = document.createElement('div');
+                notif.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 0.95rem; z-index: 5000; box-shadow: 0 8px 30px rgba(46, 204, 113, 0.5); animation: modalFadeIn 0.3s ease;';
+                notif.innerHTML = '<i class="fas fa-check-circle"></i> Сохранено! Выход...';
+                document.body.appendChild(notif);
+                setTimeout(function() {
+                    notif.style.opacity = '0';
+                    notif.style.transition = 'opacity 0.4s';
+                    setTimeout(function() { window.location.href = 'roulette.html'; }, 500);
+                }, 1200);
+            } else {
+                alert('Не удалось сохранить. Возможно, localStorage недоступен.');
+            }
+        });
+    }
+
+    if (nextLevel) {
+        nextLevel.addEventListener('click', function() {
+            openInfoModal();
+        });
+    }
+
+    if (exitBtn) {
+        exitBtn.addEventListener('click', function() {
+            openSummaryModal();
+        });
+    }
+
+    var infoModalClose = document.getElementById('infoModalClose');
+    var infoModalCancel = document.getElementById('infoModalCancel');
+    var infoModalSave = document.getElementById('infoModalSave');
+    var infoTime = document.getElementById('infoTime');
+    var timeHint = document.getElementById('infoTimeHint');
+
+    if (infoModalClose) infoModalClose.addEventListener('click', closeInfoModal);
+    if (infoModalCancel) infoModalCancel.addEventListener('click', closeInfoModal);
+
+    if (infoTime) {
+        infoTime.addEventListener('input', function() {
+            var digits = this.value.replace(/\D/g, '').slice(0, 4);
+            var formatted = digits;
+            if (digits.length > 2) {
+                formatted = digits.slice(0, 2) + ':' + digits.slice(2);
+            }
+            this.value = formatted;
+            infoFormState.time = formatted;
+
+            var isValid = isValidTimeFormat(formatted);
+
+            if (formatted.length === 0) {
+                this.classList.remove('input-error', 'input-valid');
+                timeHint.textContent = 'Введите время в формате ММ:СС (например 02:46)';
+                timeHint.className = 'info-form-hint';
+            } else if (isValid) {
+                this.classList.remove('input-error');
+                this.classList.add('input-valid');
+                timeHint.textContent = '✓ Формат корректен';
+                timeHint.className = 'info-form-hint valid';
+            } else {
+                this.classList.remove('input-valid');
+                this.classList.add('input-error');
+                if (formatted.length < 5) {
+                    timeHint.textContent = 'Введите время полностью: ММ:СС (например 02:46)';
+                } else {
+                    timeHint.textContent = 'Неверное время (секунды 00–59, минуты 00–99)';
+                }
+                timeHint.className = 'info-form-hint error';
+            }
+
+            updateInfoModalSaveButton();
+        });
+
+        infoTime.addEventListener('keypress', function(e) {
+            var char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) e.preventDefault();
+        });
+
+        infoTime.addEventListener('paste', function(e) {
+            e.preventDefault();
+            var pasted = (e.clipboardData || window.clipboardData).getData('text');
+            var digits = pasted.replace(/\D/g, '').slice(0, 4);
+            var formatted = digits;
+            if (digits.length > 2) formatted = digits.slice(0, 2) + ':' + digits.slice(2);
+            this.value = formatted;
+            infoFormState.time = formatted;
+            this.dispatchEvent(new Event('input'));
+        });
+    }
+
+    if (infoModalSave) {
+        infoModalSave.addEventListener('click', function() {
+            if (!isValidTimeFormat(infoFormState.time)) {
+                alert('Пожалуйста, введите корректное время в формате ММ:СС (например 02:46)');
+                return;
+            }
+
+            var record = {
+                levelNum: infoFormState.levelNum,
+                trialName: infoFormState.trialName,
+                trialObj: infoFormState.trialObj,
+                variators: infoFormState.variatorNames.slice(),
+                time: infoFormState.time,
+                mapImage: escState.map ? escState.map.image : null,
+                timestamp: Date.now()
+            };
+            collectedRecords.push(record);
+            closeInfoModal();
+
+            escState.level++;
+            updateLevelCounter();
+
+            escState.currentEquipPlayerIndex = 0;
+            // Снаряжение НЕ сбрасываем!
+
+            var hasAvailable = false;
+            escState.players.forEach(function(_, idx) {
+                if (!areAllCategoriesComplete(idx)) hasAvailable = true;
+            });
+
+            if (hasAvailable) {
+                showBreakModal();
+            } else {
+                generateEscResult();
+            }
+        });
+    }
+
+    var summaryClose = document.getElementById('summaryClose');
+    var summaryCloseBtn = document.getElementById('summaryCloseBtn');
+    var summaryCopy = document.getElementById('summaryCopy');
+
+    if (summaryClose) summaryClose.addEventListener('click', closeSummaryModal);
+    if (summaryCloseBtn) {
+        summaryCloseBtn.addEventListener('click', function() {
+            closeSummaryModal();
+            clearSavedEscalation();
+            location.reload();
+        });
+    }
+
+    if (summaryCopy) {
+        summaryCopy.addEventListener('click', function() {
+            var text = 'ЭСКАЛАЦИОННАЯ ТЕРАПИЯ\n';
+            text += '='.repeat(40) + '\n';
+            var sorted = collectedRecords.slice().sort(function(a, b) { return (a.levelNum || 0) - (b.levelNum || 0); });
+            var totalSeconds = 0;
+            sorted.forEach(function(rec) {
+                text += '#' + (rec.levelNum || '?') + ' | ' + (rec.trialName || '') + ' | ';
+                text += (rec.variators || []).join(', ') + ' | ' + (rec.time || '?') + '\n';
+                totalSeconds += timeToSeconds(rec.time);
+            });
+            text += '\nОБЩЕЕ ВРЕМЯ: ' + secondsToTime(totalSeconds) + '\n';
+            navigator.clipboard.writeText(text).then(function() {
+                summaryCopy.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+                setTimeout(function() {
+                    summaryCopy.innerHTML = '<i class="fas fa-copy"></i> Скопировать';
+                }, 2000);
+            });
+        });
+    }
+
+    var confirmCancel = document.getElementById('confirmCancel');
+    var confirmExit = document.getElementById('confirmExit');
+    var confirmModal = document.getElementById('confirmModal');
+
+    if (confirmCancel) {
+        confirmCancel.addEventListener('click', function() {
+            if (confirmModal) confirmModal.classList.remove('active');
+        });
+    }
+
+    if (confirmExit) {
+        confirmExit.addEventListener('click', function() {
+            if (confirmModal) confirmModal.classList.remove('active');
+            location.reload();
+        });
+    }
+
+    if (confirmModal) {
+        confirmModal.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    }
+
+    updateLevelCounter();
+}
+
+function initAmpModal() {
+    var modal = document.getElementById('ampModal');
+    var closeBtn = document.getElementById('ampModalClose');
+    var confirmBtn = document.getElementById('ampModalConfirm');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+        });
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+        });
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (modalState.playerIndex !== null && modalState.selectedAmp && modalState.selectedCategory) {
+                var idx = modalState.playerIndex;
+                var category = modalState.selectedCategory;
+                var currentAmps = escState.ampSelections[idx] || {};
+                var oldAmp = currentAmps[category];
+
+                if (oldAmp === modalState.selectedAmp) {
+                    if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+                    return;
+                }
+
+                if (oldAmp && escState.usedAmps[idx]) {
+                    escState.usedAmps[idx] = escState.usedAmps[idx].filter(function(a) { return a !== oldAmp; });
+                }
+
+                if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                escState.ampSelections[idx][category] = modalState.selectedAmp;
+
+                if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                if (escState.usedAmps[idx].indexOf(modalState.selectedAmp) === -1) {
+                    escState.usedAmps[idx].push(modalState.selectedAmp);
+                }
+                unlockAmpForPlayer(idx, modalState.selectedAmp);
+
+                renderEscResultPlayers();
+
+                if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+            }
+        });
+    }
+}
+
+var modalState = { playerIndex: null, selectedAmp: null, selectedCategory: "Инструмент" };
+
+function openAmpModal(playerIndex, category) {
+    if (checkAllAmpsUsed(playerIndex)) { alert('Все улучшения уже применены. Смена амф невозможна.'); return; }
+    if (isCategoryComplete(playerIndex, category)) { alert('Все амфы в этой категории уже использованы.'); return; }
+
+    var playerName = escState.players[playerIndex];
+    var currentAmp = getAmpForCategory(playerIndex, category);
+
+    modalState.playerIndex = playerIndex;
+    modalState.selectedCategory = category;
+    modalState.selectedAmp = currentAmp;
+
+    var playerNameEl = document.getElementById('ampModalPlayerName');
+    if (playerNameEl) playerNameEl.textContent = playerName + ' — ' + category;
+
+    var tabsContainer = document.getElementById('ampCategoryTabs');
+    if (tabsContainer) {
+        tabsContainer.innerHTML = '';
+        var availableCategories = ampCategories.filter(function(cat) { return !isCategoryComplete(playerIndex, cat); });
+
+        if (availableCategories.length === 0) {
+            var grid = document.getElementById('ampModalGrid');
+            if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #2ecc71; padding: 2rem;"><i class="fas fa-check-circle" style="font-size: 2rem;"></i><div style="margin-top: 0.5rem;">Все улучшения применены</div></div>`;
+            var confirmBtn = document.getElementById('ampModalConfirm');
+            if (confirmBtn) confirmBtn.disabled = true;
+            var modal = document.getElementById('ampModal');
+            if (modal) { modal.classList.add('active'); modal.style.display = 'flex'; }
+            return;
+        }
+
+        availableCategories.forEach(function(cat) {
+            var tab = document.createElement('button');
+            tab.textContent = cat;
+            tab.dataset.category = cat;
+            if (cat === category) tab.classList.add('active');
+            tab.addEventListener('click', function() {
+                if (tabsContainer) {
+                    tabsContainer.querySelectorAll('button').forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+                    var newCategory = this.dataset.category;
+                    modalState.selectedCategory = newCategory;
+                    modalState.selectedAmp = getAmpForCategory(playerIndex, newCategory);
+                    renderAmpModalGrid(playerIndex, newCategory);
+                }
+            });
+            tabsContainer.appendChild(tab);
+        });
+    }
+
+    renderAmpModalGrid(playerIndex, category);
+    var modal = document.getElementById('ampModal');
+    if (modal) { modal.classList.add('active'); modal.style.display = 'flex'; }
+}
+
+function renderAmpModalGrid(playerIndex, category) {
+    var grid = document.getElementById('ampModalGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    if (typeof ampsData === 'undefined' || ampsData.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #e16d48; padding: 2rem;">Ошибка: данные амф не загружены</div>';
+        return;
+    }
+
+    var categoryAmps = getAmpsByCategory(category);
+    var unlocked = escState.unlockedAmps[playerIndex] || [];
+    var currentAmp = getAmpForCategory(playerIndex, category);
+    var hasAvailable = false;
+
+    categoryAmps.forEach(function(amp) {
+        var isUnlocked = unlocked.indexOf(amp.name) !== -1;
+        var isCurrent = currentAmp === amp.name;
+        var isAvailable = isUnlocked || isCurrent;
+
+        var item = document.createElement('div');
+        item.className = 'amp-modal-item';
+        if (isCurrent) item.classList.add('selected');
+
+        if (!isAvailable) {
+            item.classList.add('locked');
+            item.innerHTML = `
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span>Засекречено</span></div>
+                <img src="${amp.image}" alt="${amp.name}" style="opacity: 0.3;" onerror="this.src='https://placehold.co/65x65/1a1a2e/e16d48?text=?'">
+                <div class="amp-name">${amp.name}</div>
+                <div class="amp-category-label">${amp.category}</div>
+                <div class="amp-status locked">🔒 Засекречено</div>
+            `;
+        } else {
+            hasAvailable = true;
+            item.innerHTML = `
+                <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/65x65/1a1a2e/e16d48?text=?'">
+                <div class="amp-name">${amp.name}</div>
+                <div class="amp-category-label">${amp.category}</div>
+                <div class="amp-status ${isCurrent ? 'current' : 'available'}">${isCurrent ? '✓ Текущая' : 'Доступна'}</div>
+            `;
+            item.addEventListener('click', function() {
+                if (this.classList.contains('locked')) return;
+                grid.querySelectorAll('.amp-modal-item').forEach(function(el) { el.classList.remove('selected'); });
+                this.classList.add('selected');
+                modalState.selectedAmp = amp.name;
+                var confirmBtn = document.getElementById('ampModalConfirm');
+                if (confirmBtn) confirmBtn.disabled = false;
+            });
+        }
+        grid.appendChild(item);
+    });
+
+    if (!hasAvailable) {
+        var emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'grid-column: 1 / -1; text-align: center; color: #888; padding: 2rem;';
+        emptyMsg.textContent = 'В этой категории нет доступных амф. Выберите другую категорию.';
+        grid.appendChild(emptyMsg);
+    }
+
+    var confirmBtn = document.getElementById('ampModalConfirm');
+    if (confirmBtn) confirmBtn.disabled = true;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
