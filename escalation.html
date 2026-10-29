@@ -586,7 +586,7 @@
             width: 70px; height: 70px;
             object-fit: contain;
             padding: 8px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
+            background: url('images/вариант фон.png') center/cover no-repeat; 
             border: none; 
             border-radius: 12px;
             transition: all 0.3s ease;
@@ -1831,12 +1831,12 @@ function shuffleArray(arr) {
 }
 
 // ============================================================
-// ВАРИАТОР СЛОЖНОСТИ
+// ВАРИАТОР СЛОЖНОСТИ (ИЗМЕНЕНО: Враги Сильнее II с 16 уровня)
 // ============================================================
 function getDifficultyVariator(level, available) {
     if (level < 5) return null;
     if (level >= 5 && level <= 20) {
-        if (level >= 10) {
+        if (level >= 16) {
             var s2 = available.find(function(v) { return v.name === 'Враги Сильнее II' || v.name === 'Враги сильнее II'; });
             if (s2) return s2;
         }
@@ -1844,7 +1844,7 @@ function getDifficultyVariator(level, available) {
         if (s) return s;
         return {
             id: 'enemies_stronger_fallback',
-            name: level >= 10 ? 'Враги Сильнее II' : 'Враги сильнее',
+            name: level >= 16 ? 'Враги Сильнее II' : 'Враги сильнее',
             image: 'images/враги сильнее.webp',
             category: 'difficulty'
         };
@@ -1853,7 +1853,7 @@ function getDifficultyVariator(level, available) {
 }
 
 // ============================================================
-// СОВМЕСТИМОСТЬ ВАРИАТОРОВ
+// СОВМЕСТИМОСТЬ ВАРИАТОРОВ (ДОПОЛНЕНА НОВЫМИ ПРАВИЛАМИ)
 // ============================================================
 function isVariatorCompatible(v, selected, trialName, playerCount, level) {
     var name = v.name;
@@ -1862,6 +1862,37 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
 
     if (names.indexOf(name) !== -1) return false;
 
+    // --- НОВОЕ ПРАВИЛО: Трофейное Снаряжение блокирует Урон Перезапускает, Ограниченное, Без Улучшения ---
+    var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
+    if (name === 'Трофейное Снаряжение') {
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+    if (trophyBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Трофейное Снаряжение') !== -1) return false;
+        // Взаимная блокировка этих трех между собой
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (trophyBlocked[i] !== name && names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+
+    // --- НОВОЕ ПРАВИЛО: Психохирургия блокирует Без Имен, Экстремальный Психоз, Враги Сильнее I/II, Повышенная Угроза I/II ---
+    var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
+    if (name === 'Психохирургия') {
+        for (i = 0; i < psychoBlocked.length; i++) {
+            if (names.indexOf(psychoBlocked[i]) !== -1) return false;
+        }
+    }
+    if (psychoBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    // --- НОВОЕ ПРАВИЛО: Не Шумите и Разъяренные Враги взаимоисключающие ---
+    if (name === 'Не Шумите' && names.indexOf('Разъяренные Враги') !== -1) return false;
+    if (name === 'Разъяренные Враги' && names.indexOf('Не Шумите') !== -1) return false;
+
+    // --- СТАРЫЕ ПРАВИЛА ---
     var mainGroup = ['Главная Рулетка', 'Самое Главное'];
     var antiGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
 
@@ -2527,7 +2558,7 @@ function showPreviewModal(trialName, mapName, variators, level) {
         .preview-variator-img {
             width: 55px; height: 55px; object-fit: contain;
             padding: 6px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
+            background: url('images/вариант фон.png') center/cover no-repeat; 
             border: none;
             border-radius: 10px;
         }
@@ -2861,7 +2892,7 @@ function updateInfoModalSaveButton() {
 }
 
 // ============================================================
-// ИТОГОВАЯ ТАБЛИЦА (ФОН ВМЕСТО БОРТИКОВ)
+// ИТОГОВАЯ ТАБЛИЦА
 // ============================================================
 function timeToSeconds(timeStr) {
     if (!timeStr) return 0;
@@ -2930,7 +2961,7 @@ function buildSummaryTable() {
                     : null;
                 var imgEl = document.createElement('img');
                 imgEl.className = 'summary-var-icon';
-                imgEl.style.background = "url('images/вариаторы фон.webp') center/cover no-repeat";
+                imgEl.style.background = "url('images/вариант фон.png') center/cover no-repeat";
                 imgEl.style.border = "none";
                 imgEl.src = vObj && vObj.image ? vObj.image : '';
                 imgEl.alt = vName;
