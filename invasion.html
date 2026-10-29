@@ -1046,7 +1046,7 @@
                         <span id="sectionTitle">ЭСКАЛАЦИЯ</span>
                     </div>
                     <div class="sub-title">
-                        <i class="fas fa-clock"></i> Обновлено: 20.10.2026
+                        <i class="fas fa-clock"></i> Обновлено: 27.10.2026
                     </div>
                 </div>
 
@@ -1261,7 +1261,7 @@
         // ===== ПЛАТФОРМЫ ИГРОКОВ =================================
         // ============================================================
         var playerPlatforms = {
-            'Homo Area': 'steam',
+            'Майор Гом 2.0': 'steam',
             'joysk_o': 'steam',
             'Майор СУЕТЛАНА': 'steam',
             'crøssfade': 'steam',
@@ -1280,18 +1280,18 @@
         // ============================================================
         // Формат из скриншота: "Престиж(Уровень)"
         var playerPrestigeLevels = {
-            'Homo Area': { prestige: 93, level: 94 },
-            'joysk_o': { prestige: 48, level: 32 },
-            'Майор СУЕТЛАНА': { prestige: 38, level: 47 },
+            'Майор Гом 2.0': { prestige: 99, level: 16 },
+            'joysk_o': { prestige: 49, level: 74 },
+            'Майор СУЕТЛАНА': { prestige: 41, level: 82 },
             'crøssfade': { prestige: 63, level: 61 },
-            'Генерал Героиня': { prestige: 24, level: 15 },
-            'Shugar': { prestige: 37, level: 98 },
-            'blablablacreek': { prestige: 7, level: 94 },
+            'Генерал Героиня': { prestige: 26, level: 65 },
+            'Shugar': { prestige: 41, level: 95 },
+            'blablablacreek': { prestige: 8, level: 55 },
             'humiliated': { prestige: 48, level: 1 },
-            'Barricade Guy': { prestige: 57, level: 44 },
-            'LARIK_LOL': { prestige: 21, level: 59 },
-            'Garlik_Darlik': { prestige: 43, level: 37 },
-            'Takuya_Satori': { prestige: 4, level: 48 }
+            'Barricade Guy': { prestige: 59, level: 42 },
+            'LARIK_LOL': { prestige: 24, level: 87 },
+            'Garlik_Darlik': { prestige: 43, level: 79 },
+            'Takuya_Satori': { prestige: 4, level: 60 }
         };
 
         function getPrestigeLevel(name) {
@@ -1345,49 +1345,49 @@
         // Общая таблица — сортировка по очкам (points) по убыванию
         // Очки взяты из скриншота "ОБЩАЯ ТАБЛИЦА", рейтинг из "РЕАГЕНТЫ" / "САМОЗВАНЦЫ"
         var invasionGeneralData = [
-            { rank: 1, name: "Homo Area", points: 145435, rating: "#19" },
-            { rank: 2, name: "joysk_o", points: 36880, rating: "#358" },
-            { rank: 3, name: "Майор СУЕТЛАНА", points: 88285, rating: "#104" },
-            { rank: 4, name: "crøssfade", points: 54850, rating: "#208" },
-            { rank: 5, name: "Генерал Героиня", points: 36365, rating: "#370" },
-            { rank: 6, name: "Shugar", points: 57900, rating: "#192" },
-            { rank: 7, name: "blablablacreek", points: 4060, rating: "#4351" },
-            { rank: 8, name: "humiliated", points: 15560, rating: "#951" },
-            { rank: 9, name: "Barricade Guy", points: 38665, rating: "#334" },
-            { rank: 10, name: "LARIK_LOL", points: 31335, rating: "#428" },
-            { rank: 11, name: "Garlik_Darlik", points: 12395, rating: "#1202" },
-            { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#9722" }
+            { rank: 1, name: "Майор Гом 2.0", points: 156695, rating: "#16" },
+            { rank: 2, name: "joysk_o", points: 40735, rating: "#334" },
+            { rank: 3, name: "Майор СУЕТЛАНА", points: 97980, rating: "#88" },
+            { rank: 4, name: "crøssfade", points: 54850, rating: "#218" },
+            { rank: 5, name: "Генерал Героиня", points: 40050, rating: "#339" },
+            { rank: 6, name: "Shugar", points: 64755, rating: "#174" },
+            { rank: 7, name: "blablablacreek", points: 5330, rating: "#3125" },
+            { rank: 8, name: "humiliated", points: 15560, rating: "#983" },
+            { rank: 9, name: "Barricade Guy", points: 42540, rating: "#307" },
+            { rank: 10, name: "LARIK_LOL", points: 37690, rating: "#370" },
+            { rank: 11, name: "Garlik_Darlik", points: 13685, rating: "#1126" },
+            { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#10347" }
         ];
 
         // Реагенты — сортировка по матчам (matches) по убыванию
         var invasionData = {
             reagent: [
-                { rank: 1, name: "Homo Area", matches: 2371, wins: 2267, losses: 104, rating: "#19" },
-                { rank: 2, name: "joysk_o", matches: 1196, wins: 1136, losses: 60, rating: "#358" },
-                { rank: 3, name: "Майор СУЕТЛАНА", matches: 1286, wins: 1222, losses: 64, rating: "#104" },
-                { rank: 4, name: "crøssfade", matches: 1748, wins: 1628, losses: 120, rating: "#208" },
-                { rank: 5, name: "Генерал Героиня", matches: 560, wins: 541, losses: 19, rating: "#370" },
-                { rank: 6, name: "Shugar", matches: 954, wins: 874, losses: 80, rating: "#192" },
-                { rank: 7, name: "blablablacreek", matches: 129, wins: 91, losses: 38, rating: "#4351" },
-                { rank: 8, name: "humiliated", matches: 1171, wins: 1113, losses: 58, rating: "#951" },
-                { rank: 9, name: "Barricade Guy", matches: 1341, wins: 1216, losses: 125, rating: "#334" },
-                { rank: 10, name: "LARIK_LOL", matches: 437, wins: 418, losses: 19, rating: "#428" },
-                { rank: 11, name: "Garlik_Darlik", matches: 1412, wins: 1343, losses: 69, rating: "#1202" },
-                { rank: 12, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#9722" }
+                { rank: 1, name: "Майор Гом 2.0", matches: 2535, wins: 2421, losses: 114, rating: "#16" },
+                { rank: 2, name: "joysk_o", matches: 1251, wins: 1189, losses: 62, rating: "#334" },
+                { rank: 3, name: "Майор СУЕТЛАНА", matches: 1414, wins: 1346, losses: 68, rating: "#88" },
+                { rank: 4, name: "crøssfade", matches: 1748, wins: 1628, losses: 120, rating: "#218" },
+                { rank: 5, name: "Генерал Героиня", matches: 607, wins: 583, losses: 24, rating: "#339" },
+                { rank: 6, name: "Shugar", matches: 1064, wins: 976, losses: 88, rating: "#174" },
+                { rank: 7, name: "blablablacreek", matches: 148, wins: 110, losses: 38, rating: "#3125" },
+                { rank: 8, name: "humiliated", matches: 1171, wins: 1113, losses: 58, rating: "#983" },
+                { rank: 9, name: "Barricade Guy", matches: 1400, wins: 1267, losses: 133, rating: "#307" },
+                { rank: 10, name: "LARIK_LOL", matches: 526, wins: 504, losses: 22, rating: "#370" },
+                { rank: 11, name: "Garlik_Darlik", matches: 1429, wins: 1360, losses: 69, rating: "#1126" },
+                { rank: 12, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#10347" }
             ],
             impostor: [
-                { rank: 1, name: "Homo Area", matches: 754, wins: 267, losses: 487, rating: "#21" },
-                { rank: 2, name: "joysk_o", matches: 619, wins: 242, losses: 377, rating: "#358" },
-                { rank: 3, name: "Майор СУЕТЛАНА", matches: 541, wins: 191, losses: 350, rating: "#105" },
-                { rank: 4, name: "crøssfade", matches: 1086, wins: 447, losses: 639, rating: "#208" },
-                { rank: 5, name: "Генерал Героиня", matches: 246, wins: 94, losses: 152, rating: "#370" },
-                { rank: 6, name: "Shugar", matches: 278, wins: 56, losses: 222, rating: "#192" },
-                { rank: 7, name: "blablablacreek", matches: 55, wins: 23, losses: 32, rating: "#7334" },
-                { rank: 8, name: "humiliated", matches: 747, wins: 298, losses: 449, rating: "#951" },
-                { rank: 9, name: "Barricade Guy", matches: 552, wins: 251, losses: 301, rating: "#334" },
-                { rank: 10, name: "LARIK_LOL", matches: 182, wins: 55, losses: 127, rating: "#428" },
-                { rank: 11, name: "Garlik_Darlik", matches: 881, wins: 467, losses: 414, rating: "#1202" },
-                { rank: 12, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#9722" }
+                { rank: 1, name: "Майор Гом 2.0", matches: 793, wins: 281, losses: 512, rating: "#16" },
+                { rank: 2, name: "joysk_o", matches: 634, wins: 248, losses: 386, rating: "#334" },
+                { rank: 3, name: "Майор СУЕТЛАНА", matches: 584, wins: 216, losses: 368, rating: "#88" },
+                { rank: 4, name: "crøssfade", matches: 1086, wins: 447, losses: 639, rating: "#218" },
+                { rank: 5, name: "Генерал Героиня", matches: 264, wins: 103, losses: 161, rating: "#339" },
+                { rank: 6, name: "Shugar", matches: 300, wins: 62, losses: 238, rating: "#174" },
+                { rank: 7, name: "blablablacreek", matches: 61, wins: 26, losses: 35, rating: "#3125" },
+                { rank: 8, name: "humiliated", matches: 747, wins: 298, losses: 449, rating: "#983" },
+                { rank: 9, name: "Barricade Guy", matches: 566, wins: 255, losses: 311, rating: "#307" },
+                { rank: 10, name: "LARIK_LOL", matches: 213, wins: 63, losses: 150, rating: "#370" },
+                { rank: 11, name: "Garlik_Darlik", matches: 886, wins: 471, losses: 415, rating: "#1126" },
+                { rank: 12, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#10347" }
             ]
         };
 
