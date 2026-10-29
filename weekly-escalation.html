@@ -578,36 +578,45 @@
         }
 
         /* ============================================================
-           ВАРИАТОРЫ (ФОН ВМЕСТО БОРТИКОВ)
+           ВАРИАТОРЫ (НОВЫЙ ВИД: ФОН ПОД КАРТИНКОЙ, БЕЗ БОРТИКОВ)
            ============================================================ */
         .variator-list {
             display: flex;
-            gap: 0.8rem;
+            gap: 1.2rem;
             flex-wrap: wrap;
             justify-content: center;
         }
         .variator-list .var-item {
             display: flex; flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-            width: 95px;
+            gap: 0.6rem;
+            width: 100px;
             text-align: center;
         }
-        .variator-list .var-item img {
-            width: 70px; height: 70px;
-            object-fit: contain;
-            padding: 8px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
-            border: none; 
+        .variator-list .var-item .var-icon-wrapper {
+            width: 80px;
+            height: 80px;
             border-radius: 12px;
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .variator-list .var-item:hover img {
+        .variator-list .var-item:hover .var-icon-wrapper {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.15);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.2);
+        }
+        .variator-list .var-item .var-icon-wrapper img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
         }
         .variator-list .var-item .var-name {
-            font-size: 0.62rem;
+            font-size: 0.65rem;
             color: #ffbc9a;
             text-align: center;
             line-height: 1.2;
@@ -1206,16 +1215,15 @@
             height: 52px;
             object-fit: contain;
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.6);
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
             padding: 5px;
-            border: 1px solid rgba(220, 90, 50, 0.4);
+            border: none;
             flex-shrink: 0;
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
             cursor: help;
         }
         .summary-var-icon:hover {
             transform: scale(1.12);
-            border-color: #e16d48;
             box-shadow: 0 0 12px rgba(220, 90, 50, 0.5);
             z-index: 5;
             position: relative;
@@ -1396,8 +1404,10 @@
             .selection-item .item-name { font-size: 0.7rem; }
             .result-map-row .map-image { width: 100px; height: 100px; }
             .variator-list { gap: 0.5rem; }
-            .variator-list .var-item img { width: 50px; height: 50px; }
-            .variator-list .var-item .var-name { font-size: 0.55rem; max-width: 60px; }
+            .variator-list .var-item { width: 80px; }
+            .variator-list .var-item .var-icon-wrapper { width: 60px; height: 60px; }
+            .variator-list .var-item .var-icon-wrapper img { width: 40px; height: 40px; }
+            .variator-list .var-item .var-name { font-size: 0.55rem; }
             .step-actions { flex-direction: column; align-items: center; }
             .next-btn, .back-btn, .exit-btn { width: 100%; justify-content: center; }
             .back-to-roulette { font-size: 0.85rem; padding: 0.5rem 1rem; }
@@ -2788,11 +2798,6 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
         };
 
         resultVariators.innerHTML = escState.variators.map(function(v) {
-            var isWeekly = weeklyVarName2 && v.name === weeklyVarName2;
-            var borderColor = isWeekly ? '#f1c40f' : 'transparent';
-            var bgColor = isWeekly ? 'rgba(241,196,15,0.1)' : 'transparent';
-            var weeklyBadge = isWeekly ? '<div style="font-size:0.5rem; color:#f1c40f; font-weight:700; letter-spacing:0.5px; margin-top:2px;"><i class="fas fa-star"></i> НЕДЕЛЯ</div>' : '';
-
             var nameUpper = v.name.toUpperCase();
             var fontSize;
             if (variatorFontSizes[nameUpper]) fontSize = variatorFontSizes[nameUpper];
@@ -2800,10 +2805,11 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
             else fontSize = '0.75rem';
 
             return `
-                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.4rem; max-width:100px; border:2px solid ${borderColor}; border-radius:14px; padding:6px; background:${bgColor};">
-                    <img src="${v.image}" alt="${v.name}" style="width:80px; height:80px; object-fit:contain; border-radius:14px; background:rgba(0,0,0,0.3); padding:6px; border:1px solid rgba(220,90,50,0.15);" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.4rem; max-width:100px;">
+                    <div class="var-icon-wrapper" style="background: url('images/вариаторы фон.webp') center/cover no-repeat; width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <img src="${v.image}" alt="${v.name}" style="width: 50px; height: 50px; object-fit: contain;" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                    </div>
                     <span style="font-size:${fontSize}; color:#ffbc9a; text-align:center; max-width:90px; line-height:1.3; font-weight:600; text-transform:uppercase;">${nameUpper}</span>
-                    ${weeklyBadge}
                 </div>
             `;
         }).join('');
