@@ -936,7 +936,7 @@
     <audio id="mainAudio3" preload="auto"><source src="images/комната отдыха 3.mp3" type="audio/mpeg"></audio>
 </div>
 
-<!-- ===== РАСПИСАНИЕ ЭСКАЛАЦИИ (должно подключаться ДО скрипта баннера) ===== -->
+<!-- ===== РАСПИСАНИЕ ЭСКАЛАЦИИ ===== -->
 <script src="weekly-schedule.js"></script>
 
 <script>
@@ -1023,7 +1023,7 @@
         audio.load();
     });
 
-    // ===== МУЗЫКА ГЛАВНОЙ (НЕ ЗАПУСКАЕТСЯ АВТОМАТИЧЕСКИ) =====
+    // ===== МУЗЫКА ГЛАВНОЙ =====
     const MUSIC_VOLUME_KEY = 'kurilka_music_volume';
 
     let mainAudioStarted = false, currentTrackIndex = 0, mainAudioFiles = [], currentAudioElement = null;
@@ -1290,7 +1290,7 @@
                                 <h2><i class="fas fa-biohazard" style="color:#e25d32;margin-right:10px;"></i>ЕЖЕНЕДЕЛЬНАЯ ЭСКАЛАЦИОННАЯ ТЕРАПИЯ</h2>
                                 <p id="weeklySlidePeriod">Загрузка расписания...</p>
                                 <p id="weeklySlideDescription"></p>
-                                <p id="weeklySlideNext" style="color:#8a7a9a;font-size:0.95rem;margin-top:1rem;"></p>
+                                <p id="weeklySlideNext" style="display:none;"></p>
                             </div>
                         </div>
 
@@ -1387,8 +1387,8 @@
 
                 <div class="player-card">
                     <div class="player-emblem" style="background-image:url('images/эмблема 2.webp');"></div>
-                    <div class="player-name">Майор Гом 2.0</div>
-                    <div class="player-stat">Очки вторжения <span class="stat-value">156.695</span></div>
+                    <div class="player-name">Homo Area</div>
+                    <div class="player-stat">Очки вторжения <span class="stat-value">145.435</span></div>
                 </div>
 
                 <div class="player-card">
@@ -1682,11 +1682,9 @@
         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
     ];
 
-    function pad(n) { return ('0' + n).slice(-2); }
-
+    // Только дата, без времени
     function formatDate(d) {
-        return d.getDate() + ' ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear()
-            + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        return d.getDate() + ' ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear();
     }
 
     function resolveSchedule() {
@@ -1721,7 +1719,6 @@
         var imgEl    = document.getElementById('weeklySlideImage');
         var periodEl = document.getElementById('weeklySlidePeriod');
         var descEl   = document.getElementById('weeklySlideDescription');
-        var nextEl   = document.getElementById('weeklySlideNext');
         if (!imgEl || !periodEl) return;
 
         var res = resolveSchedule();
@@ -1740,7 +1737,7 @@
         imgEl.src = current.bannerImage || current.image || '';
         imgEl.alt = current.name || 'Эскалация';
 
-        // Период + название
+        // Период + название (БЕЗ времени)
         var startDate = new Date(current.date);
         var endDate = next ? new Date(next.date) : null;
         var periodText;
@@ -1767,15 +1764,6 @@
             } else {
                 descEl.innerHTML = '';
                 descEl.style.display = 'none';
-            }
-        }
-
-        // «Далее: …»
-        if (nextEl) {
-            if (active && next) {
-                nextEl.textContent = 'Далее: «' + next.name + '» — с ' + formatDate(new Date(next.date));
-            } else {
-                nextEl.textContent = '';
             }
         }
     }
