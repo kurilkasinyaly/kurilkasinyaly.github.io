@@ -1194,11 +1194,14 @@
             position: relative; overflow: hidden;
         }
 
-        .summary-modal::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('images/фон эскалация.webp') center/cover no-repeat;
-            opacity: 0.15; z-index: 0;
+            .summary-modal::before {
+                content: '';
+                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                /* Замените путь на нужную картинку */
+                background: url('images/эскалация баннер.webp') center/cover no-repeat;
+                opacity: 0.3; /* Настройте прозрачность (0.1 - почти не видно, 1.0 - полностью перекрывает) */
+                z-index: 0;
+                border-radius: 16px; /* Чтобы фон не вылезал за скругленные углы окна */
         }
 
         .summary-modal > * { position: relative; z-index: 1; }
