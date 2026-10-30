@@ -262,7 +262,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Блок карты + испытания */
         .mission-trial-block {
             display: flex; gap: 1.5rem;
             align-items: center;
@@ -324,7 +323,6 @@
             border-left: 4px solid rgba(220, 90, 50, 0.5);
         }
 
-        /* Блок вариаторов */
         .mission-variators-block {
             display: flex; flex-direction: column;
             align-items: center; gap: 1rem;
@@ -477,6 +475,8 @@
             justify-content: space-between;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            text-decoration: none;
+            color: inherit;
         }
         .escalation-rule-card:hover {
             transform: translateY(-4px);
@@ -489,6 +489,12 @@
             position: relative;
             z-index: 2;
             padding: 1rem 1rem 0;
+            min-height: 48px;
+        }
+        .escalation-rule-card .rule-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .escalation-rule-card .rule-icon {
             width: 32px; height: 32px;
@@ -530,7 +536,7 @@
             align-items: center;
             justify-content: center;
             flex-grow: 1;
-            padding: 0 1rem;
+            padding: 0 1rem 1rem;
             z-index: 2;
         }
         .escalation-rule-card .rule-name-box {
@@ -572,49 +578,25 @@
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
             margin-bottom: 0;
         }
-        .escalation-rule-card .btn-start {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #d9541f, #e8743a);
-            border: none;
-            padding: 0.7rem 1rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            text-decoration: none;
-            width: 100%;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-        }
-        .escalation-rule-card .btn-start:hover {
-            background: linear-gradient(135deg, #e25d32, #ff8050);
-        }
-        .escalation-rule-card .btn-start i { font-size: 0.75rem; }
 
-        /* Таймер еженедельной эскалации в углу */
+        /* Таймер еженедельной эскалации (рядом с календариком, без рамки и фона) */
         .weekly-timer-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(0, 0, 0, 0.75);
-            border: 1px solid rgba(241, 196, 15, 0.5);
-            border-radius: 20px;
-            padding: 0.3rem 0.8rem;
-            font-size: 0.7rem;
+            gap: 8px;
+            font-size: 0.95rem;
             color: #f1c40f;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.5px;
-            margin-left: 0.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
             white-space: nowrap;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
         }
-        .weekly-timer-badge i { font-size: 0.8rem; }
+        .weekly-timer-badge img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+        }
 
         /* ===== ОСОБЫЕ ИСПЫТАНИЯ ===== */
         .special-trials { margin-bottom: 2.5rem; }
@@ -817,6 +799,8 @@
             .escalation-rule-card .rule-subtitle { font-size: 0.5rem; }
             .escalation-rule-card .rule-variator-name { font-size: 0.55rem; }
             .escalation-rule-card .rule-variator-slot { width: 60px; height: 60px; }
+            .weekly-timer-badge { font-size: 0.8rem; gap: 6px; }
+            .weekly-timer-badge img { width: 20px; height: 20px; }
             .mission-trial-block .map-image-wrap { width: 150px; height: 150px; }
             .mission-trial-block .trial-info .trial-name { font-size: 1.3rem; }
             .mission-trial-block .trial-info .trial-desc { font-size: 0.85rem; padding: 0.5rem 0.7rem; }
@@ -930,19 +914,19 @@
 
         <div class="escalation-rules">
             <!-- Еженедельная -->
-            <div class="escalation-rule-card" style="background-image: url('images/еженедельная эскалация баннер.webp');">
+            <a href="weekly-escalation.html" class="escalation-rule-card" style="background-image: url('images/еженедельная эскалация баннер.webp');">
                 <div class="rule-top">
-                    <div class="rule-icon"><i class="fas fa-calendar-week"></i></div>
-                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <div class="rule-left">
+                        <div class="rule-icon"><i></i></div>
                         <!-- Таймер -->
                         <div class="weekly-timer-badge" id="weeklyTimerBadge">
-                            <img src="images/часы.webp" style="width: 14px; height: 14px; object-fit: contain;" alt="Время">
+                            <img src="images/часы.webp" alt="Время">
                             <span id="weeklyTimerText">Загрузка...</span>
                         </div>
-                        <!-- Иконка вариатора -->
-                        <div class="rule-variator-slot" id="weeklyVariatorSlot">
-                            <img id="weeklyVariatorImage" src="images/вариатор-таймербомбы.webp" alt="Вариатор" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-star\' style=\'color: #f1c40f; font-size: 2rem;\'></i>'">
-                        </div>
+                    </div>
+                    <!-- Иконка вариатора -->
+                    <div class="rule-variator-slot" id="weeklyVariatorSlot">
+                        <img id="weeklyVariatorImage" src="images/вариатор-таймербомбы.webp" alt="Вариатор" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-star\' style=\'color: #f1c40f; font-size: 2rem;\'></i>'">
                     </div>
                 </div>
                 <div class="rule-center-content">
@@ -952,22 +936,18 @@
                     <div class="rule-subtitle">ЕЖЕНЕДЕЛЬНЫЙ ТЕМАТИЧЕСКИЙ ЗАБЕГ</div>
                     <div class="rule-variator-name" id="weeklyVariatorName">"ТАЙМЕР БОМБЫ"</div>
                 </div>
-                <a href="weekly-escalation.html" class="btn-start"><i class="fas fa-play"></i> НАЧАТЬ ЭСКАЛАЦИЮ</a>
-            </div>
+            </a>
 
             <!-- Бесконечная -->
-            <div class="escalation-rule-card" style="background-image: url('images/бесконечная эскалация баннер.webp');">
-                <div class="rule-top">
-                    <div class="rule-icon"><i class="fas fa-infinity"></i></div>
-                </div>
+            <a href="escalation.html" class="escalation-rule-card" style="background-image: url('images/бесконечная эскалация баннер.webp');">
+                <div class="rule-top"></div>
                 <div class="rule-center-content">
                     <div class="rule-name-box">
                         <div class="rule-name">БЕСКОНЕЧНАЯ</div>
                     </div>
                     <div class="rule-subtitle">ЭСКАЛАЦИЯ СЛУЧАЙНЫХ ИСПЫТАНИЙ</div>
                 </div>
-                <a href="escalation.html" class="btn-start"><i class="fas fa-play"></i> НАЧАТЬ ЭСКАЛАЦИЮ</a>
-            </div>
+            </a>
         </div>
     </div>
 
