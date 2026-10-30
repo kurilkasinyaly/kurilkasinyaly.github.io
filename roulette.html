@@ -357,24 +357,26 @@
         }
         .mission-variators-block .variator-item .var-img-wrap {
             width: 90px; height: 90px;
-            padding: 10px;
-            background: rgba(20, 15, 28, 0.85);
-            border: 2px solid rgba(220, 90, 50, 0.4);
-            border-radius: 16px;
+            /* ФОН ВАРИАТОРА (как в Эскалации) */
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
+            border: none; /* Убрали бортики */
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .mission-variators-block .variator-item:hover .var-img-wrap {
-            border-color: #e16d48;
             transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(220, 90, 50, 0.25);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.25);
         }
         .mission-variators-block .variator-item .var-img-wrap img {
-            width: 100%;
-            height: 100%;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
         }
         .mission-variators-block .variator-item .var-name {
             font-size: 0.65rem;
@@ -452,7 +454,7 @@
         .escalation-rules {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
             max-width: 900px;
@@ -462,12 +464,12 @@
 
         .escalation-rule-card {
             border-radius: 16px;
-            padding: 0.9rem 1rem;
-            border: 2px solid rgba(220, 90, 50, 0.5);
+            padding: 0; /* Убрали внутренние отступы */
+            border: none; /* Убрали рамку */
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-height: 170px;
+            min-height: 190px;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -475,11 +477,11 @@
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
         .escalation-rule-card:hover {
-            transform: translateY(-3px);
-            border-color: #e16d48;
-            box-shadow: 0 12px 30px rgba(220, 90, 50, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(220, 90, 50, 0.4);
         }
         .escalation-rule-card .rule-top {
             display: flex;
@@ -487,88 +489,89 @@
             justify-content: space-between;
             position: relative;
             z-index: 2;
-            gap: 0.5rem;
+            padding: 1rem 1rem 0;
         }
         .escalation-rule-card .rule-icon {
-            width: 28px; height: 28px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.75);
             display: flex; align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #e16d48;
             flex-shrink: 0;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .escalation-rule-card .rule-variator-slot {
             width: 80px;
             height: 80px;
             border-radius: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 3px solid rgba(241, 196, 15, 0.8);
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(241, 196, 15, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             overflow: hidden;
-            box-shadow: 0 3px 15px rgba(241, 196, 15, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 1rem;
+            right: 1rem;
         }
         .escalation-rule-card .rule-variator-slot img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            padding: 5px;
+            padding: 6px;
             display: block;
         }
-        .escalation-rule-card .rule-name-box {
-            position: relative;
+        .escalation-rule-card .rule-center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 0 1rem;
             z-index: 2;
+        }
+        .escalation-rule-card .rule-name-box {
             display: inline-block;
-            align-self: center;
-            margin: 0.4rem 0 0.3rem;
-            padding: 0.25rem 1rem;
+            margin: 0 0 0.5rem;
+            padding: 0.25rem 1.2rem;
             border: 2px solid #f1c40f;
-            border-radius: 6px;
-            background: rgba(0, 0, 0, 0.6);
-            box-shadow: 0 2px 10px rgba(241, 196, 15, 0.25);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 2px 10px rgba(241, 196, 15, 0.3);
         }
         .escalation-rule-card .rule-name-box .rule-name {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 900;
             color: #f1c40f;
-            letter-spacing: 1.2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
             white-space: nowrap;
         }
         .escalation-rule-card .rule-subtitle {
-            position: relative;
-            z-index: 2;
             text-align: center;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: #fff;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.3;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.8);
-            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+            margin-bottom: 0.3rem;
         }
         .escalation-rule-card .rule-variator-name {
-            position: relative;
-            z-index: 2;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #ffbc9a;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0;
         }
         .escalation-rule-card .btn-start {
             position: relative;
@@ -579,9 +582,8 @@
             gap: 6px;
             background: linear-gradient(135deg, #d9541f, #e8743a);
             border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            padding: 0.7rem 1rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: white;
             cursor: pointer;
@@ -589,14 +591,12 @@
             font-family: inherit;
             text-decoration: none;
             width: 100%;
-            box-shadow: 0 3px 12px rgba(217, 84, 31, 0.4);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
         }
         .escalation-rule-card .btn-start:hover {
             background: linear-gradient(135deg, #e25d32, #ff8050);
-            transform: scale(1.02);
-            box-shadow: 0 5px 20px rgba(217, 84, 31, 0.6);
         }
-        .escalation-rule-card .btn-start i { font-size: 0.7rem; }
+        .escalation-rule-card .btn-start i { font-size: 0.75rem; }
 
         /* ===== ОСОБЫЕ ИСПЫТАНИЯ ===== */
         .special-trials { margin-bottom: 2.5rem; }
@@ -774,7 +774,7 @@
             .mission-trial-block .trial-info .trial-name { font-size: 1.5rem; }
             .mission-variators-block .variator-items { grid-template-columns: repeat(4, 1fr); gap: 0.6rem; }
             .mission-variators-block .variator-item { width: 75px; }
-            .mission-variators-block .variator-item .var-img-wrap { width: 65px; height: 65px; padding: 8px; }
+            .mission-variators-block .variator-item .var-img-wrap { width: 65px; height: 65px; }
             .timer-display { gap: 0.8rem; }
             .timer-unit .number { font-size: 1.8rem; min-width: 35px; }
             .timer-separator { font-size: 1.5rem; }
@@ -793,7 +793,7 @@
             .logo .logo-text { font-size: 0.9rem; }
             .logo { gap: 0.4rem; }
             .page-header h1 { font-size: 1.4rem; }
-            .escalation-rule-card { padding: 0.8rem; min-height: 140px; }
+            .escalation-rule-card { min-height: 140px; }
             .escalation-rule-card .rule-name-box .rule-name { font-size: 0.7rem; }
             .escalation-rule-card .rule-subtitle { font-size: 0.5rem; }
             .escalation-rule-card .rule-variator-name { font-size: 0.55rem; }
@@ -803,7 +803,8 @@
             .mission-trial-block .trial-info .trial-desc { font-size: 0.85rem; padding: 0.5rem 0.7rem; }
             .mission-variators-block .variator-items { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
             .mission-variators-block .variator-item { width: 60px; }
-            .mission-variators-block .variator-item .var-img-wrap { width: 52px; height: 52px; padding: 6px; }
+            .mission-variators-block .variator-item .var-img-wrap { width: 52px; height: 52px; }
+            .mission-variators-block .variator-item .var-img-wrap img { width: 32px; height: 32px; }
             .mission-variators-block .variator-item .var-name { font-size: 0.5rem; max-width: 60px; }
             .timer-unit .number { font-size: 1.5rem; min-width: 28px; }
             .timer-separator { font-size: 1.2rem; }
@@ -917,11 +918,13 @@
                         <img id="weeklyVariatorImage" src="images/вариатор-таймербомбы.webp" alt="Вариатор" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-star\' style=\'color: #f1c40f; font-size: 2rem;\'></i>'">
                     </div>
                 </div>
-                <div class="rule-name-box">
-                    <div class="rule-name">ЕЖЕНЕДЕЛЬНАЯ</div>
+                <div class="rule-center-content">
+                    <div class="rule-name-box">
+                        <div class="rule-name">ЕЖЕНЕДЕЛЬНАЯ</div>
+                    </div>
+                    <div class="rule-subtitle">ЕЖЕНЕДЕЛЬНЫЙ ТЕМАТИЧЕСКИЙ ЗАБЕГ</div>
+                    <div class="rule-variator-name" id="weeklyVariatorName">"ТАЙМЕР БОМБЫ"</div>
                 </div>
-                <div class="rule-subtitle">ЕЖЕНЕДЕЛЬНЫЙ ТЕМАТИЧЕСКИЙ ЗАБЕГ</div>
-                <div class="rule-variator-name" id="weeklyVariatorName">"ТАЙМЕР БОМБЫ"</div>
                 <a href="weekly-escalation.html" class="btn-start"><i class="fas fa-play"></i> НАЧАТЬ ЭСКАЛАЦИЮ</a>
             </div>
 
@@ -930,10 +933,12 @@
                 <div class="rule-top">
                     <div class="rule-icon"><i class="fas fa-infinity"></i></div>
                 </div>
-                <div class="rule-name-box">
-                    <div class="rule-name">БЕСКОНЕЧНАЯ</div>
+                <div class="rule-center-content">
+                    <div class="rule-name-box">
+                        <div class="rule-name">БЕСКОНЕЧНАЯ</div>
+                    </div>
+                    <div class="rule-subtitle">ЭСКАЛАЦИЯ СЛУЧАЙНЫХ ИСПЫТАНИЙ</div>
                 </div>
-                <div class="rule-subtitle">ЭСКАЛАЦИЯ СЛУЧАЙНЫХ ИСПЫТАНИЙ</div>
                 <a href="escalation.html" class="btn-start"><i class="fas fa-play"></i> НАЧАТЬ ЭСКАЛАЦИЮ</a>
             </div>
         </div>
@@ -1100,24 +1105,28 @@ window.toggleMainMusic = toggleMainMusic;
 window.toggleVolumeDropdown = toggleVolumeDropdown;
 
 // ================================================================
-//  ЗАДАНИЕ ДНЯ
+//  ЗАДАНИЕ ДНЯ (ЛОГИКА ИЗ ЭСКАЛАЦИИ)
 // ================================================================
 
-var EXCLUDED_VARIATORS_DAILY = [
-    'Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери',
-    'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова',
-    'Сильнее Вместе', 'Без Рации'
+var SIDE_QUEST_VARIATORS = [
+    "Сбор Подарков", "Сбор Крыс", "Сбор Амулетов", "Доставьте Компоненты",
+    "Извлеките Образцы Органов", "Разбейте Телевизоры", "Находите Радиопередатчики",
+    "Собирайте Схемы", "Найдите Трансляцию", "Соберите Коробки С Уликами",
+    "Расшифруйте Вещание", "Потушите Огонь", "Экстракция Крови", "Остановите Утечку", "Случайное Побочное Задание"
 ];
 
-function isExcludedDaily(name) {
+function isExcludedVariator(name) {
     if (!name) return false;
-    if (EXCLUDED_VARIATORS_DAILY.indexOf(name) !== -1) return true;
+    var excluded = ['Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери', 'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова', 'Сильнее Вместе', 'Без Рации'];
+    if (excluded.indexOf(name) !== -1) return true;
     if (typeof allVariatorsData !== 'undefined') {
         var v = allVariatorsData.find(function(x) { return x.name === name; });
         if (v && (v.category === 'boss' || v.category === 'main_asset')) return true;
     }
     return false;
 }
+
+function isSideQuestVariator(name) { return SIDE_QUEST_VARIATORS.indexOf(name) !== -1; }
 
 function shuffleArray(arr) {
     var a = arr.slice();
@@ -1128,95 +1137,175 @@ function shuffleArray(arr) {
     return a;
 }
 
-function isVariatorCompatible(v, selected) {
-    var name = v.name;
-    var names = selected.map(function(x) { return x.name; });
+// ПОЛНАЯ СОВМЕСТИМОСТЬ ИЗ ЭСКАЛАЦИИ
+function isVariatorCompatible(variator, selectedVariators, trialName, playerCount, level) {
+    var variatorName = variator.name;
+    var selectedNames = selectedVariators.map(function(v) { return v.name; });
     var i;
 
-    if (names.indexOf(name) !== -1) return false;
+    if (selectedNames.indexOf(variatorName) !== -1) return false;
 
-    var mainGroup = ['Главная Рулетка', 'Самое Главное'];
-    var antiGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
-    if (mainGroup.indexOf(name) !== -1) {
-        for (i = 0; i < mainGroup.length; i++) if (mainGroup[i] !== name && names.indexOf(mainGroup[i]) !== -1) return false;
-        for (i = 0; i < antiGroup.length; i++) if (names.indexOf(antiGroup[i]) !== -1) return false;
+    var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
+    if (variatorName === 'Трофейное Снаряжение') {
+        for (i = 0; i < trophyBlocked.length; i++) if (selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
     }
-    if (antiGroup.indexOf(name) !== -1) {
-        for (i = 0; i < mainGroup.length; i++) if (names.indexOf(mainGroup[i]) !== -1) return false;
-        for (i = 0; i < antiGroup.length; i++) if (antiGroup[i] !== name && names.indexOf(antiGroup[i]) !== -1) return false;
+    if (trophyBlocked.indexOf(variatorName) !== -1) {
+        if (selectedNames.indexOf('Трофейное Снаряжение') !== -1) return false;
+        for (i = 0; i < trophyBlocked.length; i++) if (trophyBlocked[i] !== variatorName && selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
     }
 
-    var mines = ['Больше Мин Психоза', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины'];
-    if (mines.indexOf(name) !== -1) {
-        for (i = 0; i < mines.length; i++) if (mines[i] !== name && names.indexOf(mines[i]) !== -1) return false;
+    var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
+    if (variatorName === 'Психохирургия') {
+        for (i = 0; i < psychoBlocked.length; i++) if (selectedNames.indexOf(psychoBlocked[i]) !== -1) return false;
+    }
+    if (psychoBlocked.indexOf(variatorName) !== -1) {
+        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
     }
 
-    if (name === 'Вечная Мерзлота') {
-        if (names.indexOf('Резкое Похолодание') !== -1) return false;
-        if (names.indexOf('Токсический Шок') !== -1) return false;
+    if (variatorName === 'Не Шумите' && selectedNames.indexOf('Разъяренные Враги') !== -1) return false;
+    if (variatorName === 'Разъяренные Враги' && selectedNames.indexOf('Не Шумите') !== -1) return false;
+
+    var mainLotteryGroup = ['Главная Рулетка', 'Самое Главное'];
+    var antiLotteryGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
+    if (mainLotteryGroup.indexOf(variatorName) !== -1) {
+        for (i = 0; i < mainLotteryGroup.length; i++) if (mainLotteryGroup[i] !== variatorName && selectedNames.indexOf(mainLotteryGroup[i]) !== -1) return false;
+        for (i = 0; i < antiLotteryGroup.length; i++) if (selectedNames.indexOf(antiLotteryGroup[i]) !== -1) return false;
     }
-    if (name === 'Резкое Похолодание' || name === 'Токсический Шок') {
-        if (names.indexOf('Вечная Мерзлота') !== -1) return false;
+    if (antiLotteryGroup.indexOf(variatorName) !== -1) {
+        for (i = 0; i < mainLotteryGroup.length; i++) if (selectedNames.indexOf(mainLotteryGroup[i]) !== -1) return false;
+        for (i = 0; i < antiLotteryGroup.length; i++) if (antiLotteryGroup[i] !== variatorName && selectedNames.indexOf(antiLotteryGroup[i]) !== -1) return false;
     }
 
-    if (name === 'Таймер Бомбы' || name === 'Таймер бомбы') {
-        if (names.indexOf('Разбейте Телевизоры') !== -1) return false;
-    }
-    if (name === 'Разбейте Телевизоры') {
-        if (names.indexOf('Таймер Бомбы') !== -1) return false;
-        if (names.indexOf('Таймер бомбы') !== -1) return false;
+    var mineVariators = ['Больше Мин Психоза', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины'];
+    if (mineVariators.indexOf(variatorName) !== -1) {
+        for (i = 0; i < mineVariators.length; i++) if (mineVariators[i] !== variatorName && selectedNames.indexOf(mineVariators[i]) !== -1) return false;
     }
 
-    if (name === 'Токсический Шок' && names.indexOf('Глубокий Ожог') !== -1) return false;
-    if (name === 'Глубокий Ожог' && names.indexOf('Токсический Шок') !== -1) return false;
+    var firstLevelBlocked = ['Сломанный Реагент', 'Без Снаряжения', 'Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Без Амф', 'Без Рецептов', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение', 'Трофейное Снаряжение'];
+    if (variatorName === 'Первый Уровень') { for (i = 0; i < firstLevelBlocked.length; i++) if (selectedNames.indexOf(firstLevelBlocked[i]) !== -1) return false; }
+    if (firstLevelBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Первый Уровень') !== -1) return false; }
 
-    var density = ['Низкая Плотность Врагов','Много Противников','Повышенная Угроза','Повышенная угроза II'];
-    var strongNames = ['Враги сильнее','Враги Сильнее','Враги сильнее II','Враги Сильнее II'];
-    if (strongNames.indexOf(name) !== -1) {
-        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
-    }
-    if (density.indexOf(name) !== -1) {
-        for (i = 0; i < strongNames.length; i++) if (names.indexOf(strongNames[i]) !== -1) return false;
-        if (names.indexOf('Психохирургия') !== -1) return false;
-    }
-    if (name === 'Психохирургия') {
-        for (i = 0; i < strongNames.length; i++) if (names.indexOf(strongNames[i]) !== -1) return false;
-        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
+    var brokenReagentBlocked = ['Первый Уровень', 'Без Снаряжения', 'Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Без Амф', 'Без Рецептов', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение', 'Трофейное Снаряжение'];
+    if (variatorName === 'Сломанный Реагент') { for (i = 0; i < brokenReagentBlocked.length; i++) if (selectedNames.indexOf(brokenReagentBlocked[i]) !== -1) return false; }
+    if (brokenReagentBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Сломанный Реагент') !== -1) return false; }
+
+    var noEquipmentBlocked = ['Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение'];
+    if (variatorName === 'Без Снаряжения') { for (i = 0; i < noEquipmentBlocked.length; i++) if (selectedNames.indexOf(noEquipmentBlocked[i]) !== -1) return false; }
+    if (noEquipmentBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Без Снаряжения') !== -1) return false; }
+
+    if (variatorName === 'Все На Выход') {
+        if (trialName === 'Раздавите бригадира' || trialName === 'Устранение устаревшего оборудования') return false;
     }
 
-    var pairs = [
-        ['Ограниченный Инвентарь','Ограниченный Инвентарь II'],
-        ['Повышенная Угроза','Повышенная угроза II'],
-        ['Ограниченные Укрытия','Ограниченные Укрытия II'],
-        ['Ограниченные предметы','Ограниченные предметы II']
-    ];
-    for (var p = 0; p < pairs.length; p++) {
-        var g = pairs[p];
-        if (g.indexOf(name) !== -1) {
-            for (i = 0; i < g.length; i++) if (g[i] !== name && names.indexOf(g[i]) !== -1) return false;
+    if (variatorName === 'Сильнее Вместе') {
+        if (playerCount === 1) return false;
+        if (playerCount === 2 || playerCount === 3) {
+            var forbiddenMaps = ['Сожгите секс-игрушки', 'Обработайте фабрику газом', 'Освободите заключенных', 'Заберите наркотики'];
+            if (forbiddenMaps.indexOf(trialName) !== -1) return false;
         }
     }
 
-    var noItems = 'Без Предметов В Испытании';
-    var limItems = ['Ограниченные предметы','Ограниченные предметы II'];
-    if (name === noItems) { for (i = 0; i < limItems.length; i++) if (names.indexOf(limItems[i]) !== -1) return false; }
-    if (limItems.indexOf(name) !== -1) { if (names.indexOf(noItems) !== -1) return false; }
+    if (variatorName === 'Вечная Мерзлота') {
+        if (selectedNames.indexOf('Резкое Похолодание') !== -1) return false;
+        if (selectedNames.indexOf('Токсический Шок') !== -1) return false;
+    }
+    if (variatorName === 'Резкое Похолодание' || variatorName === 'Токсический Шок') {
+        if (selectedNames.indexOf('Вечная Мерзлота') !== -1) return false;
+    }
+
+    if (variatorName === 'Таймер Бомбы' || variatorName === 'Таймер бомбы') {
+        if (trialName === 'Устранение устаревшего оборудования') return false;
+        if (selectedNames.indexOf('Разбейте Телевизоры') !== -1) return false;
+    }
+    if (variatorName === 'Разбейте Телевизоры') {
+        if (selectedNames.indexOf('Таймер Бомбы') !== -1) return false;
+        if (selectedNames.indexOf('Таймер бомбы') !== -1) return false;
+    }
+
+    if (variatorName === 'Токсический Шок') { if (selectedNames.indexOf('Глубокий Ожог') !== -1) return false; }
+    if (variatorName === 'Глубокий Ожог') { if (selectedNames.indexOf('Токсический Шок') !== -1) return false; }
+
+    var densityAndThreat = ['Низкая Плотность Врагов', 'Много Противников', 'Повышенная Угроза', 'Повышенная угроза II'];
+    if (variatorName === 'Враги сильнее' || variatorName === 'Враги Сильнее' || variatorName === 'Враги сильнее II' || variatorName === 'Враги Сильнее II') {
+        for (i = 0; i < densityAndThreat.length; i++) if (selectedNames.indexOf(densityAndThreat[i]) !== -1) return false;
+    }
+
+    if (densityAndThreat.indexOf(variatorName) !== -1) {
+        if (selectedNames.indexOf('Враги сильнее') !== -1) return false;
+        if (selectedNames.indexOf('Враги Сильнее') !== -1) return false;
+        if (selectedNames.indexOf('Враги сильнее II') !== -1) return false;
+        if (selectedNames.indexOf('Враги Сильнее II') !== -1) return false;
+        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    if (variatorName === 'Психохирургия') {
+        if (selectedNames.indexOf('Враги сильнее') !== -1) return false;
+        if (selectedNames.indexOf('Враги Сильнее') !== -1) return false;
+        if (selectedNames.indexOf('Враги сильнее II') !== -1) return false;
+        if (selectedNames.indexOf('Враги Сильнее II') !== -1) return false;
+        for (i = 0; i < densityAndThreat.length; i++) {
+            if (selectedNames.indexOf(densityAndThreat[i]) !== -1) return false;
+        }
+    }
+
+    if (variatorName === 'Враги сильнее' || variatorName === 'Враги Сильнее' || variatorName === 'Враги сильнее II' || variatorName === 'Враги Сильнее II') {
+        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    var sameTypeGroups = [
+        ['Ограниченный Инвентарь', 'Ограниченный Инвентарь II'],
+        ['Повышенная Угроза', 'Повышенная угроза II'],
+        ['Ограниченные Укрытия', 'Ограниченные Укрытия II'],
+        ['Ограниченные предметы', 'Ограниченные предметы II']
+    ];
+
+    for (var g = 0; g < sameTypeGroups.length; g++) {
+        var group = sameTypeGroups[g];
+        if (group.indexOf(variatorName) !== -1) {
+            for (i = 0; i < group.length; i++) {
+                if (group[i] !== variatorName && selectedNames.indexOf(group[i]) !== -1) return false;
+            }
+        }
+    }
+
+    var itemRestrictionGroup = [
+        'Без Предметов В Испытании', 'Ограниченные Предметы', 'Ограниченные Предметы II',
+        'Ограниченные предметы', 'Ограниченные предметы II', 'Без Медицинских Предметов',
+        'Без Технических Предметов', 'Закрытые Предметы', 'Только Предметы Для Бросания'
+    ];
+
+    if (itemRestrictionGroup.indexOf(variatorName) !== -1) {
+        for (i = 0; i < itemRestrictionGroup.length; i++) {
+            if (itemRestrictionGroup[i] !== variatorName && selectedNames.indexOf(itemRestrictionGroup[i]) !== -1) {
+                return false;
+            }
+        }
+    }
+
+    if (playerCount === 1) {
+        if (variatorName === 'Без Имён' || variatorName === 'Без Рации') return false;
+    }
+    if (variatorName === 'Низкая Плотность Врагов' && level > 5) return false;
+    if (level < 21) {
+        if (variatorName === 'Ностофобия' || variatorName === 'Психохирургия') return false;
+    }
 
     return true;
 }
 
-function generateDailyVariators(count) {
+function generateDailyVariators(count, trialName) {
     if (typeof allVariatorsData === 'undefined') return [];
 
     var available = allVariatorsData.filter(function(v) {
-        return !isExcludedDaily(v.name);
+        return !isExcludedVariator(v.name);
     });
 
     var result = [];
     var shuffled = shuffleArray(available);
 
     for (var i = 0; i < shuffled.length && result.length < count; i++) {
-        if (isVariatorCompatible(shuffled[i], result)) {
+        // Используем логику из Эскалации (передаем фейковый уровень 10, игроков 1)
+        if (isVariatorCompatible(shuffled[i], result, trialName, 1, 10)) {
             result.push(shuffled[i]);
         }
     }
@@ -1247,7 +1336,9 @@ function getDailyMission() {
     if (!mapData || !mapData.trials || mapData.trials.length === 0) return null;
 
     var trial = mapData.trials[Math.floor(Math.random() * mapData.trials.length)];
-    var variators = generateDailyVariators(8);
+    
+    // Генерируем вариаторы с учетом названия испытания
+    var variators = generateDailyVariators(8, trial.name);
 
     var missionData = {
         mapName: mapName,
