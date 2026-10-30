@@ -731,6 +731,78 @@
             overflow-y: auto;
             animation: modalFadeIn 0.3s ease-out;
         }
+        .catchup-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2500;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px; box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            overflow: visible; /* никакого скролла у оверлея */
+        }
+        .catchup-modal {
+            background: rgba(18, 12, 28, 0.97);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 2.2rem 2.4rem;
+            width: min(1400px, 96vw);
+            max-height: none;          /* без ограничения по высоте */
+            overflow: visible;         /* без внутреннего скролла */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .catchup-modal .catchup-cards {
+            display: flex;
+            gap: 34px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px 0 55px 0;    /* место под тултипы */
+        }
+        /* Карточки в догоне — чуть крупнее, чтобы всё читалось */
+        .catchup-modal .equip-card {
+            width: 220px;
+            height: 320px;
+        }
+        .catchup-modal .amp-card {
+            width: 200px;
+            height: 270px;
+            padding: 16px;
+        }
+        .catchup-modal .amp-card img {
+            width: 110px;
+            height: 110px;
+        }
+        .catchup-modal .amp-card .amp-title {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box {
+            width: 320px;
+            font-size: 0.85rem;
+            padding: 14px 16px;
+        }
+        .catchup-modal .tooltip-box .tt-name {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box .tt-desc {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .catchup-modal .catchup-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .catchup-modal .catchup-header h2 {
+            font-size: 1.5rem; color: #e16d48;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .catchup-modal .catchup-step {
+            text-align: center; color: #888; font-size: 0.9rem;
+            margin-bottom: 18px;
+        }
         .amp-modal-header {
             display: flex; justify-content: space-between;
             align-items: center;
@@ -2978,28 +3050,28 @@ function openCatchUpEquipModal() {
 
     var overlay = document.createElement('div');
     overlay.id = 'catchUpModal';
-    overlay.className = 'amp-modal-overlay active';
-    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2500; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+    overlay.className = 'catchup-modal-overlay';
 
     var modal = document.createElement('div');
-    modal.className = 'amp-modal';
-    modal.style.cssText = 'max-width:900px; width:100%;';
+    modal.className = 'catchup-modal';
 
     var shuf = (typeof equipmentData !== 'undefined' ? equipmentData.slice() : []).sort(function() { return Math.random() - 0.5; });
     var sel = shuf.slice(0, 3);
 
     var cardsHtml = sel.map(function(eq) {
-        return '<div class="equip-card" data-eq="' + eq.name + '" style="width:180px; height:260px; position:relative;">' +
+        return '<div class="equip-card" data-eq="' + eq.name + '" style="position:relative;">' +
             '<div class="tooltip-box"><div class="tt-type">[СНАРЯЖЕНИЕ]</div><div class="tt-name">' + eq.name + '</div><div class="tt-desc">' + (eq.desc || '') + '</div></div>' +
         '</div>';
     }).join('');
 
+    var totalSteps = 1 + Math.max(0, escState.level - 1);
+
     modal.innerHTML =
-        '<div class="amp-modal-header">' +
-            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение (догон)</h2>' +
+        '<div class="catchup-header">' +
+            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
         '</div>' +
-        '<div style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:16px;">Шаг 1 из ' + (1 + Math.max(0, escState.level - 1)) + '</div>' +
-        '<div style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; padding-bottom:40px;">' + cardsHtml + '</div>';
+        '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
+        '<div class="catchup-cards">' + cardsHtml + '</div>';
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
@@ -3013,7 +3085,6 @@ function openCatchUpEquipModal() {
         });
     });
 }
-
 function openCatchUpAmpModal() {
     var idx = escState.pendingNewPlayer.index;
     var name = escState.pendingNewPlayer.name;
@@ -3042,15 +3113,13 @@ function openCatchUpAmpModal() {
 
     var overlay = document.createElement('div');
     overlay.id = 'catchUpModal';
-    overlay.className = 'amp-modal-overlay active';
-    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2500; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+    overlay.className = 'catchup-modal-overlay';
 
     var modal = document.createElement('div');
-    modal.className = 'amp-modal';
-    modal.style.cssText = 'max-width:900px; width:100%;';
+    modal.className = 'catchup-modal';
 
     var cardsHtml = display.map(function(amp) {
-        return '<div class="amp-card" data-amp="' + amp.name + '" style="flex:1 1 0; max-width:180px;">' +
+        return '<div class="amp-card" data-amp="' + amp.name + '">' +
             '<div class="tooltip-box"><div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || '') + '</div></div>' +
             '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
             '<div class="amp-title">' + amp.name + '</div>' +
@@ -3059,11 +3128,11 @@ function openCatchUpAmpModal() {
     }).join('');
 
     modal.innerHTML =
-        '<div class="amp-modal-header">' +
-            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы (догон)</h2>' +
+        '<div class="catchup-header">' +
+            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы</h2>' +
         '</div>' +
-        '<div style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:6px;">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
-        '<div style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; padding-bottom:40px;">' + cardsHtml + '</div>';
+        '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
+        '<div class="catchup-cards">' + cardsHtml + '</div>';
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
@@ -3085,7 +3154,6 @@ function openCatchUpAmpModal() {
         });
     });
 }
-
 // ============================================================
 // МОДАЛКА СБОРА ИНФОРМАЦИИ
 // ============================================================
