@@ -451,6 +451,7 @@
         .escalation-rules {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            align-items: start;
             gap: 1.5rem;
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
@@ -466,17 +467,24 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-height: 190px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            display: block;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             text-decoration: none;
             color: inherit;
+        }
+        /* Картинка баннера показывается целиком, без обрезки */
+        .escalation-rule-card .rule-bg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .escalation-rule-card .rule-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .escalation-rule-card:hover {
             transform: translateY(-4px);
@@ -794,7 +802,6 @@
             .logo .logo-text { font-size: 0.9rem; }
             .logo { gap: 0.4rem; }
             .page-header h1 { font-size: 1.4rem; }
-            .escalation-rule-card { min-height: 140px; }
             .escalation-rule-card .rule-name-box .rule-name { font-size: 0.7rem; }
             .escalation-rule-card .rule-subtitle { font-size: 0.5rem; }
             .escalation-rule-card .rule-variator-name { font-size: 0.55rem; }
@@ -914,10 +921,11 @@
 
         <div class="escalation-rules">
             <!-- Еженедельная -->
-            <a href="weekly-escalation.html" class="escalation-rule-card" style="background-image: url('images/еженедельная эскалация баннер.webp');">
+            <a href="weekly-escalation.html" class="escalation-rule-card">
+                <img class="rule-bg" src="images/еженедельная эскалация баннер.webp" alt="">
+                <div class="rule-overlay">
                 <div class="rule-top">
                     <div class="rule-left">
-                        <div class="rule-icon"><i></i></div>
                         <!-- Таймер -->
                         <div class="weekly-timer-badge" id="weeklyTimerBadge">
                             <img src="images/часы.webp" alt="Время">
@@ -936,16 +944,20 @@
                     <div class="rule-subtitle">ЕЖЕНЕДЕЛЬНЫЙ ТЕМАТИЧЕСКИЙ ЗАБЕГ</div>
                     <div class="rule-variator-name" id="weeklyVariatorName">"ТАЙМЕР БОМБЫ"</div>
                 </div>
+                </div>
             </a>
 
             <!-- Бесконечная -->
-            <a href="escalation.html" class="escalation-rule-card" style="background-image: url('images/бесконечная эскалация баннер.webp');">
+            <a href="escalation.html" class="escalation-rule-card">
+                <img class="rule-bg" src="images/бесконечная эскалация баннер.webp" alt="">
+                <div class="rule-overlay">
                 <div class="rule-top"></div>
                 <div class="rule-center-content">
                     <div class="rule-name-box">
                         <div class="rule-name">БЕСКОНЕЧНАЯ</div>
                     </div>
                     <div class="rule-subtitle">ЭСКАЛАЦИЯ СЛУЧАЙНЫХ ИСПЫТАНИЙ</div>
+                </div>
                 </div>
             </a>
         </div>
