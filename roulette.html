@@ -357,9 +357,8 @@
         }
         .mission-variators-block .variator-item .var-img-wrap {
             width: 90px; height: 90px;
-            /* ФОН ВАРИАТОРА (как в Эскалации) */
             background: url('images/вариаторы фон.webp') center/cover no-repeat;
-            border: none; /* Убрали бортики */
+            border: none; 
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -373,8 +372,8 @@
             box-shadow: 0 8px 20px rgba(220, 90, 50, 0.25);
         }
         .mission-variators-block .variator-item .var-img-wrap img {
-            width: 50px;
-            height: 50px;
+            width: 65px;
+            height: 65px;
             object-fit: contain;
             filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
         }
@@ -463,9 +462,9 @@
         }
 
         .escalation-rule-card {
-            border-radius: 16px;
-            padding: 0; /* Убрали внутренние отступы */
-            border: none; /* Убрали рамку */
+            border-radius: 0px; 
+            padding: 0; 
+            border: none; 
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -597,6 +596,25 @@
             background: linear-gradient(135deg, #e25d32, #ff8050);
         }
         .escalation-rule-card .btn-start i { font-size: 0.75rem; }
+
+        /* Таймер еженедельной эскалации в углу */
+        .weekly-timer-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(241, 196, 15, 0.5);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            color: #f1c40f;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .weekly-timer-badge i { font-size: 0.8rem; }
 
         /* ===== ОСОБЫЕ ИСПЫТАНИЯ ===== */
         .special-trials { margin-bottom: 2.5rem; }
@@ -775,6 +793,7 @@
             .mission-variators-block .variator-items { grid-template-columns: repeat(4, 1fr); gap: 0.6rem; }
             .mission-variators-block .variator-item { width: 75px; }
             .mission-variators-block .variator-item .var-img-wrap { width: 65px; height: 65px; }
+            .mission-variators-block .variator-item .var-img-wrap img { width: 45px; height: 45px; }
             .timer-display { gap: 0.8rem; }
             .timer-unit .number { font-size: 1.8rem; min-width: 35px; }
             .timer-separator { font-size: 1.5rem; }
@@ -804,7 +823,7 @@
             .mission-variators-block .variator-items { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
             .mission-variators-block .variator-item { width: 60px; }
             .mission-variators-block .variator-item .var-img-wrap { width: 52px; height: 52px; }
-            .mission-variators-block .variator-item .var-img-wrap img { width: 32px; height: 32px; }
+            .mission-variators-block .variator-item .var-img-wrap img { width: 36px; height: 36px; }
             .mission-variators-block .variator-item .var-name { font-size: 0.5rem; max-width: 60px; }
             .timer-unit .number { font-size: 1.5rem; min-width: 28px; }
             .timer-separator { font-size: 1.2rem; }
@@ -914,8 +933,16 @@
             <div class="escalation-rule-card" style="background-image: url('images/еженедельная эскалация баннер.webp');">
                 <div class="rule-top">
                     <div class="rule-icon"><i class="fas fa-calendar-week"></i></div>
-                    <div class="rule-variator-slot" id="weeklyVariatorSlot">
-                        <img id="weeklyVariatorImage" src="images/вариатор-таймербомбы.webp" alt="Вариатор" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-star\' style=\'color: #f1c40f; font-size: 2rem;\'></i>'">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <!-- Таймер -->
+                        <div class="weekly-timer-badge" id="weeklyTimerBadge">
+                            <img src="images/часы.webp" style="width: 14px; height: 14px; object-fit: contain;" alt="Время">
+                            <span id="weeklyTimerText">Загрузка...</span>
+                        </div>
+                        <!-- Иконка вариатора -->
+                        <div class="rule-variator-slot" id="weeklyVariatorSlot">
+                            <img id="weeklyVariatorImage" src="images/вариатор-таймербомбы.webp" alt="Вариатор" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-star\' style=\'color: #f1c40f; font-size: 2rem;\'></i>'">
+                        </div>
                     </div>
                 </div>
                 <div class="rule-center-content">
@@ -979,6 +1006,48 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nameEl) nameEl.textContent = '«' + active.name.toUpperCase() + '»';
     if (imgEl && active.image) imgEl.src = active.image;
 });
+
+// ================================================================
+//  ТАЙМЕР ДО ОБНОВЛЕНИЯ ЕЖЕНЕДЕЛЬНОГО ВАРИАТОРА (ВТОРНИК 19:00 МСК)
+// ================================================================
+function updateWeeklyTimer() {
+    var timerText = document.getElementById('weeklyTimerText');
+    if (!timerText) return;
+
+    var now = new Date();
+    var targetDay = 2; // Вторник
+    var targetHour = 19; // 19:00
+
+    var targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var daysUntilTuesday = (targetDay + 7 - now.getDay()) % 7;
+    
+    // Если сегодня вторник, но время уже больше 19:00, ждем следующего вторника
+    if (daysUntilTuesday === 0 && now.getHours() >= targetHour) {
+        daysUntilTuesday = 7;
+    }
+    
+    targetDate.setDate(targetDate.getDate() + daysUntilTuesday);
+    targetDate.setHours(targetHour, 0, 0, 0);
+
+    var diff = targetDate - now;
+    
+    if (diff <= 0) {
+        timerText.textContent = "СКОРО";
+        return;
+    }
+
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (days > 0) {
+        timerText.textContent = days + " Д. " + hours + " Ч.";
+    } else if (hours > 0) {
+        timerText.textContent = hours + " Ч. " + minutes + " М.";
+    } else {
+        timerText.textContent = "СКОРО";
+    }
+}
 
 // ================================================================
 //  МУЗЫКА (не запускается автоматически, только по клику)
@@ -1098,7 +1167,10 @@ document.addEventListener('DOMContentLoaded', function() {
         slider.style.background = 'linear-gradient(to right, #e25d32 0%, #e25d32 ' + initialVal + '%, rgba(255,255,255,0.15) ' + initialVal + '%, rgba(255,255,255,0.15) 100%)';
         updateVolumeDisplay();
     }
-    // НЕ запускаем музыку автоматически
+    
+    // Запускаем таймер еженедельной эскалации
+    updateWeeklyTimer();
+    setInterval(updateWeeklyTimer, 1000);
 });
 
 window.toggleMainMusic = toggleMainMusic;
