@@ -1751,7 +1751,12 @@ let escState = {
     nostophobiaCount: 0,
     currentEquipPlayerIndex: 0,
     currentAmpPlayerIndex: 0,
-    currentBreakPlayerIndex: 0
+    currentBreakPlayerIndex: 0,
+    // [NEW] поля для добавления/удаления игроков во время эскалации
+    initialPlayerCount: 0,
+    pendingNewPlayer: null,
+    catchUpQueue: [],
+    catchUpMode: null
 };
 
 var infoFormState = {
@@ -1777,6 +1782,11 @@ function checkDataLoaded() {
     if (typeof ampCategories === 'undefined') return false;
     if (typeof ampsData === 'undefined') return false;
     return true;
+}
+
+// [NEW] Проверка кооперативного режима
+function isCoopMode() {
+    return escState.players.length > 1;
 }
 
 // ============================================================
@@ -2209,7 +2219,12 @@ function saveEscalation() {
                 usedSmallTrials: escState.usedSmallTrials.slice(),
                 currentEquipPlayerIndex: escState.currentEquipPlayerIndex,
                 currentAmpPlayerIndex: escState.currentAmpPlayerIndex,
-                currentBreakPlayerIndex: escState.currentBreakPlayerIndex
+                currentBreakPlayerIndex: escState.currentBreakPlayerIndex,
+                // [NEW]
+                initialPlayerCount: escState.initialPlayerCount,
+                pendingNewPlayer: escState.pendingNewPlayer ? JSON.parse(JSON.stringify(escState.pendingNewPlayer)) : null,
+                catchUpQueue: JSON.parse(JSON.stringify(escState.catchUpQueue || [])),
+                catchUpMode: escState.catchUpMode
             },
             collectedRecords: JSON.parse(JSON.stringify(collectedRecords))
         };
@@ -2269,6 +2284,12 @@ function applySavedEscalation(data) {
     escState.currentEquipPlayerIndex = s.currentEquipPlayerIndex || 0;
     escState.currentAmpPlayerIndex = s.currentAmpPlayerIndex || 0;
     escState.currentBreakPlayerIndex = s.currentBreakPlayerIndex || 0;
+
+    // [NEW]
+    escState.initialPlayerCount = s.initialPlayerCount || escState.playerCount || 0;
+    escState.pendingNewPlayer = s.pendingNewPlayer || null;
+    escState.catchUpQueue = s.catchUpQueue || [];
+    escState.catchUpMode = s.catchUpMode || null;
 
     collectedRecords = (data.collectedRecords || []).slice();
 
@@ -2614,6 +2635,9 @@ function showFullResult() {
 }
 
 function generateEscResult() {
+    // [MOD] всегда передаём актуальное число игроков для кооп/одиночной фильтрации
+    escState.playerCount = escState.players.length;
+
     var sel = getMapAndTrial(escState.level);
     if (!sel) return;
 
@@ -2622,7 +2646,10 @@ function generateEscResult() {
 
     var d = getDifficultyByLevel(escState.level);
     escState.difficulty = d.name;
-    escState.variators = getVariatorsForLevel(escState.level, sel.mapName, escState.playerCount);
+
+    // [MOD] при кооперативе используем актуальный состав
+    var effectiveCount = isCoopMode() ? escState.players.length : 1;
+    escState.variators = getVariatorsForLevel(escState.level, sel.mapName, effectiveCount);
 
     document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
 
@@ -2651,6 +2678,7 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
                         <span class="map-meta-item"><strong style="color:#ffbc9a;">№:</strong> #${escState.level}</span>
                         <span class="map-meta-item"><strong style="color:#ffbc9a;">Сложность:</strong> ${escState.difficulty}</span>
                         <span class="map-meta-item"><strong style="color:#ffbc9a;">Вариаторов:</strong> ${escState.variators.length}</span>
+                        <span class="map-meta-item"><strong style="color:#ffbc9a;">Режим:</strong> ${isCoopMode() ? 'Кооператив' : 'Одиночный'}</span>
                     </div>
                 </div>
             </div>
@@ -2677,6 +2705,26 @@ function renderEscResultPlayers() {
     if (!container) return;
     container.innerHTML = '';
 
+    // [NEW] Панель управления участниками
+    var controls = document.createElement('div');
+    controls.style.cssText = 'display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-bottom:12px; flex-wrap:wrap;';
+
+    var addBtn = document.createElement('button');
+    addBtn.className = 'next-btn';
+    addBtn.style.cssText = 'padding:0.55rem 1.2rem; font-size:0.78rem; min-width:auto;';
+    addBtn.innerHTML = '<i class="fas fa-user-plus"></i> Добавить игрока';
+    addBtn.disabled = escState.players.length >= 4;
+    addBtn.title = escState.players.length >= 4 ? 'Максимум 4 игрока' : 'Добавить игрока';
+    addBtn.addEventListener('click', function() { addPlayerDuringEscalation(); });
+    controls.appendChild(addBtn);
+
+    var modeBadge = document.createElement('span');
+    modeBadge.style.cssText = 'font-size:0.7rem; color:#888; padding:0.3rem 0.9rem; border-radius:20px; background:rgba(220,90,50,0.1); border:1px solid rgba(220,90,50,0.2); white-space:nowrap;';
+    modeBadge.textContent = isCoopMode() ? 'Кооператив' : 'Одиночный режим';
+    controls.appendChild(modeBadge);
+
+    container.appendChild(controls);
+
     escState.players.forEach(function(player, idx) {
         var equip = escState.equipSelections[idx] || 'Не выбрано';
         var eData = typeof equipmentData !== 'undefined' ? equipmentData.find(function(e) { return e.name === equip; }) : null;
@@ -2686,7 +2734,7 @@ function renderEscResultPlayers() {
         section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px;';
 
         var toggle = document.createElement('div');
-        toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15);';
+        toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px;';
         toggle.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1;">
                 <i class="fas fa-user" style="color: #e16d48; font-size: 1rem;"></i>
@@ -2700,6 +2748,17 @@ function renderEscResultPlayers() {
             </div>
         `;
         section.appendChild(toggle);
+
+        // [NEW] Кнопка удаления игрока
+        var removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '<i class="fas fa-user-minus"></i>';
+        removeBtn.title = 'Убрать игрока';
+        removeBtn.style.cssText = 'background:rgba(255,51,51,0.15); border:1px solid rgba(255,51,51,0.3); color:#ff6666; border-radius:8px; width:28px; height:28px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;';
+        removeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            removePlayerDuringEscalation(idx);
+        });
+        toggle.querySelector('div:last-child').appendChild(removeBtn);
 
         var content = document.createElement('div');
         content.style.cssText = 'padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;';
@@ -2788,6 +2847,242 @@ function renderEscResultPlayers() {
                 this.querySelector('.fa-chevron-down').style.transform = 'rotate(0deg)';
             }
         };
+    });
+}
+
+// ============================================================
+// [NEW] ДОБАВЛЕНИЕ / УДАЛЕНИЕ ИГРОКА ВО ВРЕМЯ ЭСКАЛАЦИИ
+// ============================================================
+function addPlayerDuringEscalation() {
+    if (escState.players.length >= 4) {
+        alert('Максимум 4 игрока.');
+        return;
+    }
+
+    var name = prompt('Введите ник нового игрока:');
+    if (name === null) return;
+    name = name.trim();
+    if (!name) { alert('Имя не может быть пустым.'); return; }
+    if (escState.players.indexOf(name) !== -1) { alert('Игрок с таким именем уже есть.'); return; }
+
+    var newIndex = escState.players.length;
+    escState.players.push(name);
+
+    escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
+    escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
+    escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
+    escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
+    escState.allAmpsUsed[newIndex] = false;
+
+    // После добавления игрок становится кооперативом автоматически (players.length > 1)
+    // → при следующей генерации будут доступны кооп-вариаторы
+
+    // Очередь догона: снаряжение + (уровень-1) раундов по 3 амфы
+    var catchUpAmpRounds = Math.max(0, escState.level - 1);
+
+    escState.catchUpQueue = [];
+    escState.catchUpQueue.push({ type: 'equip' });
+    for (var r = 0; r < catchUpAmpRounds; r++) {
+        escState.catchUpQueue.push({ type: 'amp' });
+    }
+
+    escState.pendingNewPlayer = { index: newIndex, name: name };
+    escState.catchUpMode = null;
+
+    // Перерисуем блок участников, чтобы бейдж режима обновился
+    renderEscResultPlayers();
+
+    // Запускаем догон
+    processCatchUpQueue();
+}
+
+function removePlayerDuringEscalation(idx) {
+    if (escState.players.length <= 1) {
+        alert('Нельзя убрать последнего игрока. Покинуть эскалацию можно через «Покинуть Эскалацию».');
+        return;
+    }
+    var name = escState.players[idx];
+    if (!confirm('Убрать игрока «' + name + '» из эскалации?')) return;
+
+    escState.players.splice(idx, 1);
+
+    function remap(obj) {
+        var out = {};
+        Object.keys(obj).forEach(function(k) {
+            var i = parseInt(k, 10);
+            if (isNaN(i)) { out[k] = obj[k]; return; }
+            if (i < idx) out[i] = obj[i];
+            else if (i > idx) out[i - 1] = obj[i];
+        });
+        return out;
+    }
+    escState.equipSelections = remap(escState.equipSelections);
+    escState.ampSelections   = remap(escState.ampSelections);
+    escState.usedAmps        = remap(escState.usedAmps);
+    escState.unlockedAmps    = remap(escState.unlockedAmps);
+    escState.allAmpsUsed     = remap(escState.allAmpsUsed);
+
+    if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
+        escState.pendingNewPlayer = null;
+        escState.catchUpQueue = [];
+        escState.catchUpMode = null;
+        var m = document.getElementById('catchUpModal');
+        if (m) m.remove();
+    } else if (escState.pendingNewPlayer && escState.pendingNewPlayer.index > idx) {
+        escState.pendingNewPlayer.index -= 1;
+    }
+
+    // Если остался 1 игрок — isCoopMode() вернёт false
+    // (следующий уровень будет сгенерирован в одиночном режиме)
+    renderEscResultPlayers();
+}
+
+function processCatchUpQueue() {
+    if (!escState.pendingNewPlayer) return;
+
+    var old = document.getElementById('catchUpModal');
+    if (old) old.remove();
+
+    if (escState.catchUpQueue.length === 0) {
+        var finishedName = escState.pendingNewPlayer.name;
+        escState.pendingNewPlayer = null;
+        escState.catchUpMode = null;
+        renderEscResultPlayers();
+        showToast('Игрок «' + finishedName + '» догнал прогресс эскалации', '#2ecc71');
+        return;
+    }
+
+    var step = escState.catchUpQueue.shift();
+    if (step.type === 'equip') {
+        openCatchUpEquipModal();
+    } else {
+        openCatchUpAmpModal();
+    }
+}
+
+function showToast(text, color) {
+    var notif = document.createElement('div');
+    notif.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:' + (color || '#2ecc71') + '; color:white; padding:14px 28px; border-radius:40px; font-weight:600; font-size:0.95rem; z-index:5000; box-shadow:0 8px 30px rgba(0,0,0,0.5); animation:modalFadeIn 0.3s ease;';
+    notif.textContent = text;
+    document.body.appendChild(notif);
+    setTimeout(function() {
+        notif.style.opacity = '0';
+        notif.style.transition = 'opacity 0.4s';
+        setTimeout(function() { notif.remove(); }, 500);
+    }, 1800);
+}
+
+function openCatchUpEquipModal() {
+    var idx = escState.pendingNewPlayer.index;
+    var name = escState.pendingNewPlayer.name;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'catchUpModal';
+    overlay.className = 'amp-modal-overlay active';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2500; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+
+    var modal = document.createElement('div');
+    modal.className = 'amp-modal';
+    modal.style.cssText = 'max-width:900px; width:100%;';
+
+    var shuf = (typeof equipmentData !== 'undefined' ? equipmentData.slice() : []).sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    var cardsHtml = sel.map(function(eq) {
+        return '<div class="equip-card" data-eq="' + eq.name + '" style="width:180px; height:260px; position:relative;">' +
+            '<div class="tooltip-box"><div class="tt-type">[СНАРЯЖЕНИЕ]</div><div class="tt-name">' + eq.name + '</div><div class="tt-desc">' + (eq.desc || '') + '</div></div>' +
+        '</div>';
+    }).join('');
+
+    modal.innerHTML =
+        '<div class="amp-modal-header">' +
+            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение (догон)</h2>' +
+        '</div>' +
+        '<div style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:16px;">Шаг 1 из ' + (1 + Math.max(0, escState.level - 1)) + '</div>' +
+        '<div style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; padding-bottom:40px;">' + cardsHtml + '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    modal.querySelectorAll('.equip-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var eqName = this.dataset.eq;
+            escState.equipSelections[idx] = eqName;
+            overlay.remove();
+            processCatchUpQueue();
+        });
+    });
+}
+
+function openCatchUpAmpModal() {
+    var idx = escState.pendingNewPlayer.index;
+    var name = escState.pendingNewPlayer.name;
+
+    var remainingRounds = escState.catchUpQueue.filter(function(s) { return s.type === 'amp'; }).length + 1;
+    var totalRounds = Math.max(0, escState.level - 1);
+    var currentRound = totalRounds - remainingRounds + 1;
+
+    var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
+    if (availCats.length === 0) {
+        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
+        processCatchUpQueue();
+        return;
+    }
+
+    var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+    var availAmps = getAvailableAmpsByCategory(idx, randCat);
+    var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
+    var display = shuf.slice(0, 3);
+
+    if (display.length === 0) {
+        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
+        processCatchUpQueue();
+        return;
+    }
+
+    var overlay = document.createElement('div');
+    overlay.id = 'catchUpModal';
+    overlay.className = 'amp-modal-overlay active';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2500; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+
+    var modal = document.createElement('div');
+    modal.className = 'amp-modal';
+    modal.style.cssText = 'max-width:900px; width:100%;';
+
+    var cardsHtml = display.map(function(amp) {
+        return '<div class="amp-card" data-amp="' + amp.name + '" style="flex:1 1 0; max-width:180px;">' +
+            '<div class="tooltip-box"><div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || '') + '</div></div>' +
+            '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
+            '<div class="amp-title">' + amp.name + '</div>' +
+            '<div class="amp-category">' + amp.category + '</div>' +
+        '</div>';
+    }).join('');
+
+    modal.innerHTML =
+        '<div class="amp-modal-header">' +
+            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы (догон)</h2>' +
+        '</div>' +
+        '<div style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:6px;">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
+        '<div style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; padding-bottom:40px;">' + cardsHtml + '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    modal.querySelectorAll('.amp-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var ampName = this.dataset.amp;
+            var ampObj = ampsData.find(function(a) { return a.name === ampName; });
+            var cat = ampObj ? ampObj.category : randCat;
+
+            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+            escState.ampSelections[idx][cat] = ampName;
+            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+            if (escState.usedAmps[idx].indexOf(ampName) === -1) escState.usedAmps[idx].push(ampName);
+            unlockAmpForPlayer(idx, ampName);
+
+            overlay.remove();
+            processCatchUpQueue();
+        });
     });
 }
 
@@ -3218,6 +3513,10 @@ function checkSavedOnStart() {
                 } else if (escState.currentStep >= 5 && escState.trial && escState.map) {
                     showFullResult();
                     prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
+                    // [NEW] если в сохранении был незавершённый догон — продолжим
+                    if (escState.pendingNewPlayer) {
+                        setTimeout(function() { processCatchUpQueue(); }, 400);
+                    }
                 } else if (escState.currentStep === 2) {
                     goToEscStep(2);
                     renderEscPlayerNames();
@@ -3234,7 +3533,12 @@ function checkSavedOnStart() {
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
                     nostophobiaCount: 0, currentEquipPlayerIndex: 0,
-                    currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0
+                    currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
+                    // [NEW]
+                    initialPlayerCount: 0,
+                    pendingNewPlayer: null,
+                    catchUpQueue: [],
+                    catchUpMode: null
                 };
                 collectedRecords = [];
                 updateLevelCounter();
@@ -3259,6 +3563,7 @@ function doInit() {
                 options.forEach(function(b) { b.classList.remove('selected'); });
                 this.classList.add('selected');
                 escState.playerCount = parseInt(this.dataset.count);
+                escState.initialPlayerCount = escState.playerCount; // [NEW]
                 if (s1Next) s1Next.disabled = false;
             });
         });
@@ -3275,7 +3580,8 @@ function doInit() {
             if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
             if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
         });
-        
+        escState.initialPlayerCount = escState.players.length; // [NEW]
+
         escState.currentEquipPlayerIndex = 0;
         
         goToEscStep(3);
@@ -3397,7 +3703,6 @@ function doInit() {
             updateLevelCounter();
 
             escState.currentEquipPlayerIndex = 0;
-            // Снаряжение НЕ сбрасываем!
 
             var hasAvailable = false;
             escState.players.forEach(function(_, idx) {
