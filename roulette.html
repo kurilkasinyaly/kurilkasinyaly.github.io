@@ -518,9 +518,14 @@
         .escalation-rule-card .rule-variator-slot {
             width: 80px;
             height: 80px;
-            border-radius: 12px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat;
-            border: 3px solid #d4763a; /* цвет бортика баннера */
+            border-radius: 0;
+            background-color: #d4763a; /* сплошная заливка цветом бортика баннера */
+            background-image: url('images/вариаторы фон.webp');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-origin: border-box;
+            border: 3px solid #d4763a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -535,7 +540,7 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            padding: 6px;
+            padding: 0;
             display: block;
         }
         .escalation-rule-card .rule-center-content {
