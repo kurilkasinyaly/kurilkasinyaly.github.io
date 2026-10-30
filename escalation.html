@@ -1831,7 +1831,7 @@ function shuffleArray(arr) {
 }
 
 // ============================================================
-// ВАРИАТОР СЛОЖНОСТИ (ИЗМЕНЕНО: Враги Сильнее II с 16 уровня)
+// ВАРИАТОР СЛОЖНОСТИ
 // ============================================================
 function getDifficultyVariator(level, available) {
     if (level < 5) return null;
@@ -1853,7 +1853,7 @@ function getDifficultyVariator(level, available) {
 }
 
 // ============================================================
-// СОВМЕСТИМОСТЬ ВАРИАТОРОВ (ДОПОЛНЕНА НОВЫМИ ПРАВИЛАМИ)
+// СОВМЕСТИМОСТЬ ВАРИАТОРОВ
 // ============================================================
 function isVariatorCompatible(v, selected, trialName, playerCount, level) {
     var name = v.name;
@@ -1862,7 +1862,6 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
 
     if (names.indexOf(name) !== -1) return false;
 
-    // --- НОВОЕ ПРАВИЛО: Трофейное Снаряжение блокирует Урон Перезапускает, Ограниченное, Без Улучшения ---
     var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
     if (name === 'Трофейное Снаряжение') {
         for (i = 0; i < trophyBlocked.length; i++) {
@@ -1871,13 +1870,11 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
     }
     if (trophyBlocked.indexOf(name) !== -1) {
         if (names.indexOf('Трофейное Снаряжение') !== -1) return false;
-        // Взаимная блокировка этих трех между собой
         for (i = 0; i < trophyBlocked.length; i++) {
             if (trophyBlocked[i] !== name && names.indexOf(trophyBlocked[i]) !== -1) return false;
         }
     }
 
-    // --- НОВОЕ ПРАВИЛО: Психохирургия блокирует Без Имен, Экстремальный Психоз, Враги Сильнее I/II, Повышенная Угроза I/II ---
     var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
     if (name === 'Психохирургия') {
         for (i = 0; i < psychoBlocked.length; i++) {
@@ -1888,11 +1885,9 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
         if (names.indexOf('Психохирургия') !== -1) return false;
     }
 
-    // --- НОВОЕ ПРАВИЛО: Не Шумите и Разъяренные Враги взаимоисключающие ---
     if (name === 'Не Шумите' && names.indexOf('Разъяренные Враги') !== -1) return false;
     if (name === 'Разъяренные Враги' && names.indexOf('Не Шумите') !== -1) return false;
 
-    // --- СТАРЫЕ ПРАВИЛА ---
     var mainGroup = ['Главная Рулетка', 'Самое Главное'];
     var antiGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
 
@@ -2519,7 +2514,7 @@ function renderEscAmps() {
 }
 
 // ============================================================
-// ПРЕВЬЮ-МОДАЛКА (ФОН ВМЕСТО БОРТИКОВ)
+// ПРЕВЬЮ-МОДАЛКА
 // ============================================================
 function showPreviewModal(trialName, mapName, variators, level) {
     var old = document.getElementById('previewModal');
@@ -3199,15 +3194,9 @@ function showBreakModal() {
 function initEscalation() {
     if (!checkDataLoaded()) {
         var checkInterval = setInterval(function() {
-            if (checkDataLoaded()) {
-                clearInterval(checkInterval);
-                doInit();
-            }
+            if (checkDataLoaded()) { clearInterval(checkInterval); doInit(); }
         }, 500);
-        setTimeout(function() {
-            clearInterval(checkInterval);
-            doInit();
-        }, 10000);
+        setTimeout(function() { clearInterval(checkInterval); doInit(); }, 10000);
         return;
     }
     doInit();
