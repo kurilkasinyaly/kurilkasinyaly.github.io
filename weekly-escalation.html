@@ -547,6 +547,59 @@
             border: 2px solid rgba(220, 90, 50, 0.3);
             flex-shrink: 0;
         }
+
+        /* ===== РАМКИ ИСПЫТАНИЙ (МК-стимуляция / Генезис) ===== */
+        .trial-frame {
+            position: relative;
+            width: 100%;
+            max-width: 240px;
+            flex-shrink: 0;
+            /* отступ картинки от края рамки (подберите под свои рамки) */
+            --frame-inset-top: 7%;
+            --frame-inset-right: 7%;
+            --frame-inset-bottom: 7%;
+            --frame-inset-left: 7%;
+        }
+        /* рамка задаёт размер блока, картинка испытания лежит поверх неё и закрывает чёрную подложку */
+        .trial-frame .trial-frame-border {
+            display: block;
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .trial-frame .trial-frame-window {
+            position: absolute;
+            top: var(--frame-inset-top);
+            right: var(--frame-inset-right);
+            bottom: var(--frame-inset-bottom);
+            left: var(--frame-inset-left);
+            overflow: hidden;
+            z-index: 2;
+            background: transparent;
+        }
+        .trial-frame .trial-frame-window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        /* Картинка лежит ПОВЕРХ рамки и закрывает чёрную подложку внутри неё.
+           Отступы = толщина видимого бортика рамки (бумага / белая кайма). */
+        .trial-frame.frame-mk {
+            --frame-inset-top: 15%;
+            --frame-inset-right: 7.5%;
+            --frame-inset-bottom: 21%;
+            --frame-inset-left: 7.5%;
+        }
+        .trial-frame.frame-genesis {
+            --frame-inset-top: 9.5%;
+            --frame-inset-right: 9.5%;
+            --frame-inset-bottom: 11.5%;
+            --frame-inset-left: 10%;
+        }
+
         .result-map-info { flex: 1; min-width: 200px; }
         .result-map-info .map-label {
             font-size: 0.75rem; color: #888;
@@ -2852,9 +2905,19 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
         var weeklyVarName = escState.weeklyVariator ? escState.weeklyVariator.name.toUpperCase() : 'Нет';
         var modeText = isCoopMode() ? 'Кооператив' : 'Одиночный';
 
+        // Тип рамки: большие испытания (каждое 10-е, название ЗАГЛАВНЫМИ) — Генезис, остальные — МК-стимуляция
+        var isBigTrial = trial.name === trial.name.toUpperCase();
+        var frameSrc = isBigTrial ? 'images/Генезис-рамка.webp' : 'images/МК-рамка.webp';
+        var frameClass = isBigTrial ? 'frame-genesis' : 'frame-mk';
+
         resultMap.innerHTML = `
             <div class="result-map-row">
-                <img class="map-image" src="${trialImage}" alt="${trial.name}" style="width:100%; max-width:200px; height:auto; object-fit:contain; border-radius:16px; border:2px solid rgba(220,90,50,0.3);" onerror="this.src='https://placehold.co/200x200/1a1a2e/e16d48?text=${encodeURIComponent(trial.name)}'">
+                <div class="trial-frame ${frameClass}">
+                    <div class="trial-frame-window">
+                        <img src="${trialImage}" alt="${trial.name}" onerror="this.src='https://placehold.co/200x200/1a1a2e/e16d48?text=${encodeURIComponent(trial.name)}'">
+                    </div>
+                    <img class="trial-frame-border" src="${frameSrc}" alt="">
+                </div>
                 <div class="result-map-info" style="flex:1; min-width:200px;">
                     <div class="map-label" style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;"><i class="fas fa-map"></i> Карта</div>
                     <div class="trial-name" style="font-size:1.6rem; color:#e16d48; font-weight:900; margin:0.2rem 0 0.1rem; letter-spacing:1px;">${trial.name.toUpperCase()}</div>
