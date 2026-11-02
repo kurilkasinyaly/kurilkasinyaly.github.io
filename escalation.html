@@ -549,13 +549,13 @@
             --frame-inset-bottom: 7%;
             --frame-inset-left: 7%;
         }
-        /* рамка задаёт размер блока, картинка испытания лежит под ней */
+        /* рамка задаёт размер блока, картинка испытания лежит поверх неё и закрывает чёрную подложку */
         .trial-frame .trial-frame-border {
             display: block;
             width: 100%;
             height: auto;
             position: relative;
-            z-index: 2;
+            z-index: 1;
             pointer-events: none;
         }
         .trial-frame .trial-frame-window {
@@ -565,8 +565,8 @@
             bottom: var(--frame-inset-bottom);
             left: var(--frame-inset-left);
             overflow: hidden;
-            z-index: 1;
-            background: #000;
+            z-index: 2;
+            background: transparent;
         }
         .trial-frame .trial-frame-window img {
             width: 100%;
@@ -575,17 +575,19 @@
             display: block;
         }
         /* отдельная подгонка под каждую рамку, если у них разная толщина */
+        /* Картинка лежит ПОВЕРХ рамки и закрывает чёрную подложку внутри неё.
+           Отступы = толщина видимого бортика рамки (бумага / белая кайма). */
         .trial-frame.frame-mk {
-            --frame-inset-top: 7%;
-            --frame-inset-right: 7%;
-            --frame-inset-bottom: 7%;
-            --frame-inset-left: 7%;
+            --frame-inset-top: 15%;
+            --frame-inset-right: 7.5%;
+            --frame-inset-bottom: 21%;
+            --frame-inset-left: 7.5%;
         }
         .trial-frame.frame-genesis {
-            --frame-inset-top: 7%;
-            --frame-inset-right: 7%;
-            --frame-inset-bottom: 7%;
-            --frame-inset-left: 7%;
+            --frame-inset-top: 9.5%;
+            --frame-inset-right: 9.5%;
+            --frame-inset-bottom: 11.5%;
+            --frame-inset-left: 10%;
         }
 
         .result-map-info { flex: 1; min-width: 200px; }
