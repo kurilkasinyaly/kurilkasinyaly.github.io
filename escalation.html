@@ -183,32 +183,6 @@
             text-align: center;
         }
 
-        .player-count-options {
-            display: flex; gap: 1.2rem;
-            flex-wrap: wrap; justify-content: center;
-            padding: 0.5rem 0;
-        }
-        .player-count-btn {
-            background: rgba(0, 0, 0, 0.35);
-            border: 2px solid rgba(220, 90, 50, 0.25);
-            border-radius: 24px;
-            padding: 1.2rem 2.8rem;
-            color: #c2b9d4; font-size: 1.6rem; font-weight: 700;
-            cursor: pointer; transition: all 0.3s ease;
-            min-width: 90px; font-family: inherit;
-        }
-        .player-count-btn:hover {
-            border-color: #e16d48; color: white;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(220, 90, 50, 0.1);
-        }
-        .player-count-btn.selected {
-            border-color: #e16d48;
-            background: rgba(220, 90, 50, 0.2);
-            color: white;
-            box-shadow: 0 0 40px rgba(220, 90, 50, 0.15);
-        }
-
         .player-name-inputs {
             display: flex; flex-direction: column;
             gap: 1rem; max-width: 550px;
@@ -1566,54 +1540,59 @@
             <span class="level-difficulty level-difficulty-intro" id="levelDifficulty">Начальная</span>
         </div>
 
+        <!-- ШАГ 1: Ввод Ника -->
         <div class="step-container" id="escStep1">
             <div class="step-title">
                 <span class="step-number">Шаг 1</span>
-                <i class="fas fa-users"></i> Количество игроков
+                <i class="fas fa-user"></i> Ваш ник
             </div>
-            <div class="step-subtitle">Выберите, сколько игроков будет участвовать в испытании</div>
-            <div class="player-count-options" id="escPlayerCountOptions">
-                <button class="player-count-btn" data-count="1">1</button>
-                <button class="player-count-btn" data-count="2">2</button>
-                <button class="player-count-btn" data-count="3">3</button>
-                <button class="player-count-btn" data-count="4">4</button>
+            <div class="step-subtitle">Введите ваш игровой ник (или выберите из списка)</div>
+            <div class="player-name-inputs">
+                <div class="input-row">
+                    <label><i class="fas fa-user" style="color: #e16d48;"></i> Игрок</label>
+                    <input type="text" list="knownPlayers" placeholder="Введите ник..." id="escPlayerName_0" value="">
+                    <datalist id="knownPlayers">
+                        <option value="Майор Гом 2.0">
+                        <option value="joysk_o">
+                        <option value="Майор СУЕТЛАНА">
+                        <option value="crøssfade">
+                        <option value="Генерал Героиня">
+                        <option value="Shugar">
+                        <option value="blablablacreek">
+                        <option value="humiliated">
+                        <option value="Barricade Guy">
+                        <option value="LARIK_LOL">
+                        <option value="Garlik_Darlik">
+                        <option value="Takuya_Satori">
+                        <option value="Despektr">
+                    </datalist>
+                </div>
             </div>
             <div class="step-actions">
                 <button class="next-btn" id="escStep1Next" disabled>Далее →</button>
             </div>
         </div>
 
-        <div class="step-container hidden" id="escStep2">
-            <div class="step-title">
-                <span class="step-number">Шаг 2</span>
-                <i class="fas fa-user-edit"></i> Имена игроков
-            </div>
-            <div class="step-subtitle">Введите имена всех участников</div>
-            <div class="player-name-inputs" id="escPlayerNameInputs"></div>
-            <div class="step-actions">
-                <button class="back-btn" id="escStep2Back">← Назад</button>
-                <button class="next-btn" id="escStep2Next" disabled>Далее →</button>
-            </div>
-        </div>
-
+        <!-- ШАГ 3: Выбор Снаряжения (сразу после ввода ника) -->
         <div class="step-container hidden" id="escStep3">
             <div class="step-title">
-                <span class="step-number">Шаг 3</span>
+                <span class="step-number">Шаг 2</span>
                 <i class="fas fa-backpack"></i> Выбор снаряжения
             </div>
-            <div class="step-subtitle" id="escStep3Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
+            <div class="step-subtitle" id="escStep3Subtitle">Выберите стартовое снаряжение</div>
             <div id="escStep3Content"></div>
             <div class="step-actions" id="escStep3Actions">
                 <button class="back-btn" id="escStep3Back" disabled>← Назад</button>
             </div>
         </div>
 
+        <!-- ШАГ 4: Выбор Амф (сразу после снаряжения) -->
         <div class="step-container hidden" id="escStep4">
             <div class="step-title">
-                <span class="step-number">Шаг 4</span>
+                <span class="step-number">Шаг 3</span>
                 <i class="fas fa-capsules"></i> Выбор амф
             </div>
-            <div class="step-subtitle" id="escStep4Subtitle">Каждому игроку предлагается 3 случайных амфы на выбор (нужно выбрать 1)</div>
+            <div class="step-subtitle" id="escStep4Subtitle">Выберите стартовую амфу</div>
             <div id="escStep4Content"></div>
             <div class="step-actions">
                 <button class="back-btn" id="escStep4Back" disabled>← Назад</button>
@@ -1639,7 +1618,7 @@
                 </div>
                 <div>
                     <div class="result-card">
-                        <h3><i class="fas fa-users"></i> УЧАСТНИКИ</h3>
+                        <h3><i class="fas fa-user"></i> ИГРОК</h3>
                         <div id="escResultPlayers"></div>
                     </div>
                 </div>
@@ -1767,7 +1746,7 @@
 
         <div class="save-info" id="saveInfoBlock">
             <div class="row"><span>Уровень:</span> <strong id="saveInfoLevel">—</strong></div>
-            <div class="row"><span>Игроков:</span> <strong id="saveInfoPlayers">—</strong></div>
+            <div class="row"><span>Игрок:</span> <strong id="saveInfoPlayers">—</strong></div>
             <div class="row"><span>Записей в отчёте:</span> <strong id="saveInfoRecords">—</strong></div>
             <div class="row"><span>Дата сохранения:</span> <strong id="saveInfoDate">—</strong></div>
         </div>
@@ -2453,6 +2432,7 @@ function renderEscPlayerNames() {
         <option value="LARIK_LOL">
         <option value="Garlik_Darlik">
         <option value="Takuya_Satori">
+        <option value="Despektr">
     </datalist>`;
 
     for (var i = 0; i < pc; i++) {
@@ -2858,26 +2838,6 @@ function renderEscResultPlayers() {
     if (!container) return;
     container.innerHTML = '';
 
-    // [NEW] Панель управления участниками
-    var controls = document.createElement('div');
-    controls.style.cssText = 'display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-bottom:12px; flex-wrap:wrap;';
-
-    var addBtn = document.createElement('button');
-    addBtn.className = 'next-btn';
-    addBtn.style.cssText = 'padding:0.55rem 1.2rem; font-size:0.78rem; min-width:auto;';
-    addBtn.innerHTML = '<i class="fas fa-user-plus"></i> Добавить игрока';
-    addBtn.disabled = escState.players.length >= 4;
-    addBtn.title = escState.players.length >= 4 ? 'Максимум 4 игрока' : 'Добавить игрока';
-    addBtn.addEventListener('click', function() { addPlayerDuringEscalation(); });
-    controls.appendChild(addBtn);
-
-    var modeBadge = document.createElement('span');
-    modeBadge.style.cssText = 'font-size:0.7rem; color:#888; padding:0.3rem 0.9rem; border-radius:20px; background:rgba(220,90,50,0.1); border:1px solid rgba(220,90,50,0.2); white-space:nowrap;';
-    modeBadge.textContent = isCoopMode() ? 'Кооператив' : 'Одиночный режим';
-    controls.appendChild(modeBadge);
-
-    container.appendChild(controls);
-
     escState.players.forEach(function(player, idx) {
         var equip = escState.equipSelections[idx] || 'Не выбрано';
         var eData = typeof equipmentData !== 'undefined' ? equipmentData.find(function(e) { return e.name === equip; }) : null;
@@ -2901,17 +2861,6 @@ function renderEscResultPlayers() {
             </div>
         `;
         section.appendChild(toggle);
-
-        // [NEW] Кнопка удаления игрока
-        var removeBtn = document.createElement('button');
-        removeBtn.innerHTML = '<i class="fas fa-user-minus"></i>';
-        removeBtn.title = 'Убрать игрока';
-        removeBtn.style.cssText = 'background:rgba(255,51,51,0.15); border:1px solid rgba(255,51,51,0.3); color:#ff6666; border-radius:8px; width:28px; height:28px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;';
-        removeBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            removePlayerDuringEscalation(idx);
-        });
-        toggle.querySelector('div:last-child').appendChild(removeBtn);
 
         var content = document.createElement('div');
         content.style.cssText = 'padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;';
@@ -3003,238 +2952,6 @@ function renderEscResultPlayers() {
     });
 }
 
-// ============================================================
-// [NEW] ДОБАВЛЕНИЕ / УДАЛЕНИЕ ИГРОКА ВО ВРЕМЯ ЭСКАЛАЦИИ
-// ============================================================
-function addPlayerDuringEscalation() {
-    if (escState.players.length >= 4) {
-        alert('Максимум 4 игрока.');
-        return;
-    }
-
-    var name = prompt('Введите ник нового игрока:');
-    if (name === null) return;
-    name = name.trim();
-    if (!name) { alert('Имя не может быть пустым.'); return; }
-    if (escState.players.indexOf(name) !== -1) { alert('Игрок с таким именем уже есть.'); return; }
-
-    var newIndex = escState.players.length;
-    escState.players.push(name);
-
-    escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
-    escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
-    escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
-    escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
-    escState.allAmpsUsed[newIndex] = false;
-
-    // После добавления игрок становится кооперативом автоматически (players.length > 1)
-    // → при следующей генерации будут доступны кооп-вариаторы
-
-    // Очередь догона: снаряжение + (уровень-1) раундов по 3 амфы
-    var catchUpAmpRounds = Math.max(0, escState.level - 1);
-
-    escState.catchUpQueue = [];
-    escState.catchUpQueue.push({ type: 'equip' });
-    for (var r = 0; r < catchUpAmpRounds; r++) {
-        escState.catchUpQueue.push({ type: 'amp' });
-    }
-
-    escState.pendingNewPlayer = { index: newIndex, name: name };
-    escState.catchUpMode = null;
-
-    // Перерисуем блок участников, чтобы бейдж режима обновился
-    renderEscResultPlayers();
-
-    // Запускаем догон
-    processCatchUpQueue();
-}
-
-function removePlayerDuringEscalation(idx) {
-    if (escState.players.length <= 1) {
-        alert('Нельзя убрать последнего игрока. Покинуть эскалацию можно через «Покинуть Эскалацию».');
-        return;
-    }
-    var name = escState.players[idx];
-    if (!confirm('Убрать игрока «' + name + '» из эскалации?')) return;
-
-    escState.players.splice(idx, 1);
-
-    function remap(obj) {
-        var out = {};
-        Object.keys(obj).forEach(function(k) {
-            var i = parseInt(k, 10);
-            if (isNaN(i)) { out[k] = obj[k]; return; }
-            if (i < idx) out[i] = obj[i];
-            else if (i > idx) out[i - 1] = obj[i];
-        });
-        return out;
-    }
-    escState.equipSelections = remap(escState.equipSelections);
-    escState.ampSelections   = remap(escState.ampSelections);
-    escState.usedAmps        = remap(escState.usedAmps);
-    escState.unlockedAmps    = remap(escState.unlockedAmps);
-    escState.allAmpsUsed     = remap(escState.allAmpsUsed);
-
-    if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
-        escState.pendingNewPlayer = null;
-        escState.catchUpQueue = [];
-        escState.catchUpMode = null;
-        var m = document.getElementById('catchUpModal');
-        if (m) m.remove();
-    } else if (escState.pendingNewPlayer && escState.pendingNewPlayer.index > idx) {
-        escState.pendingNewPlayer.index -= 1;
-    }
-
-    // Если остался 1 игрок — isCoopMode() вернёт false
-    // (следующий уровень будет сгенерирован в одиночном режиме)
-    renderEscResultPlayers();
-}
-
-function processCatchUpQueue() {
-    if (!escState.pendingNewPlayer) return;
-
-    var old = document.getElementById('catchUpModal');
-    if (old) old.remove();
-
-    if (escState.catchUpQueue.length === 0) {
-        var finishedName = escState.pendingNewPlayer.name;
-        escState.pendingNewPlayer = null;
-        escState.catchUpMode = null;
-        renderEscResultPlayers();
-        showToast('Игрок «' + finishedName + '» догнал прогресс эскалации', '#2ecc71');
-        return;
-    }
-
-    var step = escState.catchUpQueue.shift();
-    if (step.type === 'equip') {
-        openCatchUpEquipModal();
-    } else {
-        openCatchUpAmpModal();
-    }
-}
-
-function showToast(text, color) {
-    var notif = document.createElement('div');
-    notif.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:' + (color || '#2ecc71') + '; color:white; padding:14px 28px; border-radius:40px; font-weight:600; font-size:0.95rem; z-index:5000; box-shadow:0 8px 30px rgba(0,0,0,0.5); animation:modalFadeIn 0.3s ease;';
-    notif.textContent = text;
-    document.body.appendChild(notif);
-    setTimeout(function() {
-        notif.style.opacity = '0';
-        notif.style.transition = 'opacity 0.4s';
-        setTimeout(function() { notif.remove(); }, 500);
-    }, 1800);
-}
-
-function openCatchUpEquipModal() {
-    var idx = escState.pendingNewPlayer.index;
-    var name = escState.pendingNewPlayer.name;
-
-    var overlay = document.createElement('div');
-    overlay.id = 'catchUpModal';
-    overlay.className = 'catchup-modal-overlay';
-
-    var modal = document.createElement('div');
-    modal.className = 'catchup-modal';
-
-    var shuf = (typeof equipmentData !== 'undefined' ? equipmentData.slice() : []).sort(function() { return Math.random() - 0.5; });
-    var sel = shuf.slice(0, 3);
-
-    var cardsHtml = sel.map(function(eq) {
-        return '<div class="equip-card" data-eq="' + eq.name + '" style="position:relative;">' +
-            '<div class="tooltip-box"><div class="tt-type">[СНАРЯЖЕНИЕ]</div><div class="tt-name">' + eq.name + '</div><div class="tt-desc">' + (eq.desc || '') + '</div></div>' +
-        '</div>';
-    }).join('');
-
-    var totalSteps = 1 + Math.max(0, escState.level - 1);
-
-    modal.innerHTML =
-        '<div class="catchup-header">' +
-            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
-        '</div>' +
-        '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
-        '<div class="catchup-cards">' + cardsHtml + '</div>';
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    modal.querySelectorAll('.equip-card').forEach(function(card) {
-        card.addEventListener('click', function() {
-            var eqName = this.dataset.eq;
-            escState.equipSelections[idx] = eqName;
-            overlay.remove();
-            processCatchUpQueue();
-        });
-    });
-}
-function openCatchUpAmpModal() {
-    var idx = escState.pendingNewPlayer.index;
-    var name = escState.pendingNewPlayer.name;
-
-    var remainingRounds = escState.catchUpQueue.filter(function(s) { return s.type === 'amp'; }).length + 1;
-    var totalRounds = Math.max(0, escState.level - 1);
-    var currentRound = totalRounds - remainingRounds + 1;
-
-    var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
-    if (availCats.length === 0) {
-        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
-        processCatchUpQueue();
-        return;
-    }
-
-    var randCat = availCats[Math.floor(Math.random() * availCats.length)];
-    var availAmps = getAvailableAmpsByCategory(idx, randCat);
-    var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
-    var display = shuf.slice(0, 3);
-
-    if (display.length === 0) {
-        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
-        processCatchUpQueue();
-        return;
-    }
-
-    var overlay = document.createElement('div');
-    overlay.id = 'catchUpModal';
-    overlay.className = 'catchup-modal-overlay';
-
-    var modal = document.createElement('div');
-    modal.className = 'catchup-modal';
-
-    var cardsHtml = display.map(function(amp) {
-        return '<div class="amp-card" data-amp="' + amp.name + '">' +
-            '<div class="tooltip-box"><div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || '') + '</div></div>' +
-            '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
-            '<div class="amp-title">' + amp.name + '</div>' +
-            '<div class="amp-category">' + amp.category + '</div>' +
-        '</div>';
-    }).join('');
-
-    modal.innerHTML =
-        '<div class="catchup-header">' +
-            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы</h2>' +
-        '</div>' +
-        '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
-        '<div class="catchup-cards">' + cardsHtml + '</div>';
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    modal.querySelectorAll('.amp-card').forEach(function(card) {
-        card.addEventListener('click', function() {
-            var ampName = this.dataset.amp;
-            var ampObj = ampsData.find(function(a) { return a.name === ampName; });
-            var cat = ampObj ? ampObj.category : randCat;
-
-            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
-            escState.ampSelections[idx][cat] = ampName;
-            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
-            if (escState.usedAmps[idx].indexOf(ampName) === -1) escState.usedAmps[idx].push(ampName);
-            unlockAmpForPlayer(idx, ampName);
-
-            overlay.remove();
-            processCatchUpQueue();
-        });
-    });
-}
 // ============================================================
 // МОДАЛКА СБОРА ИНФОРМАЦИИ
 // ============================================================
@@ -3662,13 +3379,6 @@ function checkSavedOnStart() {
                 } else if (escState.currentStep >= 5 && escState.trial && escState.map) {
                     showFullResult();
                     prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
-                    // [NEW] если в сохранении был незавершённый догон — продолжим
-                    if (escState.pendingNewPlayer) {
-                        setTimeout(function() { processCatchUpQueue(); }, 400);
-                    }
-                } else if (escState.currentStep === 2) {
-                    goToEscStep(2);
-                    renderEscPlayerNames();
                 } else {
                     goToEscStep(1);
                 }
@@ -3683,7 +3393,6 @@ function checkSavedOnStart() {
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
                     nostophobiaCount: 0, currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
-                    // [NEW]
                     initialPlayerCount: 0,
                     pendingNewPlayer: null,
                     catchUpQueue: [],
@@ -3698,44 +3407,45 @@ function checkSavedOnStart() {
 }
 
 function doInit() {
-    var options = document.querySelectorAll('#escPlayerCountOptions .player-count-btn');
     var s1Next = document.getElementById('escStep1Next');
-    var s2Back = document.getElementById('escStep2Back');
-    var s2Next = document.getElementById('escStep2Next');
-    var nextLevel = document.getElementById('escNextLevelBtn');
-    var exitBtn = document.getElementById('escExitBtn');
-    var saveBtn = document.getElementById('escSaveBtn');
+    var playerNameInput = document.getElementById('escPlayerName_0');
 
-    if (options) {
-        options.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                options.forEach(function(b) { b.classList.remove('selected'); });
-                this.classList.add('selected');
-                escState.playerCount = parseInt(this.dataset.count);
-                escState.initialPlayerCount = escState.playerCount; // [NEW]
-                if (s1Next) s1Next.disabled = false;
+    function checkName() {
+        if (playerNameInput) {
+            s1Next.disabled = playerNameInput.value.trim() === '';
+        }
+    }
+    
+    if (playerNameInput) {
+        playerNameInput.addEventListener('input', checkName);
+        playerNameInput.addEventListener('change', checkName);
+    }
+
+    if (s1Next) {
+        s1Next.addEventListener('click', function() {
+            var name = document.getElementById('escPlayerName_0').value.trim();
+            if (!name) return;
+
+            escState.players = [name];
+            escState.playerCount = 1;
+            escState.initialPlayerCount = 1;
+
+            escState.players.forEach(function(_, idx) {
+                if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
             });
+
+            escState.currentEquipPlayerIndex = 0;
+            
+            goToEscStep(3);
+            renderEscEquipment();
         });
     }
 
-    if (s1Next) s1Next.addEventListener('click', function() { goToEscStep(2); renderEscPlayerNames(); });
-    if (s2Back) s2Back.addEventListener('click', function() { goToEscStep(1); });
-    if (s2Next) s2Next.addEventListener('click', function() {
-        var inputs = document.querySelectorAll('#escPlayerNameInputs input');
-        escState.players = [];
-        inputs.forEach(function(input, i) { escState.players.push(input.value.trim() || 'Игрок ' + (i + 1)); });
-        escState.players.forEach(function(_, idx) {
-            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
-            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
-            if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
-        });
-        escState.initialPlayerCount = escState.players.length; // [NEW]
-
-        escState.currentEquipPlayerIndex = 0;
-        
-        goToEscStep(3);
-        renderEscEquipment();
-    });
+    var exitBtn = document.getElementById('escExitBtn');
+    var nextLevel = document.getElementById('escNextLevelBtn');
+    var saveBtn = document.getElementById('escSaveBtn');
 
     if (saveBtn) {
         saveBtn.addEventListener('click', function() {
@@ -3883,14 +3593,14 @@ function doInit() {
             const totalTimeStr = secondsToTime(totalSeconds);
             const levelsCompleted = collectedRecords.length;
             
-            // Отправляем данные по каждому игроку, который был в команде
+            // Отправляем данные
             escState.players.forEach(playerName => {
                 sendResultToDB(
                     MODE_NAME, 
                     playerName,
                     levelsCompleted,
                     totalTimeStr,
-                    'steam' // Можно потом сделать выбор платформы
+                    'steam'
                 );
             });
 
