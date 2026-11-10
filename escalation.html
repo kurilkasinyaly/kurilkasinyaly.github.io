@@ -1,1 +1,4165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Эскалация — Курилка Синьялы</title>
+    <link rel="icon" href="images/лого.png" type="image/png" sizes="64x64">
+    <link rel="shortcut icon" href="images/лого.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/лого.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #f0eef7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(ellipse at 20% 30%, #0a0a0f 0%, #010101 100%);
+        }
+
+        .background-video {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.78);
+            z-index: -1;
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.96) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes resultAppear {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes modalFadeIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .container {
+            max-width: 1400px; margin: 0 auto;
+            padding: 1rem 1.8rem;
+            position: relative; z-index: 10;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; padding: 0.8rem 2rem;
+            background: rgba(8, 6, 15, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 80px; margin-bottom: 2rem; gap: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.2);
+            transition: all 0.3s;
+            animation: fadeInScale 0.6s ease-out;
+        }
+        .header:hover { border-color: rgba(220, 90, 50, 0.4); }
+
+        .logo { display: flex; align-items: center; gap: 0.8rem; }
+        .logo .logo-img { max-height: 55px; width: auto; display: block; }
+        .logo .logo-text {
+            font-size: 1.4rem; font-weight: 800;
+            background: linear-gradient(135deg, #fbc2a0, #e25d32);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            white-space: nowrap;
+        }
+        .logo p { font-size: 0.65rem; color: #7a6a8a; margin-top: 0px; }
+
+        .nav-links {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 0.4rem;
+            background: rgba(15, 10, 20, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+            border: 1px solid rgba(210, 100, 55, 0.15);
+        }
+
+        .nav-btn {
+            background: transparent; border: none;
+            padding: 0.5rem 0.9rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem;
+            cursor: pointer; color: #b5a8c8;
+            transition: all 0.3s; font-family: inherit;
+            display: inline-flex; align-items: center; gap: 5px;
+            text-decoration: none;
+        }
+        .nav-btn:hover { color: white; text-shadow: 0 0 8px rgba(220,90,50,0.3); }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            color: white;
+            box-shadow: 0 3px 12px rgba(188, 70, 39, 0.25);
+        }
+
+        .escalation-wrapper {
+            max-width: 1100px; margin: 0 auto;
+            background: rgba(18, 12, 28, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            padding: 2.5rem;
+            animation: fadeInScale 0.6s ease-out;
+            position: relative; overflow: hidden;
+        }
+
+        .escalation-wrapper::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/фон эскалация.webp') center/cover no-repeat;
+            opacity: 0.25; z-index: 0;
+        }
+
+        .escalation-wrapper > * { position: relative; z-index: 1; }
+
+        .escalation-wrapper h1 {
+            font-size: 2.2rem; text-align: center;
+            background: linear-gradient(135deg, #fff, #e25d32, #ffbc9a);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: center; gap: 15px;
+        }
+        .escalation-wrapper h1 i { color: #e16d48; }
+
+        .level-counter {
+            text-align: center; margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(220, 90, 50, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .level-counter .level-number {
+            font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, #e25d32, #ffbc9a);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .level-counter .level-label { font-size: 0.9rem; color: #888; margin-left: 0.5rem; }
+        .level-counter .level-difficulty {
+            display: inline-block; margin-left: 1rem;
+            padding: 0.2rem 1.2rem; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600;
+        }
+        .level-difficulty-intro { background: rgba(108, 117, 125, 0.3); color: #6c757d; }
+        .level-difficulty-standard { background: rgba(255, 159, 74, 0.3); color: #ff9f4a; }
+        .level-difficulty-intensive { background: rgba(46, 204, 113, 0.3); color: #2ecc71; }
+        .level-difficulty-psycho { background: rgba(255, 51, 51, 0.3); color: #ff3333; }
+
+        .step-container {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 28px; padding: 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.15);
+            animation: fadeInScale 0.5s ease-out;
+        }
+        .step-container.hidden { display: none; }
+
+        .step-title {
+            font-size: 1.4rem; color: #e16d48;
+            margin-bottom: 0.8rem;
+            display: flex; align-items: center; gap: 14px;
+            border-left: 4px solid #e16d48;
+            padding-left: 18px;
+        }
+        .step-title .step-number {
+            background: rgba(220, 90, 50, 0.2);
+            padding: 0.2rem 0.8rem; border-radius: 30px;
+            font-size: 0.9rem; color: #e16d48;
+        }
+        .step-subtitle {
+            font-size: 0.95rem; color: #c2b9d4;
+            margin-bottom: 1.8rem; padding-left: 10px;
+            text-align: center;
+        }
+
+        .player-count-options {
+            display: flex; gap: 1.2rem;
+            flex-wrap: wrap; justify-content: center;
+            padding: 0.5rem 0;
+        }
+        .player-count-btn {
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px solid rgba(220, 90, 50, 0.25);
+            border-radius: 24px;
+            padding: 1.2rem 2.8rem;
+            color: #c2b9d4; font-size: 1.6rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            min-width: 90px; font-family: inherit;
+        }
+        .player-count-btn:hover {
+            border-color: #e16d48; color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(220, 90, 50, 0.1);
+        }
+        .player-count-btn.selected {
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.2);
+            color: white;
+            box-shadow: 0 0 40px rgba(220, 90, 50, 0.15);
+        }
+
+        .player-name-inputs {
+            display: flex; flex-direction: column;
+            gap: 1rem; max-width: 550px;
+            margin: 0 auto; padding: 0.5rem 0;
+        }
+        .player-name-inputs .input-row {
+            display: flex; align-items: center;
+            gap: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem 1rem 0.3rem 1.5rem;
+            border-radius: 18px;
+            border: 1px solid rgba(220, 90, 50, 0.1);
+            transition: border-color 0.3s;
+        }
+        .player-name-inputs .input-row:hover { border-color: rgba(220, 90, 50, 0.3); }
+        .player-name-inputs .input-row label {
+            min-width: 80px; color: #c2b9d4;
+            font-weight: 600; font-size: 0.95rem;
+        }
+        .player-name-inputs .input-row input {
+            flex: 1; background: transparent; border: none;
+            padding: 0.7rem 0.5rem;
+            color: #f0eef7; font-size: 1rem;
+            font-family: inherit; outline: none;
+        }
+        .player-name-inputs .input-row input::placeholder { color: #555; }
+
+        /* ============================================================
+           КАРТОЧКИ СНАРЯЖЕНИЯ
+           ============================================================ */
+        .equip-card {
+            position: relative;
+            width: 180px;
+            height: 260px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .equip-card[data-eq="Рентген"] { background-image: url('images/card_xray.png'); }
+        .equip-card[data-eq="Оглушение"] { background-image: url('images/card_stun.png'); }
+        .equip-card[data-eq="Исцеление"] { background-image: url('images/card_heal.png'); }
+        .equip-card[data-eq="Завеса"] { background-image: url('images/card_blind.png'); }
+        .equip-card[data-eq="Глушилка"] { background-image: url('images/card_jam.png'); }
+        .equip-card[data-eq="Баррикада"] { background-image: url('images/card_barricade.png'); }
+
+        .equip-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            z-index: 50;
+        }
+
+        .equip-card.selected {
+            box-shadow: 0 0 0 3px #ffbc9a, 0 0 30px rgba(220, 90, 50, 0.8);
+        }
+
+        /* ============================================================
+           КАРТОЧКИ АМФ
+           ============================================================ */
+        .amp-card {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: rgba(20, 15, 28, 0.8);
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .amp-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #e16d48;
+            box-shadow: 0 10px 25px rgba(220, 90, 50, 0.4);
+            z-index: 50;
+        }
+
+        .amp-card.selected {
+            border-color: #e16d48;
+            box-shadow: 0 0 0 3px #ffbc9a, 0 0 30px rgba(220, 90, 50, 0.8);
+        }
+
+        .amp-card img {
+            width: 80px; height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+        }
+
+        .amp-card .amp-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffbc9a;
+            text-transform: uppercase;
+        }
+
+        .amp-card .amp-category {
+            font-size: 0.55rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           ТУЛТИПЫ (Всплывающая информация)
+           ============================================================ */
+        .tooltip-box {
+            position: absolute;
+            top: 105%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background: rgba(10, 8, 15, 0.95);
+            border: 1px solid rgba(220, 90, 50, 0.5);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.75rem;
+            color: #c2b9d4;
+            line-height: 1.4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: left;
+        }
+
+        .equip-card:hover .tooltip-box,
+        .amp-card:hover .tooltip-box {
+            opacity: 1;
+            transform: translateX(-50%) translateY(5px);
+        }
+
+        .tooltip-box .tt-type {
+            font-size: 0.6rem;
+            color: #e16d48;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-box .tt-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .tooltip-box .tt-desc {
+            font-size: 0.7rem;
+            color: #a09baf;
+        }
+
+        /* ============================================================
+           ОСТАЛЬНЫЕ СТИЛИ
+           ============================================================ */
+        .selection-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(220, 90, 50, 0.2);
+            border-radius: 16px;
+            padding: 0.8rem 0.6rem;
+            text-align: center; cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .selection-item:hover {
+            border-color: #e16d48;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .selection-item.selected {
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.15);
+            box-shadow: 0 0 40px rgba(220, 90, 50, 0.08);
+        }
+        .selection-item img {
+            width: 70px; height: 70px;
+            object-fit: contain;
+            margin-bottom: 0.3rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            transition: transform 0.3s;
+        }
+        .selection-item:hover img { transform: scale(1.05); }
+        .selection-item .item-name {
+            font-size: 0.8rem; color: #c2b9d4;
+            font-weight: 500; line-height: 1.2;
+        }
+        .selection-item .item-category {
+            font-size: 0.55rem; color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.1rem;
+        }
+        .selection-item .check-mark {
+            position: absolute; top: 6px; right: 8px;
+            color: #4c9aff; font-size: 1.2rem;
+            display: none;
+        }
+        .selection-item.selected .check-mark { display: block; }
+
+        .step-actions {
+            display: flex; justify-content: center;
+            gap: 1.2rem; margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            border: none;
+            padding: 0.9rem 3rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 700;
+            color: white; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            min-width: 160px;
+        }
+        .next-btn:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 8px 35px rgba(188, 74, 40, 0.4);
+        }
+        .next-btn:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none;
+        }
+
+        .back-btn {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #c2b9d4; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .back-btn:hover:not(:disabled) {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+        .back-btn:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
+
+        .exit-btn {
+            background: rgba(255, 51, 51, 0.15);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #ff6666; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .exit-btn:hover {
+            background: rgba(255, 51, 51, 0.25);
+            color: #ff3333;
+        }
+
+        .save-btn {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1.05rem; font-weight: 600;
+            color: #2ecc71; cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .save-btn:hover {
+            background: rgba(46, 204, 113, 0.25);
+            color: #27ae60;
+        }
+
+        .escalation-result {
+            display: none;
+            animation: resultAppear 0.6s ease-out;
+        }
+        .escalation-result.active { display: block; }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+        .result-card {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(220, 90, 50, 0.15);
+        }
+        .result-card h3 {
+            color: #e16d48; font-size: 1rem;
+            margin-bottom: 1.2rem;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.15);
+            padding-bottom: 0.8rem;
+        }
+
+        .result-map-row {
+            display: flex; gap: 1.5rem;
+            align-items: flex-start; flex-wrap: wrap;
+        }
+        .result-map-row .map-image {
+            width: 160px; height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid rgba(220, 90, 50, 0.3);
+            flex-shrink: 0;
+        }
+
+        /* ===== РАМКИ ИСПЫТАНИЙ (МК-стимуляция / Генезис) ===== */
+        .trial-frame {
+            position: relative;
+            width: 100%;
+            max-width: 240px;
+            flex-shrink: 0;
+            --frame-inset-top: 7%;
+            --frame-inset-right: 7%;
+            --frame-inset-bottom: 7%;
+            --frame-inset-left: 7%;
+        }
+        .trial-frame .trial-frame-border {
+            display: block;
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .trial-frame .trial-frame-window {
+            position: absolute;
+            top: var(--frame-inset-top);
+            right: var(--frame-inset-right);
+            bottom: var(--frame-inset-bottom);
+            left: var(--frame-inset-left);
+            overflow: hidden;
+            z-index: 2;
+            background: transparent;
+        }
+        .trial-frame .trial-frame-window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .trial-frame.frame-mk {
+            --frame-inset-top: 15%;
+            --frame-inset-right: 7.5%;
+            --frame-inset-bottom: 21%;
+            --frame-inset-left: 7.5%;
+        }
+        .trial-frame.frame-genesis {
+            --frame-inset-top: 9.5%;
+            --frame-inset-right: 9.5%;
+            --frame-inset-bottom: 11.5%;
+            --frame-inset-left: 10%;
+        }
+
+        .result-map-info { flex: 1; min-width: 200px; }
+        .result-map-info .map-label {
+            font-size: 0.75rem; color: #888;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .result-map-info .map-name {
+            font-size: 1.4rem; color: #e16d48;
+            font-weight: 700; margin: 0.2rem 0 0.3rem;
+        }
+        .result-map-info .trial-name {
+            font-size: 1.1rem; color: #ffbc9a;
+            font-weight: 600; margin-bottom: 0.3rem;
+        }
+        .result-map-info .trial-desc {
+            color: #c2b9d4; font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .result-map-info .map-meta {
+            display: flex; flex-wrap: wrap; gap: 1rem;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(220, 90, 50, 0.15);
+        }
+        .result-map-info .map-meta-item {
+            font-size: 0.8rem; color: #888;
+        }
+        .result-map-info .map-meta-item strong {
+            color: #ffbc9a; font-weight: 600;
+        }
+
+        /* ============================================================
+           ВАРИАТОРЫ
+           ============================================================ */
+        .variator-list {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .variator-list .var-item {
+            display: flex; flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            width: 95px;
+            text-align: center;
+        }
+        .variator-list .var-item img {
+            width: 70px; height: 70px;
+            object-fit: contain;
+            padding: 8px;
+            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
+            border: none; 
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .variator-list .var-item:hover img {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.15);
+        }
+        .variator-list .var-item .var-name {
+            font-size: 0.62rem;
+            color: #ffbc9a;
+            text-align: center;
+            line-height: 1.2;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .player-result {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.1);
+            transition: border-color 0.3s;
+        }
+        .player-result:hover { border-color: rgba(220, 90, 50, 0.3); }
+        .player-result:last-child { margin-bottom: 0; }
+        .player-result .player-name {
+            font-weight: 700; color: #fff;
+            font-size: 1.1rem; margin-bottom: 0.6rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .player-result .player-name i {
+            color: #e16d48; font-size: 1.2rem;
+        }
+        .player-result .player-equip {
+            display: flex; align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+        }
+        .player-result .player-equip img {
+            width: 36px; height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px;
+        }
+        .player-result .player-equip .label {
+            color: #888; font-size: 0.75rem; font-weight: 500;
+        }
+        .player-result .player-equip .value {
+            color: #ffbc9a; font-size: 0.9rem; font-weight: 500;
+        }
+
+        .player-amps-categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .amp-category-block {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid rgba(220, 90, 50, 0.1);
+            transition: border-color 0.3s;
+            position: relative;
+        }
+        .amp-category-block:hover { border-color: rgba(220, 90, 50, 0.25); }
+        .amp-category-block .category-header {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+        .amp-category-block .category-name {
+            font-size: 0.7rem; font-weight: 600;
+            color: #e16d48; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .amp-category-block .category-change-btn {
+            background: rgba(220, 90, 50, 0.2);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            color: #c2b9d4; font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .amp-category-block .category-change-btn:hover {
+            background: rgba(220, 90, 50, 0.4);
+            color: white; transform: scale(1.1);
+        }
+        .amp-category-block .category-amp-name {
+            font-size: 0.8rem; color: #ffbc9a;
+            font-weight: 500; text-align: center;
+            padding: 0.2rem 0;
+        }
+        .amp-category-block .category-amp-empty {
+            font-size: 0.65rem; color: #666;
+            text-align: center;
+            padding: 0.2rem 0;
+            font-style: italic;
+        }
+        .amp-category-block .category-complete {
+            font-size: 0.6rem; color: #2ecc71;
+            text-align: center;
+        }
+
+        .result-actions {
+            display: flex; justify-content: center;
+            gap: 1.2rem; margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .result-actions .next-btn { min-width: 200px; }
+
+        .amp-modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .amp-modal-overlay.active { display: flex; }
+
+        .amp-modal {
+            background: rgba(18, 12, 28, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        .catchup-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2500;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px; box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            overflow: visible;
+        }
+        .catchup-modal {
+            background: rgba(18, 12, 28, 0.97);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 2.2rem 2.4rem;
+            width: min(1400px, 96vw);
+            max-height: none;
+            overflow: visible;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .catchup-modal .catchup-cards {
+            display: flex;
+            gap: 34px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px 0 55px 0;
+        }
+        .catchup-modal .equip-card {
+            width: 220px;
+            height: 320px;
+        }
+        .catchup-modal .amp-card {
+            width: 200px;
+            height: 270px;
+            padding: 16px;
+        }
+        .catchup-modal .amp-card img {
+            width: 110px;
+            height: 110px;
+        }
+        .catchup-modal .amp-card .amp-title {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box {
+            width: 320px;
+            font-size: 0.85rem;
+            padding: 14px 16px;
+        }
+        .catchup-modal .tooltip-box .tt-name {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box .tt-desc {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .catchup-modal .catchup-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .catchup-modal .catchup-header h2 {
+            font-size: 1.5rem; color: #e16d48;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .catchup-modal .catchup-step {
+            text-align: center; color: #888; font-size: 0.9rem;
+            margin-bottom: 18px;
+        }
+        .amp-modal-header {
+            display: flex; justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .amp-modal-header h2 {
+            font-size: 1.3rem; color: #e16d48;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .amp-modal-close {
+            background: none; border: none;
+            color: #c2b9d4; font-size: 2rem;
+            cursor: pointer; transition: color 0.3s;
+        }
+        .amp-modal-close:hover { color: #e16d48; }
+
+        .amp-modal-category-tabs {
+            display: flex; gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .amp-modal-category-tabs button {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            color: #c2b9d4;
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            font-family: inherit;
+        }
+        .amp-modal-category-tabs button:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+        .amp-modal-category-tabs button.active {
+            background: rgba(220, 90, 50, 0.3);
+            border-color: #e16d48;
+            color: #e16d48;
+        }
+
+        .amp-modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .amp-modal-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(220, 90, 50, 0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .amp-modal-item:hover:not(.locked) {
+            border-color: #e16d48;
+            transform: scale(1.05);
+        }
+        .amp-modal-item.selected {
+            border-color: #4c9aff;
+            background: rgba(76, 154, 255, 0.1);
+        }
+        .amp-modal-item.locked {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .amp-modal-item.locked:hover {
+            transform: none;
+            border-color: rgba(220, 90, 50, 0.2);
+        }
+        .amp-modal-item img {
+            width: 65px; height: 65px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+        }
+        .amp-modal-item .amp-name {
+            font-size: 0.85rem; color: #c2b9d4;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+        .amp-modal-item .amp-category-label {
+            font-size: 0.6rem; color: #666;
+            margin-top: 0.1rem;
+        }
+        .amp-modal-item .amp-status {
+            font-size: 0.6rem; margin-top: 0.2rem;
+        }
+        .amp-modal-item .amp-status.available { color: #4c9aff; }
+        .amp-modal-item .amp-status.locked { color: #888; }
+        .amp-modal-item .amp-status.current { color: #2ecc71; }
+
+        .amp-modal-item .lock-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 14px;
+        }
+        .amp-modal-item .lock-overlay i {
+            font-size: 2rem; color: #888;
+        }
+        .amp-modal-item .lock-overlay span {
+            font-size: 0.7rem; color: #888;
+            margin-top: 0.3rem;
+        }
+
+        .amp-modal-confirm {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .amp-modal-confirm button {
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            border: none;
+            padding: 0.7rem 2.5rem;
+            border-radius: 40px;
+            font-size: 1rem; font-weight: 700;
+            color: white; cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .amp-modal-confirm button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
+        .amp-modal-confirm button:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
+
+        .confirm-modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .confirm-modal-overlay.active { display: flex; }
+
+        .confirm-modal {
+            background: rgba(18, 12, 28, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 51, 51, 0.4);
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        .confirm-modal .icon {
+            font-size: 3rem; color: #ff3333;
+            margin-bottom: 1rem;
+        }
+        .confirm-modal h2 {
+            color: #ff3333; font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .confirm-modal p {
+            color: #c2b9d4; font-size: 0.95rem;
+            line-height: 1.6; margin-bottom: 1.5rem;
+        }
+        .confirm-modal .confirm-actions {
+            display: flex; gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .confirm-modal .confirm-actions button {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            font-family: inherit; border: none;
+        }
+        .confirm-modal .confirm-actions .btn-confirm {
+            background: linear-gradient(135deg, #bc4627, #e25d32);
+            color: white;
+        }
+        .confirm-modal .confirm-actions .btn-confirm:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
+        .confirm-modal .confirm-actions .btn-cancel {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            color: #c2b9d4;
+        }
+        .confirm-modal .confirm-actions .btn-cancel:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+
+        .back-to-roulette {
+            display: inline-flex; align-items: center;
+            gap: 10px; margin-top: 2rem;
+            color: #e16d48;
+            text-decoration: none;
+            font-weight: 600; font-size: 1rem;
+            transition: all 0.3s;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            background: rgba(220, 90, 50, 0.1);
+            border: 1px solid rgba(220, 90, 50, 0.15);
+        }
+        .back-to-roulette:hover {
+            color: #ffbc9a;
+            background: rgba(220, 90, 50, 0.2);
+            transform: translateX(-5px);
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(105, 58, 40, 0.3);
+            font-size: 0.75rem;
+            background: rgba(8, 6, 15, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 50px;
+        }
+        .footer-logo {
+            max-height: 32px;
+            width: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ============================================================
+           МОДАЛКА СБОРА ИНФОРМАЦИИ
+           ============================================================ */
+        .info-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 1700; justify-content: center;
+            align-items: flex-start; backdrop-filter: blur(12px); overflow-y: auto; padding: 30px 15px;
+        }
+        .info-modal-overlay.active { display: flex; }
+
+        .info-modal {
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            border-radius: 24px; border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 30px 35px; max-width: 900px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out; margin: auto;
+            position: relative; overflow: hidden;
+        }
+
+        .info-modal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/фон сбор-таблица.webp') center/cover no-repeat;
+            opacity: 0.15; z-index: 0;
+        }
+
+        .info-modal > * { position: relative; z-index: 1; }
+
+        .info-modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .info-modal-header h2 {
+            font-size: 1.5rem; color: #e16d48;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .info-modal-header h2 i { color: #e16d48; }
+        .info-modal-close {
+            background: none; border: none; color: #c2b9d4;
+            font-size: 2rem; cursor: pointer; transition: color 0.3s;
+        }
+        .info-modal-close:hover { color: #e16d48; }
+
+        .info-form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem;
+        }
+        .info-form-group {
+            display: flex; flex-direction: column; gap: 6px; position: relative;
+        }
+        .info-form-group.full-width { grid-column: 1 / -1; }
+
+        .info-form-group label {
+            font-size: 0.8rem; color: #e16d48; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .info-form-group input[type="text"] {
+            background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(220, 90, 50, 0.25);
+            border-radius: 12px; padding: 12px 16px; color: #f0eef7;
+            font-size: 0.95rem; font-family: inherit; outline: none;
+            transition: border-color 0.3s;
+        }
+        .info-form-group input:focus { border-color: #e16d48; }
+        .info-form-group input::placeholder { color: #555; }
+
+        .info-form-group input.readonly-field {
+            background: rgba(0, 0, 0, 0.15);
+            color: #888;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        .info-form-group input.input-error {
+            border-color: #ff3333;
+            box-shadow: 0 0 8px rgba(255, 51, 51, 0.3);
+        }
+        .info-form-group input.input-valid {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
+        }
+
+        .info-form-hint {
+            font-size: 0.7rem; color: #666;
+            margin-top: 2px; font-style: italic;
+        }
+        .info-form-hint.error { color: #ff6666; }
+        .info-form-hint.valid { color: #2ecc71; }
+
+        .readonly-variators {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px dashed rgba(220, 90, 50, 0.25);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex; flex-wrap: wrap; gap: 10px;
+            max-height: 260px; overflow-y: auto;
+            min-height: 60px;
+        }
+        .readonly-variator-item {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 12px;
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem; color: #ffbc9a; white-space: nowrap;
+        }
+        .readonly-variator-item img {
+            width: 20px; height: 20px;
+            object-fit: contain; border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3); padding: 2px;
+        }
+        .readonly-variators-empty {
+            color: #666; font-size: 0.8rem; font-style: italic; padding: 4px;
+        }
+
+        .info-modal-actions {
+            display: flex; justify-content: flex-end; gap: 1rem;
+            margin-top: 1.5rem; padding-top: 1.2rem;
+            border-top: 1px solid rgba(220, 90, 50, 0.2); flex-wrap: wrap;
+        }
+        .info-modal-actions button {
+            padding: 0.8rem 2rem; border-radius: 40px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+        }
+        .info-modal-actions .btn-primary {
+            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+        }
+        .info-modal-actions .btn-primary:hover:not(:disabled) {
+            transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4);
+        }
+        .info-modal-actions .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .info-modal-actions .btn-secondary {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
+        }
+        .info-modal-actions .btn-secondary:hover {
+            background: rgba(220, 90, 50, 0.25); color: white;
+        }
+
+        /* ============================================================
+           ИТОГОВАЯ ТАБЛИЦА
+           ============================================================ */
+        .summary-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('images/эскалация баннер.webp') center/cover no-repeat;
+            z-index: 2500; justify-content: center;
+            align-items: flex-start; backdrop-filter: blur(14px);
+            overflow-y: auto; padding: 40px 20px;
+        }
+        .summary-modal-overlay.active { display: flex; }
+
+        .summary-modal {
+            background: #0a0a0f;
+            border-radius: 16px; border: 1px solid rgba(220, 90, 50, 0.3);
+            padding: 30px 35px; max-width: 1300px; width: 100%;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+            animation: modalFadeIn 0.3s ease-out; margin: auto;
+            position: relative; overflow: hidden;
+        }
+
+        .summary-modal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/фон эскалация.webp') center/cover no-repeat;
+            opacity: 0.15; 
+            z-index: 0;
+        }
+
+        .summary-modal > * { position: relative; z-index: 1; }
+
+        .summary-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px;
+            border-bottom: 2px solid rgba(220, 90, 50, 0.4);
+        }
+        .summary-header h2 {
+            font-size: 2rem; font-weight: 300; color: #fff;
+            letter-spacing: 3px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .summary-header h2 i { color: #e16d48; font-size: 1.8rem; }
+        .summary-close {
+            background: none; border: none; color: #c2b9d4;
+            font-size: 2rem; cursor: pointer; transition: color 0.3s;
+        }
+        .summary-close:hover { color: #e16d48; }
+
+        .summary-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .summary-table thead th {
+            text-align: left; padding: 12px 10px;
+            font-size: 0.75rem; font-weight: 600;
+            color: #888; text-transform: uppercase; letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.3);
+        }
+        .summary-table thead th.col-time { text-align: center; width: 90px; }
+        .summary-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+        .summary-table tbody tr:hover { background: rgba(220, 90, 50, 0.05); }
+        .summary-table tbody td {
+            padding: 12px 10px; vertical-align: middle;
+            color: #f0eef7; font-size: 0.95rem;
+        }
+        .summary-cell-number {
+            font-weight: 700; color: #e16d48; font-size: 1rem;
+            width: 60px; text-align: center;
+        }
+        .summary-cell-thumb { width: 100px; padding: 6px 10px; }
+        .summary-cell-thumb img {
+            width: 90px; height: 55px; object-fit: cover;
+            border-radius: 8px; border: 1px solid rgba(220, 90, 50, 0.3);
+            display: block;
+        }
+        .summary-cell-name {
+            font-weight: 600; color: #fff; text-transform: uppercase;
+            font-size: 0.95rem; letter-spacing: 0.5px;
+            min-width: 220px;
+        }
+        .summary-cell-variators {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 12px;
+            align-items: center;
+            padding: 4px 0;
+            max-width: 520px;
+        }
+        .summary-var-icon {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border: 1px solid rgba(220, 90, 50, 0.4);
+            flex-shrink: 0;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: help;
+        }
+        .summary-var-icon:hover {
+            transform: scale(1.12);
+            border-color: #e16d48;
+            box-shadow: 0 0 12px rgba(220, 90, 50, 0.5);
+            z-index: 5;
+            position: relative;
+        }
+        .summary-cell-time {
+            text-align: center; font-size: 1.2rem; font-weight: 700;
+            color: #ffbc9a; font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        .summary-empty {
+            text-align: center; padding: 40px; color: #888;
+            font-size: 1rem; font-style: italic;
+        }
+        .summary-total-row td {
+            padding: 16px 10px 6px 10px;
+            border-top: 2px solid rgba(220, 90, 50, 0.4);
+            font-weight: 700;
+        }
+        .summary-total-label {
+            text-align: right; color: #e16d48;
+            font-size: 0.95rem; letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .summary-total-value {
+            text-align: center; color: #f1c40f;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem; letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+        }
+        .summary-footer {
+            margin-top: 20px; padding-top: 15px;
+            border-top: 1px solid rgba(220, 90, 50, 0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
+        }
+        .summary-footer .stats {
+            font-size: 0.8rem; color: #888;
+        }
+        .summary-footer .stats strong { color: #ffbc9a; }
+        .summary-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .summary-actions button {
+            padding: 0.7rem 1.6rem; border-radius: 40px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+        }
+        .summary-actions .btn-close {
+            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+        }
+        .summary-actions .btn-close:hover { transform: scale(1.05); box-shadow: 0 5px 25px rgba(188, 74, 40, 0.4); }
+        .summary-actions .btn-copy {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.25); color: #c2b9d4;
+        }
+        .summary-actions .btn-copy:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+
+        /* ============================================================
+           МОДАЛКА СОХРАНЕНИЯ / ВОССТАНОВЛЕНИЯ
+           ============================================================ */
+        .save-load-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 3000; justify-content: center;
+            align-items: center; backdrop-filter: blur(14px); padding: 20px;
+        }
+        .save-load-modal-overlay.active { display: flex; }
+
+        .save-load-modal {
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            border-radius: 24px; border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 30px 35px; max-width: 560px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out; text-align: center;
+        }
+
+        .save-load-modal .icon-wrap {
+            width: 70px; height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: rgba(220, 90, 50, 0.15);
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .save-load-modal .icon-wrap i {
+            font-size: 2rem; color: #e16d48;
+        }
+        .save-load-modal h2 {
+            font-size: 1.4rem; color: #ffbc9a;
+            margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+        .save-load-modal p {
+            color: #c2b9d4; font-size: 0.95rem;
+            line-height: 1.6; margin-bottom: 10px;
+        }
+        .save-load-modal .save-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(220, 90, 50, 0.2);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin: 16px 0 22px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #c2b9d4;
+        }
+        .save-load-modal .save-info .row {
+            display: flex; justify-content: space-between;
+            padding: 3px 0;
+        }
+        .save-load-modal .save-info .row strong {
+            color: #ffbc9a; font-weight: 600;
+        }
+        .save-load-modal .actions {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+        }
+        .save-load-modal .actions button {
+            padding: 0.8rem 1.8rem; border-radius: 40px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: inherit; border: none;
+            min-width: 140px;
+        }
+        .save-load-modal .btn-continue {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        .save-load-modal .btn-continue:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(46, 204, 113, 0.4);
+        }
+        .save-load-modal .btn-restart {
+            background: rgba(220, 90, 50, 0.15);
+            border: 1px solid rgba(220, 90, 50, 0.3);
+            color: #c2b9d4;
+        }
+        .save-load-modal .btn-restart:hover {
+            background: rgba(220, 90, 50, 0.25);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .result-grid { grid-template-columns: 1fr; }
+            .info-form-grid { grid-template-columns: 1fr; }
+            .equip-card { width: 150px; height: 216px; }
+        }
+
+        @media (max-width: 850px) {
+            .container { padding: 0.8rem; }
+            .header { flex-direction: column; padding: 0.8rem 1rem; border-radius: 40px; }
+            .nav-links { width: 100%; justify-content: center; flex-wrap: wrap; gap: 0.3rem; }
+            .nav-btn { padding: 0.35rem 0.7rem; font-size: 0.7rem; }
+            .logo .logo-img { max-height: 40px; }
+            .logo .logo-text { font-size: 1.1rem; }
+            .escalation-wrapper { padding: 1.5rem; margin: 0 0.5rem; }
+            .escalation-wrapper h1 { font-size: 1.6rem; }
+            .step-container { padding: 1.5rem; }
+            .step-title { font-size: 1.1rem; }
+            .player-count-btn { padding: 1rem 2rem; font-size: 1.3rem; min-width: 70px; }
+            .selection-item img { width: 60px; height: 60px; }
+            .result-map-row { flex-direction: column; text-align: left; }
+            .result-map-row .map-image { width: 130px; height: 130px; }
+            .player-name-inputs .input-row { flex-direction: column; align-items: stretch; padding: 0.5rem 1rem; }
+            .player-name-inputs .input-row label { min-width: auto; }
+            .player-amps-categories { grid-template-columns: 1fr; gap: 0.5rem; }
+            .summary-table thead { display: none; }
+            .summary-table tbody tr { display: block; padding: 12px 0; }
+            .summary-table tbody td { display: block; padding: 4px 10px; }
+            .summary-cell-thumb img { width: 100%; height: auto; max-width: 200px; }
+            .summary-cell-variators { justify-content: flex-start; max-width: 100%; }
+            .summary-var-icon { width: 44px; height: 44px; }
+        }
+
+        @media (max-width: 600px) {
+            .escalation-wrapper { padding: 1rem; }
+            .escalation-wrapper h1 { font-size: 1.3rem; flex-wrap: wrap; }
+            .step-container { padding: 1rem; }
+            .step-title { font-size: 1rem; padding-left: 12px; gap: 8px; }
+            .step-title .step-number { font-size: 0.7rem; padding: 0.1rem 0.6rem; }
+            .player-count-btn { padding: 0.8rem 1.2rem; font-size: 1.1rem; min-width: 55px; }
+            .player-count-options { gap: 0.5rem; }
+            .selection-item img { width: 50px; height: 50px; }
+            .selection-item .item-name { font-size: 0.7rem; }
+            .result-map-row .map-image { width: 100px; height: 100px; }
+            .variator-list { gap: 0.5rem; }
+            .variator-list .var-item { width: 80px; }
+            .variator-list .var-item img { width: 60px; height: 60px; padding: 6px; }
+            .variator-list .var-item .var-name { font-size: 0.55rem; }
+            .step-actions { flex-direction: column; align-items: center; }
+            .next-btn, .back-btn, .exit-btn, .save-btn { width: 100%; justify-content: center; }
+            .back-to-roulette { font-size: 0.85rem; padding: 0.5rem 1rem; }
+            .amp-modal { padding: 1rem; }
+            .amp-modal-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            .amp-modal-item img { width: 50px; height: 50px; }
+            .amp-modal-item .amp-name { font-size: 0.7rem; }
+            .player-amps-categories { grid-template-columns: 1fr; gap: 0.4rem; }
+            .amp-category-block .category-name { font-size: 0.6rem; }
+            .amp-category-block .category-amp-name { font-size: 0.7rem; }
+            .info-modal { padding: 20px 15px; }
+            .info-modal-header h2 { font-size: 1.1rem; }
+            .summary-modal { padding: 20px 15px; }
+            .summary-header h2 { font-size: 1.3rem; letter-spacing: 1px; }
+            .summary-cell-time { font-size: 1rem; }
+            .summary-var-icon { width: 40px; height: 40px; }
+            .save-load-modal { padding: 25px 20px; }
+            .save-load-modal h2 { font-size: 1.15rem; }
+            .save-load-modal .actions button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<video class="background-video" autoplay muted loop playsinline>
+    <source src="images/об игре фон.mp4" type="video/mp4">
+</video>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <img src="images/лого.png" alt="Курилка Синьялы" class="logo-img" onerror="this.style.display='none'">
+            <div>
+                <span class="logo-text">Курилка Синьялы</span>
+                <p><i class="fab fa-discord"></i> неофициальное убежище · The Outlast Trials</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Главная</a>
+            <a href="roles.html" class="nav-btn"><i class="fas fa-tags"></i> Роли</a>
+            <a href="news.html" class="nav-btn"><i class="fas fa-newspaper"></i> Новости</a>
+            <a href="roulette.html" class="nav-btn"><i class="fas fa-dice-d6"></i> Рулетка</a>
+            <a href="invasion.html" class="nav-btn"><i class="fas fa-trophy"></i> Leaderboard</a>
+            <a href="about.html" class="nav-btn"><i class="fas fa-book-open"></i> Об игре</a>
+        </div>
+    </div>
+
+    <div class="escalation-wrapper" id="escalationWrapper">
+        <h1><i class="fas fa-chart-line"></i> Эскалационная терапия</h1>
+
+        <div class="level-counter" id="levelCounter">
+            <span class="level-number" id="levelNumber">1</span>
+            <span class="level-label">УРОВЕНЬ</span>
+            <span class="level-difficulty level-difficulty-intro" id="levelDifficulty">Начальная</span>
+        </div>
+
+        <div class="step-container" id="escStep1">
+            <div class="step-title">
+                <span class="step-number">Шаг 1</span>
+                <i class="fas fa-users"></i> Количество игроков
+            </div>
+            <div class="step-subtitle">Выберите, сколько игроков будет участвовать в испытании</div>
+            <div class="player-count-options" id="escPlayerCountOptions">
+                <button class="player-count-btn" data-count="1">1</button>
+                <button class="player-count-btn" data-count="2">2</button>
+                <button class="player-count-btn" data-count="3">3</button>
+                <button class="player-count-btn" data-count="4">4</button>
+            </div>
+            <div class="step-actions">
+                <button class="next-btn" id="escStep1Next" disabled>Далее →</button>
+            </div>
+        </div>
+
+        <div class="step-container hidden" id="escStep2">
+            <div class="step-title">
+                <span class="step-number">Шаг 2</span>
+                <i class="fas fa-user-edit"></i> Имена игроков
+            </div>
+            <div class="step-subtitle">Введите имена всех участников</div>
+            <div class="player-name-inputs" id="escPlayerNameInputs"></div>
+            <div class="step-actions">
+                <button class="back-btn" id="escStep2Back">← Назад</button>
+                <button class="next-btn" id="escStep2Next" disabled>Далее →</button>
+            </div>
+        </div>
+
+        <div class="step-container hidden" id="escStep3">
+            <div class="step-title">
+                <span class="step-number">Шаг 3</span>
+                <i class="fas fa-backpack"></i> Выбор снаряжения
+            </div>
+            <div class="step-subtitle" id="escStep3Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
+            <div id="escStep3Content"></div>
+            <div class="step-actions" id="escStep3Actions">
+                <button class="back-btn" id="escStep3Back" disabled>← Назад</button>
+            </div>
+        </div>
+
+        <div class="step-container hidden" id="escStep4">
+            <div class="step-title">
+                <span class="step-number">Шаг 4</span>
+                <i class="fas fa-capsules"></i> Выбор амф
+            </div>
+            <div class="step-subtitle" id="escStep4Subtitle">Каждому игроку предлагается 3 случайных амфы на выбор (нужно выбрать 1)</div>
+            <div id="escStep4Content"></div>
+            <div class="step-actions">
+                <button class="back-btn" id="escStep4Back" disabled>← Назад</button>
+            </div>
+        </div>
+
+        <div class="escalation-result" id="escResult">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <span style="background: rgba(220,90,50,0.2); padding: 0.3rem 1.5rem; border-radius: 30px; color: #e16d48; font-size: 0.85rem; font-weight: 600;">
+                    <i class="fas fa-check-circle"></i> Испытание сгенерировано!
+                </span>
+            </div>
+            <div class="result-grid">
+                <div>
+                    <div class="result-card">
+                        <h3>ИСПЫТАНИЕ</h3>
+                        <div class="result-map-row" id="escResultMap"></div>
+                    </div>
+                    <div class="result-card" style="margin-top: 1.5rem;">
+                        <h3>ВАРИАТОРЫ</h3>
+                        <div class="variator-list" id="escResultVariators"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="result-card">
+                        <h3><i class="fas fa-users"></i> УЧАСТНИКИ</h3>
+                        <div id="escResultPlayers"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-actions">
+                <button class="save-btn" id="escSaveBtn"><i class="fas fa-save"></i> Сохранить и выйти</button>
+                <button class="exit-btn" id="escExitBtn"><i class="fas fa-sign-out-alt"></i> Покинуть Эскалацию</button>
+                <button class="next-btn" id="escNextLevelBtn">Далее →</button>
+            </div>
+        </div>
+
+        <a href="roulette.html" class="back-to-roulette"><i class="fas fa-arrow-left"></i> Вернуться к рулетке</a>
+    </div>
+
+    <footer>
+        <img src="images/лого.png" alt="Курилка Синьялы" class="footer-logo" onerror="this.style.display='none'">
+        <div><i class="fab fa-discord"></i> discord.gg/HFdReFSx7</div>
+        <p style="margin-top: 8px;">«Курилка Синьялы» — неофициальное сообщество фанатов The Outlast Trials<br> Дым, ужас и папиросы ❤️‍🔥</p>
+    </footer>
+</div>
+
+<div class="amp-modal-overlay" id="ampModal">
+    <div class="amp-modal">
+        <div class="amp-modal-header">
+            <h2><i class="fas fa-capsules"></i> <span id="ampModalPlayerName">Игрок</span> — выбор амфы</h2>
+            <button class="amp-modal-close" id="ampModalClose">&times;</button>
+        </div>
+        <div class="amp-modal-category-tabs" id="ampCategoryTabs"></div>
+        <div class="amp-modal-grid" id="ampModalGrid"></div>
+        <div class="amp-modal-confirm">
+            <button id="ampModalConfirm">Выбрать</button>
+        </div>
+    </div>
+</div>
+
+<div class="confirm-modal-overlay" id="confirmModal">
+    <div class="confirm-modal">
+        <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2>Выход из эскалации</h2>
+        <p>Все данные о текущем прогрессе будут аннулированы. Вы начнёте эскалацию с самого начала. Уверены, что хотите покинуть?</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" id="confirmCancel">Отмена</button>
+            <button class="btn-confirm" id="confirmExit">Выйти</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====== МОДАЛКА СБОРА ИНФОРМАЦИИ ====== -->
+<div class="info-modal-overlay" id="infoModal">
+    <div class="info-modal">
+        <div class="info-modal-header">
+            <h2><i class="fas fa-clipboard-list"></i> Сбор информации об испытании</h2>
+            <button class="info-modal-close" id="infoModalClose">&times;</button>
+        </div>
+
+        <div class="info-form-grid">
+            <div class="info-form-group">
+                <label><i class="fas fa-hashtag"></i> Номер эскалации</label>
+                <input type="text" id="infoLevelNum" class="readonly-field" readonly>
+            </div>
+
+            <div class="info-form-group">
+                <label><i class="fas fa-clock"></i> Время прохождения</label>
+                <input type="text" id="infoTime" placeholder="ММ:СС, например 02:46" maxlength="5" inputmode="numeric">
+                <div class="info-form-hint" id="infoTimeHint">Введите время в формате ММ:СС (например 02:46)</div>
+            </div>
+
+            <div class="info-form-group full-width">
+                <label><i class="fas fa-map"></i> Испытание</label>
+                <input type="text" id="infoTrialInput" class="readonly-field" readonly>
+            </div>
+        </div>
+
+        <div class="info-form-group full-width" style="margin-bottom: 1.2rem;">
+            <label><i class="fas fa-tags"></i> Вариаторы (определены автоматически)</label>
+            <div class="readonly-variators" id="infoVariatorList">
+                <div class="readonly-variators-empty">Загрузка...</div>
+            </div>
+        </div>
+
+        <div class="info-modal-actions">
+            <button class="btn-secondary" id="infoModalCancel">Отмена</button>
+            <button class="btn-primary" id="infoModalSave" disabled>Сохранить и продолжить →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====== ИТОГОВАЯ ТАБЛИЦА ====== -->
+<div class="summary-modal-overlay" id="summaryModal">
+    <div class="summary-modal">
+        <div class="summary-header">
+            <h2><i class="fas fa-table"></i> Эскалационная терапия</h2>
+            <button class="summary-close" id="summaryClose">&times;</button>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px; text-align: center;">#</th>
+                    <th style="width: 110px;">Испытание</th>
+                    <th>Название</th>
+                    <th style="min-width: 260px;">Переменные</th>
+                    <th class="col-time">Время</th>
+                </tr>
+            </thead>
+            <tbody id="summaryTableBody"></tbody>
+        </table>
+
+        <div class="summary-footer">
+            <div class="stats" id="summaryStats"></div>
+            <div class="summary-actions">
+                <button class="btn-copy" id="summaryCopy"><i class="fas fa-copy"></i> Скопировать</button>
+                <button class="btn-close" id="summaryCloseBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== МОДАЛКА ВОССТАНОВЛЕНИЯ СОХРАНЕНИЯ ====== -->
+<div class="save-load-modal-overlay" id="saveLoadModal">
+    <div class="save-load-modal">
+        <div class="icon-wrap"><i class="fas fa-history"></i></div>
+        <h2>Найдено сохранение</h2>
+        <p>У вас есть незавершённая эскалация. Хотите продолжить или начать заново?</p>
+
+        <div class="save-info" id="saveInfoBlock">
+            <div class="row"><span>Уровень:</span> <strong id="saveInfoLevel">—</strong></div>
+            <div class="row"><span>Игроков:</span> <strong id="saveInfoPlayers">—</strong></div>
+            <div class="row"><span>Записей в отчёте:</span> <strong id="saveInfoRecords">—</strong></div>
+            <div class="row"><span>Дата сохранения:</span> <strong id="saveInfoDate">—</strong></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-restart" id="saveLoadRestart">Начать заново</button>
+            <button class="btn-continue" id="saveLoadContinue">Продолжить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Подключаем данные, кроме amps.js (встраиваем прямо в скрипт) -->
+<script src="maps.js"></script>
+<script src="variators.js"></script>
+<script src="variators-all.js"></script>
+<script src="equipment.js"></script>
+<script src="trials.js"></script>
+
+<script>
+// ============================================================
+// ПОЛНЫЙ СПИСОК АМФ (Встроен, чтобы работали описания)
+// ============================================================
+var ampCategories = ["Инструмент", "Навык", "Лекарство"];
+
+var ampsData = [
+    // ===== ИНСТРУМЕНТЫ =====
+    { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
+    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
+    { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
+    { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
+    { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
+    { name: "Вторичное использование", image: "../images/амфа-использование.webp", category: "Инструмент", desc: "Бутылки из-под использованного лекарства можно бросать." },
+    { name: "Мастер-взломщик", image: "../images/амфа-мастер.webp", category: "Инструмент", desc: "Отмычка гарантировано открывает с первой попытки и используется дважды." },
+    { name: "Рюкзак", image: "../images/амфа-рюкзак.webp", category: "Инструмент", desc: "Расширяет инвентарь на 1 слот." },
+    { name: "Замыкание", image: "../images/амфа-замыкание.webp", category: "Инструмент", desc: "При использовании батареи частично восстанавливается перезарядка снаряжения." },
+
+    // ===== НАВЫКИ =====
+    { name: "Прячься и дыши", image: "../images/амфа-дыши.webp", category: "Навык", desc: "Найдите укрытие, чтобы сразу же восстановить выносливость и получить заряд адреналина. (Короткое время перезарядки перед использованием)." },
+    { name: "Прячься и исцеляйся", image: "../images/амфа-прячься.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы восстановить здоровье на одно деление, регенерация начинается сразу." },
+    { name: "Прятки с пользой", image: "../images/амфа-прятки.webp", category: "Навык", desc: "Зайдите в укрытие, чтобы ускорить зарядку снаряжения." },
+    { name: "Быстрый побег", image: "../images/амфа-побег.webp", category: "Навык", desc: "Получение урона временно увеличивает вашу скорость." },
+    { name: "Невидимый", image: "../images/амфа-невидимый.webp", category: "Навык", desc: "Враги не могут найти вас в укрытии, даже если вы выглядываете оттуда.\nВТОРЖЕНИЕ: вторгшиеся игроки не увидят, как вы выглядываете из укрытий." },
+    { name: "Взломщик дверных ловушек", image: "../images/амфа-взломщик.webp", category: "Навык", desc: "Дверные ловушки ломаются при обычном открывании двери, а при медленном обезвреживаются." },
+    { name: "Вдребезги", image: "../images/амфа-вдребезги.webp", category: "Навык", desc: "Вышибайте двери (в т.ч. совместные двери) и доски одним ударом." },
+    { name: "Сильная рука", image: "../images/амфа-рука.webp", category: "Навык", desc: "Кирпичи и бутылки наносят больший урон, попадая по врагу, но кирпич сразу ломается.\nВТОРЖЕНИЕ: кирпич, попавший в самозванца, не ломается сразу." },
+    { name: "Манёвр уклонения", image: "../images/амфа-манёвр.webp", category: "Навык", desc: "Моментально спасает от вражеской хватки и снимает получаемый урон (требет краткого восстановления перед повторным использованием).\nВТОРЖЕНИЕ: вам проще сопротивляться вторгшимся игрокам." },
+
+    // ===== ЛЕКАРСТВА =====
+    { name: "Двойные дозы", image: "../images/амфа-дозы.webp", category: "Лекарство", desc: "Шприцы можно использовать дважды, а таблетки возрождения дают 2 оживления." },
+    { name: "Антитоксин", image: "../images/амфа-антитоксин.webp", category: "Лекарство", desc: "Через некоторое время восстанавливает полный рассудок, а психоз длится в два раза меньше." },
+    { name: "Задел", image: "../images/амфа-задел.webp", category: "Лекарство", desc: "Начните испытание со случайным предметом в инвентаре (лекарством, антидотом, бутылкой или кирпичом)." },
+    { name: "Последний шанс", image: "../images/амфа-шанс.webp", category: "Лекарство", desc: "Последний урон сокращает ваше здоровье до 1 ОЗ, но не даёт умереть (срабатывает раз в 5 минут).\nВТОРЖЕНИЕ: позволяет один раз за испытание пережить фатальный удар от вторгшегося игрока." },
+    { name: "Инкогнито", image: "../images/амфа-инкогнито.webp", category: "Лекарство", desc: "Ваша скорость ходьбы в приседе увеличена." },
+    { name: "Отличная работа", image: "../images/амфа-работа.webp", category: "Лекарство", desc: "Выполнение задания восстанавливает часть вашего здоровья. (Короткий период перезарядки перед повторным использованием)." },
+    { name: "Усиление", image: "../images/амфа-усиление.webp", category: "Лекарство", desc: "Начните испытание со случайным бустером в инвентаре (бустер здоровья, выносливости или батареи)." },
+    { name: "Самооживление", image: "../images/амфа-самооживление.webp", category: "Лекарство", desc: "Воскресни после смерти (один раз за испытание).\nВТОРЖЕНИЕ: самооживление после того, как вас убьёт вторгшийся игрок, один раз за испытание." },
+    { name: "Эксперт по бинтам", image: "../images/амфа-эксперт.webp", category: "Лекарство", desc: "Бинты применяются быстрее, их можно использовать дважды." }
+];
+
+// ============================================================
+// БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ СНАРЯЖЕНИЯ
+// ============================================================
+if (typeof equipmentData !== 'undefined' && Array.isArray(equipmentData)) {
+    var equipDescs = {
+        "Оглушение": "Мощное метательное оружие, поражающее электрическим током, которое временно оглушает и дезориентирует врагов.",
+        "Завеса": "Мина, испускающая временно ослепляющую дымовую завесу, если на неё наступили враги.",
+        "Исцеление": "Аэрозольный газ, который восстанавливает ваше здоровье, а также здоровье ваших друзей поблизости.",
+        "Рентген": "Устройство, позволяющее видеть сквозь стены, выявляя местоположение врагов и предметов.",
+        "Баррикада": "Устройство, позволяющее баррикадировать двери или коридоры, чтобы временно заблокировать или задержать врагов.",
+        "Глушилка": "Устройство, позволяющее оглушать врагов, отключать электронные устройства или открывать запертые двери и контейнеры."
+    };
+    equipmentData.forEach(function(eq) {
+        if (equipDescs[eq.name]) eq.desc = equipDescs[eq.name];
+    });
+}
+
+// ============================================================
+// КОНСТАНТЫ
+// ============================================================
+var SIDE_QUEST_VARIATORS = [
+    "Сбор Подарков", "Сбор Крыс", "Сбор Амулетов",
+    "Доставьте Компоненты", "Извлеките Образцы Органов",
+    "Разбейте Телевизоры", "Находите Радиопередатчики",
+    "Собирайте Схемы", "Найдите Трансляцию",
+    "Соберите Коробки С Уликами", "Расшифруйте Вещание",
+    "Потушите Огонь", "Соберите плакаты", "Экстракция Крови", "Остановите Утечку", "Случайное Побочное Задание"
+];
+
+var EXCLUDED_VARIATORS = [
+    'Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери',
+    'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова'
+];
+
+// ============================================================
+// СОСТОЯНИЕ
+// ============================================================
+let escState = {
+    level: 1, playerCount: 0, players: [],
+    equipSelections: {}, ampSelections: {}, usedAmps: {},
+    unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
+    map: null, trial: null, difficulty: null, variators: [],
+    isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
+    nostophobiaCount: 0,
+    currentEquipPlayerIndex: 0,
+    currentAmpPlayerIndex: 0,
+    currentBreakPlayerIndex: 0,
+    // [NEW] поля для добавления/удаления игроков во время эскалации
+    initialPlayerCount: 0,
+    pendingNewPlayer: null,
+    catchUpQueue: [],
+    catchUpMode: null
+};
+
+var infoFormState = {
+    levelNum: null,
+    trialName: null,
+    trialObj: null,
+    variatorNames: [],
+    time: ''
+};
+
+var collectedRecords = [];
+
+var STORAGE_KEY = 'escalation_save_v1';
+
+// ============================================================
+// НАСТРОЙКИ БАЗЫ ДАННЫХ (SheetDB)
+// ============================================================
+const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
+const MODE_NAME = 'Infinite'; // Для бесконечной эскалации
+
+// ============================================================
+// ПРОВЕРКА ЗАГРУЗКИ
+// ============================================================
+function checkDataLoaded() {
+    if (typeof mapsData === 'undefined') return false;
+    if (typeof allVariatorsData === 'undefined') return false;
+    if (typeof equipmentData === 'undefined') return false;
+    if (typeof trialsData === 'undefined') return false;
+    if (typeof ampCategories === 'undefined') return false;
+    if (typeof ampsData === 'undefined') return false;
+    return true;
+}
+
+// [NEW] Проверка кооперативного режима
+function isCoopMode() {
+    return escState.players.length > 1;
+}
+
+// ============================================================
+// ФУНКЦИИ АМФ
+// ============================================================
+function getAmpsByCategory(cat) {
+    if (typeof ampsData === 'undefined') return [];
+    return ampsData.filter(function(a) { return a.category === cat; });
+}
+function getAvailableAmpsByCategory(idx, cat) {
+    var used = escState.usedAmps[idx] || [];
+    return getAmpsByCategory(cat).filter(function(a) { return used.indexOf(a.name) === -1; });
+}
+function isCategoryComplete(idx, cat) {
+    var used = escState.usedAmps[idx] || [];
+    return getAmpsByCategory(cat).every(function(a) { return used.indexOf(a.name) !== -1; });
+}
+function areAllCategoriesComplete(idx) {
+    if (typeof ampCategories === 'undefined') return false;
+    return ampCategories.every(function(cat) { return isCategoryComplete(idx, cat); });
+}
+function checkAllAmpsUsed(idx) { return areAllCategoriesComplete(idx); }
+function getAmpForCategory(idx, cat) {
+    var s = escState.ampSelections[idx] || {};
+    return s[cat] || null;
+}
+function unlockAmpForPlayer(idx, name) {
+    if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
+    if (escState.unlockedAmps[idx].indexOf(name) === -1) escState.unlockedAmps[idx].push(name);
+}
+
+// ============================================================
+// ВСПОМОГАТЕЛЬНЫЕ
+// ============================================================
+function isExcludedVariator(name) {
+    if (!name) return false;
+    if (EXCLUDED_VARIATORS.indexOf(name) !== -1) return true;
+    if (typeof allVariatorsData !== 'undefined') {
+        var v = allVariatorsData.find(function(x) { return x.name === name; });
+        if (v && (v.category === 'boss' || v.category === 'main_asset')) return true;
+    }
+    return false;
+}
+function isSideQuestVariator(name) { return SIDE_QUEST_VARIATORS.indexOf(name) !== -1; }
+function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
+// ============================================================
+// ВАРИАТОР СЛОЖНОСТИ
+// ============================================================
+function getDifficultyVariator(level, available) {
+    if (level < 5) return null;
+    if (level >= 5 && level <= 20) {
+        if (level >= 16) {
+            var s2 = available.find(function(v) { return v.name === 'Враги Сильнее II' || v.name === 'Враги сильнее II'; });
+            if (s2) return s2;
+        }
+        var s = available.find(function(v) { return v.name === 'Враги сильнее' || v.name === 'Враги Сильнее'; });
+        if (s) return s;
+        return {
+            id: 'enemies_stronger_fallback',
+            name: level >= 16 ? 'Враги Сильнее II' : 'Враги сильнее',
+            image: 'images/враги сильнее.webp',
+            category: 'difficulty'
+        };
+    }
+    return null;
+}
+
+// ============================================================
+// СОВМЕСТИМОСТЬ ВАРИАТОРОВ
+// ============================================================
+function isVariatorCompatible(v, selected, trialName, playerCount, level) {
+    var name = v.name;
+    var names = selected.map(function(x) { return x.name; });
+    var i;
+
+    if (names.indexOf(name) !== -1) return false;
+
+    var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
+    if (name === 'Трофейное Снаряжение') {
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+    if (trophyBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Трофейное Снаряжение') !== -1) return false;
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (trophyBlocked[i] !== name && names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
+    }
+
+    var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
+    if (name === 'Психохирургия') {
+        for (i = 0; i < psychoBlocked.length; i++) {
+            if (names.indexOf(psychoBlocked[i]) !== -1) return false;
+        }
+    }
+    if (psychoBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    if (name === 'Не Шумите' && names.indexOf('Разъяренные Враги') !== -1) return false;
+    if (name === 'Разъяренные Враги' && names.indexOf('Не Шумите') !== -1) return false;
+
+    var mainGroup = ['Главная Рулетка', 'Самое Главное'];
+    var antiGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
+
+    if (mainGroup.indexOf(name) !== -1) {
+        for (i = 0; i < mainGroup.length; i++) if (mainGroup[i] !== name && names.indexOf(mainGroup[i]) !== -1) return false;
+        for (i = 0; i < antiGroup.length; i++) if (names.indexOf(antiGroup[i]) !== -1) return false;
+    }
+    if (antiGroup.indexOf(name) !== -1) {
+        for (i = 0; i < mainGroup.length; i++) if (names.indexOf(mainGroup[i]) !== -1) return false;
+        for (i = 0; i < antiGroup.length; i++) if (antiGroup[i] !== name && names.indexOf(antiGroup[i]) !== -1) return false;
+    }
+
+    var mines = ['Больше Мин Психоза', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины'];
+    if (mines.indexOf(name) !== -1) {
+        for (i = 0; i < mines.length; i++) if (mines[i] !== name && names.indexOf(mines[i]) !== -1) return false;
+    }
+
+    var firstBlocked = ['Сломанный Реагент','Без Снаряжения','Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Без Амф','Без Рецептов','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение','Трофейное Снаряжение'];
+    if (name === 'Первый Уровень') { for (i = 0; i < firstBlocked.length; i++) if (names.indexOf(firstBlocked[i]) !== -1) return false; }
+    if (firstBlocked.indexOf(name) !== -1) { if (names.indexOf('Первый Уровень') !== -1) return false; }
+
+    var brokenBlocked = ['Первый Уровень','Без Снаряжения','Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Без Амф','Без Рецептов','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение','Трофейное Снаряжение'];
+    if (name === 'Сломанный Реагент') { for (i = 0; i < brokenBlocked.length; i++) if (names.indexOf(brokenBlocked[i]) !== -1) return false; }
+    if (brokenBlocked.indexOf(name) !== -1) { if (names.indexOf('Сломанный Реагент') !== -1) return false; }
+
+    var noEquipBlocked = ['Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение'];
+    if (name === 'Без Снаряжения') { for (i = 0; i < noEquipBlocked.length; i++) if (names.indexOf(noEquipBlocked[i]) !== -1) return false; }
+    if (noEquipBlocked.indexOf(name) !== -1) { if (names.indexOf('Без Снаряжения') !== -1) return false; }
+
+    if (name === 'Все На Выход') {
+        if (trialName === 'Раздавите бригадира' || trialName === 'Устранение устаревшего оборудования') return false;
+    }
+
+    if (name === 'Сильнее Вместе') {
+        if (playerCount === 1) return false;
+        if (playerCount === 2 || playerCount === 3) {
+            var forbidden = ['Сожгите секс-игрушки','Обработайте фабрику газом','Освободите заключенных','Заберите наркотики'];
+            if (forbidden.indexOf(trialName) !== -1) return false;
+        }
+    }
+
+    if (name === 'Вечная Мерзлота') {
+        if (names.indexOf('Резкое Похолодание') !== -1) return false;
+        if (names.indexOf('Токсический Шок') !== -1) return false;
+    }
+    if (name === 'Резкое Похолодание' || name === 'Токсический Шок') {
+        if (names.indexOf('Вечная Мерзлота') !== -1) return false;
+    }
+
+    if (name === 'Таймер Бомбы' || name === 'Таймер бомбы') {
+        if (trialName === 'Устранение устаревшего оборудования') return false;
+        if (names.indexOf('Разбейте Телевизоры') !== -1) return false;
+    }
+    if (name === 'Разбейте Телевизоры') {
+        if (names.indexOf('Таймер Бомбы') !== -1) return false;
+        if (names.indexOf('Таймер бомбы') !== -1) return false;
+    }
+
+    if (name === 'Токсический Шок') { if (names.indexOf('Глубокий Ожог') !== -1) return false; }
+    if (name === 'Глубокий Ожог') { if (names.indexOf('Токсический Шок') !== -1) return false; }
+
+    var density = ['Низкая Плотность Врагов','Много Противников','Повышенная Угроза','Повышенная угроза II'];
+    if (name === 'Враги сильнее' || name === 'Враги Сильнее' || name === 'Враги сильнее II' || name === 'Враги Сильнее II') {
+        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
+    }
+    if (density.indexOf(name) !== -1) {
+        if (names.indexOf('Враги сильнее') !== -1) return false;
+        if (names.indexOf('Враги Сильнее') !== -1) return false;
+        if (names.indexOf('Враги сильнее II') !== -1) return false;
+        if (names.indexOf('Враги Сильнее II') !== -1) return false;
+        if (names.indexOf('Психохирургия') !== -1) return false;
+    }
+    if (name === 'Психохирургия') {
+        if (names.indexOf('Враги сильнее') !== -1) return false;
+        if (names.indexOf('Враги Сильнее') !== -1) return false;
+        if (names.indexOf('Враги сильнее II') !== -1) return false;
+        if (names.indexOf('Враги Сильнее II') !== -1) return false;
+        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
+    }
+    if (name === 'Враги сильнее' || name === 'Враги Сильнее' || name === 'Враги сильнее II' || name === 'Враги Сильнее II') {
+        if (names.indexOf('Психохирургия') !== -1) return false;
+    }
+
+    var pairs = [
+        ['Ограниченный Инвентарь','Ограниченный Инвентарь II'],
+        ['Повышенная Угроза','Повышенная угроза II'],
+        ['Ограниченные Укрытия','Ограниченные Укрытия II'],
+        ['Ограниченные предметы','Ограниченные предметы II']
+    ];
+    for (var p = 0; p < pairs.length; p++) {
+        var g = pairs[p];
+        if (g.indexOf(name) !== -1) {
+            for (i = 0; i < g.length; i++) if (g[i] !== name && names.indexOf(g[i]) !== -1) return false;
+        }
+    }
+
+    var itemGroup = [
+        'Без Предметов В Испытании',
+        'Ограниченные Предметы', 'Ограниченные Предметы II',
+        'Ограниченные предметы', 'Ограниченные предметы II',
+        'Без Медицинских Предметов', 'Без Технических Предметов',
+        'Закрытые Предметы', 'Только Предметы Для Бросания'
+    ];
+    if (itemGroup.indexOf(name) !== -1) {
+        for (i = 0; i < itemGroup.length; i++) {
+            if (itemGroup[i] !== name && names.indexOf(itemGroup[i]) !== -1) return false;
+        }
+    }
+
+    if (playerCount === 1) { if (name === 'Без Имён' || name === 'Без Рации') return false; }
+    if (name === 'Низкая Плотность Врагов' && level > 5) return false;
+    if (level < 21) { if (name === 'Ностофобия' || name === 'Психохирургия') return false; }
+
+    return true;
+}
+
+// ============================================================
+// ЛИМИТ ПО СЛОЖНОСТИ
+// ============================================================
+function getMaxVariatorsForLevel(level) {
+    if (level >= 1 && level <= 3) return 3;
+    if (level >= 4 && level <= 5) return 4;
+    if (level >= 6 && level <= 15) return 5;
+    if (level >= 16 && level <= 20) return 6;
+    return 8;
+}
+
+// ============================================================
+// ГЕНЕРАЦИЯ ВАРИАТОРОВ
+// ============================================================
+function getVariatorsForLevel(level, mapName, playerCount) {
+    if (typeof allVariatorsData === 'undefined') return [];
+
+    var MAX_VARIATORS = getMaxVariatorsForLevel(level);
+    var trialName = escState.trial ? escState.trial.name : '';
+
+    var available = allVariatorsData.filter(function(v) {
+        if (isExcludedVariator(v.name)) return false;
+        var gates = ['Ворота С Детектором Звука','Дистанционные Ворота','Бесконтактные Ворота','Времянные Ворота','Закрытые Ворота'];
+        if (gates.indexOf(v.name) !== -1) return false;
+        if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
+        return true;
+    });
+
+    var result = [];
+    var used = [];
+
+    if (result.length < MAX_VARIATORS) {
+        if (level > 20) {
+            var psycho = available.find(function(v) { return v.name === "Психохирургия"; });
+            var doubleT = available.find(function(v) { return v.name === "Двойные задания"; });
+            if (psycho) { result.push(psycho); used.push(psycho.name); }
+            else { result.push({ id: 'psycho_fallback', name: "Психохирургия", image: "images/психохирургия.webp", category: "psycho" }); used.push("Психохирургия"); }
+            if (doubleT && result.length < MAX_VARIATORS) { result.push(doubleT); used.push(doubleT.name); }
+            else if (result.length < MAX_VARIATORS) { result.push({ id: 'double_fallback', name: "Двойные задания", image: "images/двойные задания.webp", category: "collection_special" }); used.push("Двойные задания"); }
+        } else {
+            var diffVar = getDifficultyVariator(level, available);
+            if (diffVar && used.indexOf(diffVar.name) === -1) { result.push(diffVar); used.push(diffVar.name); }
+        }
+    }
+
+    if (result.length < MAX_VARIATORS && level <= 20) {
+        var sidePool = available.filter(function(v) {
+            if (SIDE_QUEST_VARIATORS.indexOf(v.name) === -1) return false;
+            if (used.indexOf(v.name) !== -1) return false;
+            return true;
+        });
+        if (sidePool.length > 0) {
+            var chosen = sidePool[Math.floor(Math.random() * sidePool.length)];
+            result.push(chosen); used.push(chosen.name);
+        }
+    }
+
+    var filtered = available.filter(function(v) {
+        if (used.indexOf(v.name) !== -1) return false;
+        if (isSideQuestVariator(v.name)) return false;
+        if (v.name === "Психохирургия" || v.name === "Двойные задания") return false;
+        if (v.name === "Враги сильнее" || v.name === "Враги Сильнее" || v.name === "Враги Сильнее II" || v.name === "Враги сильнее II") return false;
+        return true;
+    });
+
+    var shuffled = shuffleArray(filtered);
+    for (var i = 0; i < shuffled.length && result.length < MAX_VARIATORS; i++) {
+        if (isVariatorCompatible(shuffled[i], result, trialName, playerCount, level)) {
+            result.push(shuffled[i]); used.push(shuffled[i].name);
+        }
+    }
+
+    if (result.length < MAX_VARIATORS) {
+        var remaining = available.filter(function(v) {
+            return used.indexOf(v.name) === -1 && !isSideQuestVariator(v.name)
+                && v.name !== "Психохирургия" && v.name !== "Двойные задания"
+                && v.name !== "Враги сильнее" && v.name !== "Враги Сильнее"
+                && v.name !== "Враги Сильнее II" && v.name !== "Враги сильнее II";
+        });
+        var shufRem = shuffleArray(remaining);
+        for (var j = 0; j < shufRem.length && result.length < MAX_VARIATORS; j++) {
+            if (used.indexOf(shufRem[j].name) === -1 && isVariatorCompatible(shufRem[j], result, trialName, playerCount, level)) {
+                result.push(shufRem[j]); used.push(shufRem[j].name);
+            }
+        }
+    }
+
+    if (result.length < MAX_VARIATORS) {
+        var anyRem = allVariatorsData.filter(function(v) { return used.indexOf(v.name) === -1 && !isExcludedVariator(v.name); });
+        for (var k = 0; k < anyRem.length && result.length < MAX_VARIATORS; k++) {
+            if (used.indexOf(anyRem[k].name) === -1) { result.push(anyRem[k]); used.push(anyRem[k].name); }
+        }
+    }
+
+    result = result.filter(function(v) { return !isExcludedVariator(v.name); });
+    if (result.length > MAX_VARIATORS) result = result.slice(0, MAX_VARIATORS);
+
+    return result;
+}
+
+// ============================================================
+// КАРТА / ИСПЫТАНИЕ
+// ============================================================
+function getMapAndTrial(level) {
+    if (typeof trialsData === 'undefined') return null;
+    var mapNames = Object.keys(trialsData);
+    var isBig = (level % 10 === 0);
+    var availableTrials = [];
+
+    for (var m = 0; m < mapNames.length; m++) {
+        var mn = mapNames[m], md = trialsData[mn];
+        for (var t = 0; t < md.trials.length; t++) {
+            var tr = md.trials[t];
+            var isBigTrial = tr.name === tr.name.toUpperCase();
+            if (isBig && isBigTrial) {
+                if (escState.usedBigTrials.indexOf(tr.name) === -1) availableTrials.push({ mapName: mn, mapImage: md.image, trial: tr });
+            } else if (!isBig && !isBigTrial) {
+                if (escState.usedSmallTrials.indexOf(tr.name) === -1) availableTrials.push({ mapName: mn, mapImage: md.image, trial: tr });
+            }
+        }
+    }
+
+    if (availableTrials.length === 0) {
+        if (isBig) {
+            escState.usedBigTrials = [];
+            for (var m2 = 0; m2 < mapNames.length; m2++) {
+                var mn2 = mapNames[m2], md2 = trialsData[mn2];
+                for (var t2 = 0; t2 < md2.trials.length; t2++) {
+                    var tr2 = md2.trials[t2];
+                    if (tr2.name === tr2.name.toUpperCase()) availableTrials.push({ mapName: mn2, mapImage: md2.image, trial: tr2 });
+                }
+            }
+        } else {
+            escState.usedSmallTrials = [];
+            for (var m3 = 0; m3 < mapNames.length; m3++) {
+                var mn3 = mapNames[m3], md3 = trialsData[mn3];
+                for (var t3 = 0; t3 < md3.trials.length; t3++) {
+                    var tr3 = md3.trials[t3];
+                    if (tr3.name !== tr3.name.toUpperCase()) availableTrials.push({ mapName: mn3, mapImage: md3.image, trial: tr3 });
+                }
+            }
+        }
+    }
+
+    if (availableTrials.length === 0) return null;
+    var sel = availableTrials[Math.floor(Math.random() * availableTrials.length)];
+    escState.map = { name: sel.mapName, image: sel.mapImage };
+    escState.trial = sel.trial;
+    if (sel.trial.name === sel.trial.name.toUpperCase()) escState.usedBigTrials.push(sel.trial.name);
+    else escState.usedSmallTrials.push(sel.trial.name);
+    return sel;
+}
+
+function getDifficultyByLevel(level) {
+    if (level <= 5) return { name: "Начальная", class: "level-difficulty-intro" };
+    if (level <= 15) return { name: "Нормальная", class: "level-difficulty-standard" };
+    if (level <= 20) return { name: "Высокая", class: "level-difficulty-intensive" };
+    return { name: "Психохирургия", class: "level-difficulty-psycho" };
+}
+
+function goToEscStep(step) {
+    escState.currentStep = step;
+    var steps = { 1: 'escStep1', 2: 'escStep2', 3: 'escStep3', 4: 'escStep4' };
+    var result = document.getElementById('escResult');
+    for (var key in steps) {
+        var el = document.getElementById(steps[key]);
+        if (el) el.classList.toggle('hidden', parseInt(key) !== step);
+    }
+    if (result) { result.classList.remove('active'); result.style.display = 'none'; }
+}
+
+function updateLevelCounter() {
+    var num = document.getElementById('levelNumber');
+    var diff = document.getElementById('levelDifficulty');
+    var d = getDifficultyByLevel(escState.level);
+    if (num) num.textContent = escState.level;
+    if (diff) { diff.textContent = d.name; diff.className = 'level-difficulty ' + d.class; }
+}
+
+// ============================================================
+// СОХРАНЕНИЕ / ЗАГРУЗКА (localStorage)
+// ============================================================
+function saveEscalation() {
+    try {
+        var saveData = {
+            version: 1,
+            savedAt: Date.now(),
+            escState: {
+                level: escState.level,
+                playerCount: escState.playerCount,
+                players: escState.players.slice(),
+                equipSelections: JSON.parse(JSON.stringify(escState.equipSelections)),
+                ampSelections: JSON.parse(JSON.stringify(escState.ampSelections)),
+                usedAmps: JSON.parse(JSON.stringify(escState.usedAmps)),
+                unlockedAmps: JSON.parse(JSON.stringify(escState.unlockedAmps)),
+                allAmpsUsed: JSON.parse(JSON.stringify(escState.allAmpsUsed)),
+                currentStep: escState.currentStep,
+                map: escState.map ? JSON.parse(JSON.stringify(escState.map)) : null,
+                trial: escState.trial ? JSON.parse(JSON.stringify(escState.trial)) : null,
+                difficulty: escState.difficulty,
+                variators: JSON.parse(JSON.stringify(escState.variators || [])),
+                usedBigTrials: escState.usedBigTrials.slice(),
+                usedSmallTrials: escState.usedSmallTrials.slice(),
+                currentEquipPlayerIndex: escState.currentEquipPlayerIndex,
+                currentAmpPlayerIndex: escState.currentAmpPlayerIndex,
+                currentBreakPlayerIndex: escState.currentBreakPlayerIndex,
+                // [NEW]
+                initialPlayerCount: escState.initialPlayerCount,
+                pendingNewPlayer: escState.pendingNewPlayer ? JSON.parse(JSON.stringify(escState.pendingNewPlayer)) : null,
+                catchUpQueue: JSON.parse(JSON.stringify(escState.catchUpQueue || [])),
+                catchUpMode: escState.catchUpMode
+            },
+            collectedRecords: JSON.parse(JSON.stringify(collectedRecords))
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+        return true;
+    } catch (e) {
+        console.error('Ошибка сохранения:', e);
+        return false;
+    }
+}
+
+function loadSavedEscalation() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        var data = JSON.parse(raw);
+        if (!data || !data.escState) return null;
+        return data;
+    } catch (e) {
+        console.error('Ошибка чтения сохранения:', e);
+        return null;
+    }
+}
+
+function clearSavedEscalation() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+        console.error('Ошибка удаления сохранения:', e);
+    }
+}
+
+function hasSavedEscalation() {
+    return !!loadSavedEscalation();
+}
+
+function applySavedEscalation(data) {
+    if (!data || !data.escState) return false;
+
+    var s = data.escState;
+
+    escState.level = s.level || 1;
+    escState.playerCount = s.playerCount || 0;
+    escState.players = (s.players || []).slice();
+    escState.equipSelections = s.equipSelections || {};
+    escState.ampSelections = s.ampSelections || {};
+    escState.usedAmps = s.usedAmps || {};
+    escState.unlockedAmps = s.unlockedAmps || {};
+    escState.allAmpsUsed = s.allAmpsUsed || {};
+    escState.currentStep = s.currentStep || 1;
+    escState.map = s.map || null;
+    escState.trial = s.trial || null;
+    escState.difficulty = s.difficulty || null;
+    escState.variators = s.variators || [];
+    escState.usedBigTrials = s.usedBigTrials || [];
+    escState.usedSmallTrials = s.usedSmallTrials || [];
+    escState.currentEquipPlayerIndex = s.currentEquipPlayerIndex || 0;
+    escState.currentAmpPlayerIndex = s.currentAmpPlayerIndex || 0;
+    escState.currentBreakPlayerIndex = s.currentBreakPlayerIndex || 0;
+
+    // [NEW]
+    escState.initialPlayerCount = s.initialPlayerCount || escState.playerCount || 0;
+    escState.pendingNewPlayer = s.pendingNewPlayer || null;
+    escState.catchUpQueue = s.catchUpQueue || [];
+    escState.catchUpMode = s.catchUpMode || null;
+
+    collectedRecords = (data.collectedRecords || []).slice();
+
+    return true;
+}
+
+// ============================================================
+// ОТРИСОВКА ШАГОВ
+// ============================================================
+function renderEscPlayerNames() {
+    var container = document.getElementById('escPlayerNameInputs');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var pc = escState.playerCount;
+    var grid = document.createElement('div');
+    grid.style.cssText = 'display: grid; gap: 12px 20px; max-width: 600px; margin: 0 auto;';
+
+    if (pc === 1) { grid.style.gridTemplateColumns = '1fr'; grid.style.maxWidth = '300px'; }
+    else if (pc === 2 || pc === 3) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '500px'; }
+    else if (pc === 4) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '550px'; }
+
+    var datalistHTML = `<datalist id="knownPlayers">
+        <option value="Майор Гом 2.0">
+        <option value="joysk_o">
+        <option value="Майор СУЕТЛАНА">
+        <option value="crøssfade">
+        <option value="Генерал Героиня">
+        <option value="Shugar">
+        <option value="blablablacreek">
+        <option value="humiliated">
+        <option value="Barricade Guy">
+        <option value="LARIK_LOL">
+        <option value="Garlik_Darlik">
+        <option value="Takuya_Satori">
+    </datalist>`;
+
+    for (var i = 0; i < pc; i++) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display: flex; flex-direction: column; gap: 4px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(220,90,50,0.08);';
+        row.innerHTML = `
+            <label style="font-size: 0.8rem; color: #888; font-weight: 500; letter-spacing: 0.5px;">
+                <i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>
+                Игрок ${i + 1}
+            </label>
+            <input type="text" list="knownPlayers" placeholder="Начните вводить или выберите..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+        `;
+        grid.appendChild(row);
+
+        if (pc === 3 && i === 2) {
+            row.style.gridColumn = '1 / -1';
+            row.style.maxWidth = '50%';
+            row.style.justifySelf = 'center';
+            row.style.width = '100%';
+        }
+    }
+    container.innerHTML = datalistHTML;
+    container.appendChild(grid);
+
+    var inputs = container.querySelectorAll('input');
+    var nextBtn = document.getElementById('escStep2Next');
+    function checkFilled() {
+        var all = true;
+        inputs.forEach(function(inp) { if (inp.value.trim() === '') all = false; });
+        if (nextBtn) nextBtn.disabled = !all;
+    }
+    inputs.forEach(function(inp) { inp.addEventListener('input', checkFilled); inp.addEventListener('change', checkFilled); });
+    setTimeout(checkFilled, 100);
+}
+
+function buildPlayerRows(players, renderBlock) {
+    var c = document.createElement('div');
+    c.style.cssText = 'display: flex; flex-direction: column; gap: 20px; align-items: center; max-width: 1000px; margin: 0 auto;';
+    if (players.length === 1) {
+        var r = document.createElement('div');
+        r.style.cssText = 'display: flex; justify-content: center; gap: 20px; width: 100%;';
+        r.appendChild(renderBlock(players[0], 0));
+        c.appendChild(r);
+    } else {
+        for (var i = 0; i < players.length; i += 2) {
+            var row = document.createElement('div');
+            row.style.cssText = 'display: flex; justify-content: center; gap: 20px; width: 100%; flex-wrap: wrap;';
+            row.appendChild(renderBlock(players[i], i));
+            if (i + 1 < players.length) row.appendChild(renderBlock(players[i + 1], i + 1));
+            c.appendChild(row);
+        }
+    }
+    return c;
+}
+
+// ============================================================
+// ШАГ 3 — СНАРЯЖЕНИЕ
+// ============================================================
+function renderEscEquipment() {
+    var container = document.getElementById('escStep3Content');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (typeof equipmentData === 'undefined' || equipmentData.length === 0) {
+        container.innerHTML = '<div style="color: #e16d48; text-align: center; padding: 2rem;">Ошибка: данные снаряжения не загружены</div>';
+        return;
+    }
+
+    if (escState.currentEquipPlayerIndex >= escState.playerCount) {
+        goToEscStep(4);
+        escState.currentAmpPlayerIndex = 0;
+        renderEscAmps();
+        return;
+    }
+
+    var currentPlayer = escState.players[escState.currentEquipPlayerIndex];
+    
+    var sub = document.getElementById('escStep3Subtitle');
+    if (sub) {
+        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+    }
+
+    var section = document.createElement('div');
+    section.className = 'player-block';
+    section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
+
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'player-equip-grid';
+    grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+
+    var shuf = equipmentData.slice().sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    sel.forEach(function(eq) {
+        var item = document.createElement('div');
+        item.className = 'equip-card';
+        item.dataset.eq = eq.name;
+        
+        var tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-box';
+        tooltip.innerHTML = `
+            <div class="tt-type">[СНАРЯЖЕНИЕ]</div>
+            <div class="tt-name">${eq.name}</div>
+            <div class="tt-desc">${eq.desc || 'Описание снаряжения отсутствует.'}</div>
+        `;
+
+        item.appendChild(tooltip);
+
+        item.addEventListener('click', function() {
+            escState.equipSelections[escState.currentEquipPlayerIndex] = eq.name;
+            escState.currentEquipPlayerIndex++;
+            renderEscEquipment();
+        });
+        grid.appendChild(item);
+    });
+    section.appendChild(grid);
+    container.appendChild(section);
+}
+
+// ============================================================
+// ШАГ 4 — АМФЫ
+// ============================================================
+function renderEscAmps() {
+    var container = document.getElementById('escStep4Content');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (typeof ampsData === 'undefined' || ampsData.length === 0) {
+        container.innerHTML = '<div style="color: #e16d48; text-align: center; padding: 2rem;">Ошибка: данные амф не загружены</div>';
+        return;
+    }
+
+    if (escState.currentAmpPlayerIndex >= escState.playerCount) {
+        generateEscResult();
+        return;
+    }
+
+    var currentPlayer = escState.players[escState.currentAmpPlayerIndex];
+    
+    var sub = document.getElementById('escStep4Subtitle');
+    if (sub) {
+        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+    }
+
+    var section = document.createElement('div');
+    section.className = 'player-block';
+    section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
+
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    section.appendChild(title);
+
+    var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(escState.currentAmpPlayerIndex, c); });
+    if (availCats.length === 0) {
+        escState.currentAmpPlayerIndex++;
+        renderEscAmps();
+        return;
+    }
+
+    var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+    
+    var catLabel = document.createElement('div');
+    catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
+    catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
+    section.appendChild(catLabel);
+
+    var grid = document.createElement('div');
+    grid.className = 'player-amp-grid';
+    grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; padding-bottom: 40px;';
+
+    var available = getAvailableAmpsByCategory(escState.currentAmpPlayerIndex, randCat);
+    var shuf = available.slice().sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    if (sel.length === 0) {
+        escState.currentAmpPlayerIndex++;
+        renderEscAmps();
+        return;
+    }
+
+    sel.forEach(function(amp) {
+        var item = document.createElement('div');
+        item.className = 'amp-card';
+        
+        var tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-box';
+        tooltip.innerHTML = `
+            <div class="tt-type">[АМФА]</div>
+            <div class="tt-name">${amp.name}</div>
+            <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+        `;
+
+        item.innerHTML = `
+            <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+            <div class="amp-title">${amp.name}</div>
+            <div class="amp-category">${amp.category}</div>
+        `;
+        item.appendChild(tooltip);
+
+        item.addEventListener('click', function() {
+            if (!escState.ampSelections[escState.currentAmpPlayerIndex]) escState.ampSelections[escState.currentAmpPlayerIndex] = {};
+            escState.ampSelections[escState.currentAmpPlayerIndex][randCat] = amp.name;
+            unlockAmpForPlayer(escState.currentAmpPlayerIndex, amp.name);
+            
+            if (!escState.usedAmps[escState.currentAmpPlayerIndex]) escState.usedAmps[escState.currentAmpPlayerIndex] = [];
+            if (escState.usedAmps[escState.currentAmpPlayerIndex].indexOf(amp.name) === -1) {
+                escState.usedAmps[escState.currentAmpPlayerIndex].push(amp.name);
+            }
+
+            escState.currentAmpPlayerIndex++;
+            renderEscAmps();
+        });
+        grid.appendChild(item);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+}
+
+// ============================================================
+// ПРЕВЬЮ-МОДАЛКА
+// ============================================================
+function showPreviewModal(trialName, mapName, variators, level) {
+    var old = document.getElementById('previewModal');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'previewModal';
+    overlay.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center;
+        z-index: 2000; cursor: pointer; animation: fadeInPreview 0.5s ease;`;
+
+    var modalContent = document.createElement('div');
+    modalContent.style.cssText = `background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+        border-radius: 24px; padding: 35px 45px; max-width: 1000px; width: 96%;
+        text-align: center; border: 1px solid rgba(220, 90, 50, 0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        animation: slideUpPreview 0.6s ease;`;
+
+    var style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInPreview { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUpPreview { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes slideDownPreview { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(40px) scale(0.95); } }
+        .preview-variator-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            animation: variatorAppear 0.4s ease forwards; opacity: 0; transform: scale(0.8);
+            margin: 0; flex: 1 1 0; min-width: 0; max-width: 100px;
+        }
+        @keyframes variatorAppear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .preview-variator-name {
+            font-weight: 700; color: #ffbc9a; text-align: center;
+            width: 100%; line-height: 1.15; display: block;
+            text-transform: uppercase; letter-spacing: 0.2px;
+            word-break: break-word;
+        }
+        .preview-variator-img {
+            width: 55px; height: 55px; object-fit: contain;
+            padding: 6px;
+            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
+            border: none;
+            border-radius: 10px;
+        }
+        .preview-variators-container {
+            display: flex; flex-wrap: nowrap; justify-content: center; align-items: flex-start;
+            gap: 8px; padding: 16px 0 12px 0;
+            border-top: 1px solid rgba(220,90,50,0.15);
+            border-bottom: 1px solid rgba(220,90,50,0.15);
+            margin-bottom: 18px; min-height: 80px;
+            overflow: hidden;
+        }
+        .preview-level-number { font-size: 3rem; font-weight: 900; color: #e16d48; letter-spacing: 2px; margin-bottom: 8px; }
+        .preview-trial-name { font-size: 2rem; font-weight: 900; color: #ffbc9a; letter-spacing: 2px; margin-bottom: 4px; }
+        .preview-map-name { font-size: 1.2rem; font-weight: 300; color: #c2b9d4; letter-spacing: 3px; margin-bottom: 18px; text-transform: uppercase; }
+        .preview-label { font-size: 0.85rem; color: #888; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; }
+        .preview-hint { color: #666; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
+    `;
+    document.head.appendChild(style);
+
+    var variatorsHtml = variators.map(function(v, index) {
+        var nameUpper = v.name.toUpperCase();
+        var delay = index * 0.05;
+        var fontSize = '0.5rem';
+
+        return `
+            <div class="preview-variator-item" style="animation-delay: ${delay}s;">
+                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
+                <span class="preview-variator-name" style="font-size:${fontSize};">${nameUpper}</span>
+            </div>
+        `;
+    }).join('');
+
+    modalContent.innerHTML = `
+        <div style="margin-bottom: 2px;"><span class="preview-label">Эскалационная терапия</span></div>
+        <div class="preview-level-number">#${level}</div>
+        <div class="preview-trial-name">${trialName.toUpperCase()}</div>
+        <div class="preview-map-name">${mapName.toUpperCase()}</div>
+        <div class="preview-variators-container">${variatorsHtml}</div>
+        <div class="preview-hint"><i class="fas fa-mouse-pointer" style="margin-right: 6px;"></i>Нажмите в любом месте для продолжения</div>
+    `;
+
+    overlay.appendChild(modalContent);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function() {
+        modalContent.style.animation = 'slideDownPreview 0.3s ease forwards';
+        setTimeout(function() { overlay.remove(); showFullResult(); }, 350);
+    });
+}
+
+function showFullResult() {
+    var rc = document.getElementById('escResult');
+    if (rc) {
+        rc.style.display = 'block';
+        rc.classList.add('active');
+        rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function generateEscResult() {
+    // [MOD] всегда передаём актуальное число игроков для кооп/одиночной фильтрации
+    escState.playerCount = escState.players.length;
+
+    var sel = getMapAndTrial(escState.level);
+    if (!sel) return;
+
+    escState.map = { name: sel.mapName, image: sel.mapImage };
+    escState.trial = sel.trial;
+
+    var d = getDifficultyByLevel(escState.level);
+    escState.difficulty = d.name;
+
+    // [MOD] при кооперативе используем актуальный состав
+    var effectiveCount = isCoopMode() ? escState.players.length : 1;
+    escState.variators = getVariatorsForLevel(escState.level, sel.mapName, effectiveCount);
+
+    document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
+
+    showPreviewModal(sel.trial.name, sel.mapName, escState.variators, escState.level);
+    prepareFullResult(sel.mapName, sel.mapImage, sel.trial, d);
+}
+
+function prepareFullResult(mapName, mapImage, trial, difficulty) {
+    var rc = document.getElementById('escResult');
+    if (!rc) return;
+    rc.style.display = 'none';
+    rc.classList.remove('active');
+
+    var rm = document.getElementById('escResultMap');
+    if (rm) {
+        var ti = trial.image || mapImage;
+        // Тип рамки: большие испытания (каждое 10-е, название ЗАГЛАВНЫМИ) — Генезис, остальные — МК-стимуляция
+        var isBigTrial = trial.name === trial.name.toUpperCase();
+        var frameSrc = isBigTrial ? 'images/Генезис-рамка.webp' : 'images/МК-рамка.webp';
+        var frameClass = isBigTrial ? 'frame-genesis' : 'frame-mk';
+        rm.innerHTML = `
+            <div class="result-map-row">
+                <div class="trial-frame ${frameClass}">
+                    <div class="trial-frame-window">
+                        <img src="${ti}" alt="${trial.name}" onerror="this.src='https://placehold.co/200x200/1a1a2e/e16d48?text=${encodeURIComponent(trial.name)}'">
+                    </div>
+                    <img class="trial-frame-border" src="${frameSrc}" alt="">
+                </div>
+                <div class="result-map-info" style="flex:1; min-width:200px;">
+                    <div class="map-label" style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;"><i class="fas fa-map"></i> Карта</div>
+                    <div class="trial-name" style="font-size:1.6rem; color:#e16d48; font-weight:900; margin:0.2rem 0 0.1rem; letter-spacing:1px;">${trial.name.toUpperCase()}</div>
+                    <div class="map-name" style="font-size:1.2rem; color:#ffbc9a; font-weight:300; margin-bottom:0.3rem; letter-spacing:2px; text-transform:uppercase;">${mapName.toUpperCase()}</div>
+                    <div class="trial-desc" style="color:#c2b9d4; font-size:0.85rem; line-height:1.5;">${trial.desc}</div>
+                    <div class="map-meta" style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.8rem; padding-top:0.8rem; border-top:1px solid rgba(220,90,50,0.15);">
+                        <span class="map-meta-item"><strong style="color:#ffbc9a;">№:</strong> #${escState.level}</span>
+                        <span class="map-meta-item"><strong style="color:#ffbc9a;">Сложность:</strong> ${escState.difficulty}</span>
+                        <span class="map-meta-item"><strong style="color:#ffbc9a;">Вариаторов:</strong> ${escState.variators.length}</span>
+                        <span class="map-meta-item"><strong style="color:#ffbc9a;">Режим:</strong> ${isCoopMode() ? 'Кооператив' : 'Одиночный'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    var rv = document.getElementById('escResultVariators');
+    if (rv) {
+        rv.innerHTML = escState.variators.map(function(v) {
+            return `
+                <div class="var-item">
+                    <img src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/70x70/1a1a2e/e16d48?text=?'">
+                    <span class="var-name">${v.name.toUpperCase()}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderEscResultPlayers();
+}
+
+function renderEscResultPlayers() {
+    var container = document.getElementById('escResultPlayers');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // [NEW] Панель управления участниками
+    var controls = document.createElement('div');
+    controls.style.cssText = 'display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-bottom:12px; flex-wrap:wrap;';
+
+    var addBtn = document.createElement('button');
+    addBtn.className = 'next-btn';
+    addBtn.style.cssText = 'padding:0.55rem 1.2rem; font-size:0.78rem; min-width:auto;';
+    addBtn.innerHTML = '<i class="fas fa-user-plus"></i> Добавить игрока';
+    addBtn.disabled = escState.players.length >= 4;
+    addBtn.title = escState.players.length >= 4 ? 'Максимум 4 игрока' : 'Добавить игрока';
+    addBtn.addEventListener('click', function() { addPlayerDuringEscalation(); });
+    controls.appendChild(addBtn);
+
+    var modeBadge = document.createElement('span');
+    modeBadge.style.cssText = 'font-size:0.7rem; color:#888; padding:0.3rem 0.9rem; border-radius:20px; background:rgba(220,90,50,0.1); border:1px solid rgba(220,90,50,0.2); white-space:nowrap;';
+    modeBadge.textContent = isCoopMode() ? 'Кооператив' : 'Одиночный режим';
+    controls.appendChild(modeBadge);
+
+    container.appendChild(controls);
+
+    escState.players.forEach(function(player, idx) {
+        var equip = escState.equipSelections[idx] || 'Не выбрано';
+        var eData = typeof equipmentData !== 'undefined' ? equipmentData.find(function(e) { return e.name === equip; }) : null;
+        var allUsed = checkAllAmpsUsed(idx);
+
+        var section = document.createElement('div');
+        section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px;';
+
+        var toggle = document.createElement('div');
+        toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px;';
+        toggle.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1;">
+                <i class="fas fa-user" style="color: #e16d48; font-size: 1rem;"></i>
+                <span style="font-weight: 700; color: #ffbc9a; font-size: ${player.length > 15 ? '0.8rem' : '1rem'}; letter-spacing: 0.5px; white-space: nowrap;">${player}</span>
+                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                ${eData ? `<img src="${eData.image}" alt="${equip}" style="width:32px; height:32px; object-fit:contain; border-radius:8px; background:rgba(0,0,0,0.3); padding:3px;" onerror="this.style.display='none'">` : ''}
+                <span style="font-size: 0.8rem; color: #ffbc9a; font-weight: 500; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${equip}</span>
+                <i class="fas fa-chevron-down" style="color: #888; font-size: 0.9rem; transition: transform 0.3s;"></i>
+            </div>
+        `;
+        section.appendChild(toggle);
+
+        // [NEW] Кнопка удаления игрока
+        var removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '<i class="fas fa-user-minus"></i>';
+        removeBtn.title = 'Убрать игрока';
+        removeBtn.style.cssText = 'background:rgba(255,51,51,0.15); border:1px solid rgba(255,51,51,0.3); color:#ff6666; border-radius:8px; width:28px; height:28px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;';
+        removeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            removePlayerDuringEscalation(idx);
+        });
+        toggle.querySelector('div:last-child').appendChild(removeBtn);
+
+        var content = document.createElement('div');
+        content.style.cssText = 'padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;';
+        content.id = 'resultContent_' + idx;
+
+        var inner = document.createElement('div');
+        inner.style.cssText = 'padding: 6px 0 16px 0;';
+
+        var eqBlock = document.createElement('div');
+        eqBlock.style.cssText = 'display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);';
+        eqBlock.innerHTML = `
+            ${eData ? `<img src="${eData.image}" alt="${equip}" style="width:48px; height:48px; object-fit:contain; border-radius:10px; background:rgba(0,0,0,0.3); padding:5px;" onerror="this.style.display='none'">` : ''}
+            <div>
+                <div style="font-size: 0.6rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Снаряжение</div>
+                <div style="font-size: 1rem; color: #ffbc9a; font-weight: 600;">${equip}</div>
+            </div>
+        `;
+        inner.appendChild(eqBlock);
+
+        var ampsGrid = document.createElement('div');
+        ampsGrid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;';
+
+        ampCategories.forEach(function(cat) {
+            var ampName = getAmpForCategory(idx, cat);
+            var ampData = typeof ampsData !== 'undefined' ? ampsData.find(function(a) { return a.name === ampName; }) : null;
+            var isComplete = isCategoryComplete(idx, cat);
+
+            var block = document.createElement('div');
+            block.style.cssText = 'background: rgba(255,255,255,0.04); border-radius: 12px; padding: 10px 12px; text-align: center; border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s;';
+
+            if (!isComplete) {
+                block.style.cursor = 'pointer';
+                block.addEventListener('mouseenter', function() { this.style.borderColor = '#e16d48'; this.style.background = 'rgba(220,90,50,0.1)'; });
+                block.addEventListener('mouseleave', function() { this.style.borderColor = 'rgba(255,255,255,0.06)'; this.style.background = 'rgba(255,255,255,0.04)'; });
+                block.addEventListener('click', function() { openAmpModal(idx, cat); });
+            } else {
+                block.style.opacity = '0.7';
+            }
+
+            var catName = document.createElement('div');
+            catName.style.cssText = 'font-size: 0.55rem; color: #e16d48; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px;';
+            catName.textContent = cat;
+            block.appendChild(catName);
+
+            if (isComplete) {
+                var cmp = document.createElement('div');
+                cmp.style.cssText = 'font-size: 0.5rem; color: #2ecc71; font-weight: 500;';
+                cmp.innerHTML = '<i class="fas fa-check-circle"></i> Все';
+                block.appendChild(cmp);
+            } else if (ampData) {
+                var a = document.createElement('div');
+                a.style.cssText = 'font-size: 0.75rem; color: #ffbc9a; font-weight: 600; line-height: 1.2;';
+                a.textContent = ampData.name;
+                block.appendChild(a);
+                var h = document.createElement('div');
+                h.style.cssText = 'font-size: 0.5rem; color: #666; margin-top: 4px; font-style: italic;';
+                h.textContent = 'нажмите, чтобы сменить';
+                block.appendChild(h);
+            } else {
+                var e = document.createElement('div');
+                e.style.cssText = 'font-size: 0.7rem; color: #555; font-weight: 500;';
+                e.textContent = 'Не выбрана';
+                block.appendChild(e);
+                var h2 = document.createElement('div');
+                h2.style.cssText = 'font-size: 0.5rem; color: #666; margin-top: 4px; font-style: italic;';
+                h2.textContent = 'нажмите, чтобы выбрать';
+                block.appendChild(h2);
+            }
+            ampsGrid.appendChild(block);
+        });
+        inner.appendChild(ampsGrid);
+        content.appendChild(inner);
+        section.appendChild(content);
+        container.appendChild(section);
+
+        var isOpen = false;
+        toggle.onclick = function() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                content.style.maxHeight = content.scrollHeight + 30 + 'px';
+                content.style.padding = '0 20px 20px 20px';
+                this.querySelector('.fa-chevron-down').style.transform = 'rotate(180deg)';
+            } else {
+                content.style.maxHeight = '0px';
+                content.style.padding = '0 20px';
+                this.querySelector('.fa-chevron-down').style.transform = 'rotate(0deg)';
+            }
+        };
+    });
+}
+
+// ============================================================
+// [NEW] ДОБАВЛЕНИЕ / УДАЛЕНИЕ ИГРОКА ВО ВРЕМЯ ЭСКАЛАЦИИ
+// ============================================================
+function addPlayerDuringEscalation() {
+    if (escState.players.length >= 4) {
+        alert('Максимум 4 игрока.');
+        return;
+    }
+
+    var name = prompt('Введите ник нового игрока:');
+    if (name === null) return;
+    name = name.trim();
+    if (!name) { alert('Имя не может быть пустым.'); return; }
+    if (escState.players.indexOf(name) !== -1) { alert('Игрок с таким именем уже есть.'); return; }
+
+    var newIndex = escState.players.length;
+    escState.players.push(name);
+
+    escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
+    escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
+    escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
+    escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
+    escState.allAmpsUsed[newIndex] = false;
+
+    // После добавления игрок становится кооперативом автоматически (players.length > 1)
+    // → при следующей генерации будут доступны кооп-вариаторы
+
+    // Очередь догона: снаряжение + (уровень-1) раундов по 3 амфы
+    var catchUpAmpRounds = Math.max(0, escState.level - 1);
+
+    escState.catchUpQueue = [];
+    escState.catchUpQueue.push({ type: 'equip' });
+    for (var r = 0; r < catchUpAmpRounds; r++) {
+        escState.catchUpQueue.push({ type: 'amp' });
+    }
+
+    escState.pendingNewPlayer = { index: newIndex, name: name };
+    escState.catchUpMode = null;
+
+    // Перерисуем блок участников, чтобы бейдж режима обновился
+    renderEscResultPlayers();
+
+    // Запускаем догон
+    processCatchUpQueue();
+}
+
+function removePlayerDuringEscalation(idx) {
+    if (escState.players.length <= 1) {
+        alert('Нельзя убрать последнего игрока. Покинуть эскалацию можно через «Покинуть Эскалацию».');
+        return;
+    }
+    var name = escState.players[idx];
+    if (!confirm('Убрать игрока «' + name + '» из эскалации?')) return;
+
+    escState.players.splice(idx, 1);
+
+    function remap(obj) {
+        var out = {};
+        Object.keys(obj).forEach(function(k) {
+            var i = parseInt(k, 10);
+            if (isNaN(i)) { out[k] = obj[k]; return; }
+            if (i < idx) out[i] = obj[i];
+            else if (i > idx) out[i - 1] = obj[i];
+        });
+        return out;
+    }
+    escState.equipSelections = remap(escState.equipSelections);
+    escState.ampSelections   = remap(escState.ampSelections);
+    escState.usedAmps        = remap(escState.usedAmps);
+    escState.unlockedAmps    = remap(escState.unlockedAmps);
+    escState.allAmpsUsed     = remap(escState.allAmpsUsed);
+
+    if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
+        escState.pendingNewPlayer = null;
+        escState.catchUpQueue = [];
+        escState.catchUpMode = null;
+        var m = document.getElementById('catchUpModal');
+        if (m) m.remove();
+    } else if (escState.pendingNewPlayer && escState.pendingNewPlayer.index > idx) {
+        escState.pendingNewPlayer.index -= 1;
+    }
+
+    // Если остался 1 игрок — isCoopMode() вернёт false
+    // (следующий уровень будет сгенерирован в одиночном режиме)
+    renderEscResultPlayers();
+}
+
+function processCatchUpQueue() {
+    if (!escState.pendingNewPlayer) return;
+
+    var old = document.getElementById('catchUpModal');
+    if (old) old.remove();
+
+    if (escState.catchUpQueue.length === 0) {
+        var finishedName = escState.pendingNewPlayer.name;
+        escState.pendingNewPlayer = null;
+        escState.catchUpMode = null;
+        renderEscResultPlayers();
+        showToast('Игрок «' + finishedName + '» догнал прогресс эскалации', '#2ecc71');
+        return;
+    }
+
+    var step = escState.catchUpQueue.shift();
+    if (step.type === 'equip') {
+        openCatchUpEquipModal();
+    } else {
+        openCatchUpAmpModal();
+    }
+}
+
+function showToast(text, color) {
+    var notif = document.createElement('div');
+    notif.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:' + (color || '#2ecc71') + '; color:white; padding:14px 28px; border-radius:40px; font-weight:600; font-size:0.95rem; z-index:5000; box-shadow:0 8px 30px rgba(0,0,0,0.5); animation:modalFadeIn 0.3s ease;';
+    notif.textContent = text;
+    document.body.appendChild(notif);
+    setTimeout(function() {
+        notif.style.opacity = '0';
+        notif.style.transition = 'opacity 0.4s';
+        setTimeout(function() { notif.remove(); }, 500);
+    }, 1800);
+}
+
+function openCatchUpEquipModal() {
+    var idx = escState.pendingNewPlayer.index;
+    var name = escState.pendingNewPlayer.name;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'catchUpModal';
+    overlay.className = 'catchup-modal-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'catchup-modal';
+
+    var shuf = (typeof equipmentData !== 'undefined' ? equipmentData.slice() : []).sort(function() { return Math.random() - 0.5; });
+    var sel = shuf.slice(0, 3);
+
+    var cardsHtml = sel.map(function(eq) {
+        return '<div class="equip-card" data-eq="' + eq.name + '" style="position:relative;">' +
+            '<div class="tooltip-box"><div class="tt-type">[СНАРЯЖЕНИЕ]</div><div class="tt-name">' + eq.name + '</div><div class="tt-desc">' + (eq.desc || '') + '</div></div>' +
+        '</div>';
+    }).join('');
+
+    var totalSteps = 1 + Math.max(0, escState.level - 1);
+
+    modal.innerHTML =
+        '<div class="catchup-header">' +
+            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
+        '</div>' +
+        '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
+        '<div class="catchup-cards">' + cardsHtml + '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    modal.querySelectorAll('.equip-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var eqName = this.dataset.eq;
+            escState.equipSelections[idx] = eqName;
+            overlay.remove();
+            processCatchUpQueue();
+        });
+    });
+}
+function openCatchUpAmpModal() {
+    var idx = escState.pendingNewPlayer.index;
+    var name = escState.pendingNewPlayer.name;
+
+    var remainingRounds = escState.catchUpQueue.filter(function(s) { return s.type === 'amp'; }).length + 1;
+    var totalRounds = Math.max(0, escState.level - 1);
+    var currentRound = totalRounds - remainingRounds + 1;
+
+    var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
+    if (availCats.length === 0) {
+        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
+        processCatchUpQueue();
+        return;
+    }
+
+    var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+    var availAmps = getAvailableAmpsByCategory(idx, randCat);
+    var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
+    var display = shuf.slice(0, 3);
+
+    if (display.length === 0) {
+        escState.catchUpQueue = escState.catchUpQueue.filter(function(s) { return s.type !== 'amp'; });
+        processCatchUpQueue();
+        return;
+    }
+
+    var overlay = document.createElement('div');
+    overlay.id = 'catchUpModal';
+    overlay.className = 'catchup-modal-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'catchup-modal';
+
+    var cardsHtml = display.map(function(amp) {
+        return '<div class="amp-card" data-amp="' + amp.name + '">' +
+            '<div class="tooltip-box"><div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || '') + '</div></div>' +
+            '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
+            '<div class="amp-title">' + amp.name + '</div>' +
+            '<div class="amp-category">' + amp.category + '</div>' +
+        '</div>';
+    }).join('');
+
+    modal.innerHTML =
+        '<div class="catchup-header">' +
+            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы</h2>' +
+        '</div>' +
+        '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
+        '<div class="catchup-cards">' + cardsHtml + '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    modal.querySelectorAll('.amp-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var ampName = this.dataset.amp;
+            var ampObj = ampsData.find(function(a) { return a.name === ampName; });
+            var cat = ampObj ? ampObj.category : randCat;
+
+            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+            escState.ampSelections[idx][cat] = ampName;
+            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+            if (escState.usedAmps[idx].indexOf(ampName) === -1) escState.usedAmps[idx].push(ampName);
+            unlockAmpForPlayer(idx, ampName);
+
+            overlay.remove();
+            processCatchUpQueue();
+        });
+    });
+}
+// ============================================================
+// МОДАЛКА СБОРА ИНФОРМАЦИИ
+// ============================================================
+function openInfoModal() {
+    var modal = document.getElementById('infoModal');
+    if (!modal) return;
+
+    infoFormState = { levelNum: escState.level, trialName: null, trialObj: null, variatorNames: [], time: '' };
+
+    var levelInput = document.getElementById('infoLevelNum');
+    levelInput.value = escState.level;
+
+    var timeInput = document.getElementById('infoTime');
+    timeInput.value = '';
+    timeInput.classList.remove('input-error', 'input-valid');
+
+    var timeHint = document.getElementById('infoTimeHint');
+    timeHint.textContent = 'Введите время в формате ММ:СС (например 02:46)';
+    timeHint.className = 'info-form-hint';
+
+    var trialInput = document.getElementById('infoTrialInput');
+    if (escState.trial && escState.trial.name) {
+        trialInput.value = escState.trial.name;
+        infoFormState.trialName = escState.trial.name;
+        infoFormState.trialObj = escState.trial;
+    } else {
+        trialInput.value = '—';
+    }
+
+    var preselected = [];
+    if (escState.variators && escState.variators.length > 0) {
+        escState.variators.forEach(function(v) {
+            if (v && v.name) preselected.push(v.name);
+        });
+    }
+    infoFormState.variatorNames = preselected.slice();
+
+    renderReadonlyVariators();
+    updateInfoModalSaveButton();
+
+    modal.classList.add('active');
+}
+
+function closeInfoModal() {
+    var modal = document.getElementById('infoModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function renderReadonlyVariators() {
+    var container = document.getElementById('infoVariatorList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!infoFormState.variatorNames || infoFormState.variatorNames.length === 0) {
+        container.innerHTML = '<div class="readonly-variators-empty">Нет вариаторов</div>';
+        return;
+    }
+
+    infoFormState.variatorNames.forEach(function(vName) {
+        var vObj = typeof allVariatorsData !== 'undefined'
+            ? allVariatorsData.find(function(x) { return x.name === vName; })
+            : null;
+
+        var item = document.createElement('div');
+        item.className = 'readonly-variator-item';
+
+        var imgSrc = vObj && vObj.image ? vObj.image : '';
+        item.innerHTML = `
+            ${imgSrc ? `<img src="${imgSrc}" onerror="this.style.display='none'" alt="">` : ''}
+            <span>${vName}</span>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function isValidTimeFormat(str) {
+    if (!str) return false;
+    var match = /^(\d{2}):(\d{2})$/.exec(str);
+    if (!match) return false;
+    var mm = parseInt(match[1], 10);
+    var ss = parseInt(match[2], 10);
+    if (mm < 0 || mm > 99) return false;
+    if (ss < 0 || ss > 59) return false;
+    return true;
+}
+
+function updateInfoModalSaveButton() {
+    var btn = document.getElementById('infoModalSave');
+    if (!btn) return;
+    var levelOk = infoFormState.levelNum && infoFormState.levelNum > 0;
+    var trialOk = infoFormState.trialName && infoFormState.trialName.length > 0;
+    var timeOk = isValidTimeFormat(infoFormState.time);
+    btn.disabled = !(levelOk && trialOk && timeOk);
+}
+
+// ============================================================
+// ИТОГОВАЯ ТАБЛИЦА
+// ============================================================
+function timeToSeconds(timeStr) {
+    if (!timeStr) return 0;
+    var parts = String(timeStr).split(':');
+    if (parts.length === 2) {
+        var m = parseInt(parts[0], 10);
+        var s = parseInt(parts[1], 10);
+        if (!isNaN(m) && !isNaN(s)) return m * 60 + s;
+    }
+    return 0;
+}
+
+function secondsToTime(totalSeconds) {
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    var s = totalSeconds % 60;
+    if (h > 0) {
+        return h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function buildSummaryTable() {
+    var tbody = document.getElementById('summaryTableBody');
+    var statsEl = document.getElementById('summaryStats');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (collectedRecords.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="summary-empty"><i class="fas fa-inbox"></i> Пока нет сохранённых записей</td></tr>';
+        if (statsEl) statsEl.innerHTML = '';
+        return;
+    }
+
+    var sorted = collectedRecords.slice().sort(function(a, b) { return (a.levelNum || 0) - (b.levelNum || 0); });
+
+    sorted.forEach(function(rec) {
+        var tr = document.createElement('tr');
+
+        var tdNum = document.createElement('td');
+        tdNum.className = 'summary-cell-number';
+        tdNum.textContent = rec.levelNum ? ('#' + rec.levelNum) : '—';
+        tr.appendChild(tdNum);
+
+        var tdThumb = document.createElement('td');
+        tdThumb.className = 'summary-cell-thumb';
+        var imgSrc = rec.trialObj && rec.trialObj.image ? rec.trialObj.image : (rec.mapImage || '');
+        if (imgSrc) {
+            tdThumb.innerHTML = '<img src="' + imgSrc + '" alt="" onerror="this.style.visibility=\'hidden\'">';
+        } else {
+            tdThumb.innerHTML = '<div style="width:90px;height:55px;border-radius:8px;background:rgba(0,0,0,0.4);border:1px solid rgba(220,90,50,0.3);display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;">нет</div>';
+        }
+        tr.appendChild(tdThumb);
+
+        var tdName = document.createElement('td');
+        tdName.className = 'summary-cell-name';
+        tdName.textContent = (rec.trialName || '').toUpperCase();
+        tr.appendChild(tdName);
+
+        var tdVars = document.createElement('td');
+        tdVars.className = 'summary-cell-variators';
+        if (rec.variators && rec.variators.length > 0) {
+            rec.variators.forEach(function(vName) {
+                var vObj = typeof allVariatorsData !== 'undefined'
+                    ? allVariatorsData.find(function(x) { return x.name === vName; })
+                    : null;
+                var imgEl = document.createElement('img');
+                imgEl.className = 'summary-var-icon';
+                imgEl.style.background = "url('images/вариаторы фон.webp') center/cover no-repeat";
+                imgEl.style.border = "none";
+                imgEl.src = vObj && vObj.image ? vObj.image : '';
+                imgEl.alt = vName;
+                imgEl.title = vName;
+                imgEl.onerror = function() { this.style.display = 'none'; };
+                tdVars.appendChild(imgEl);
+            });
+        } else {
+            tdVars.innerHTML = '<span style="color:#666;font-size:0.8rem;font-style:italic;">нет</span>';
+        }
+        tr.appendChild(tdVars);
+
+        var tdTime = document.createElement('td');
+        tdTime.className = 'summary-cell-time';
+        tdTime.textContent = rec.time || '—';
+        tr.appendChild(tdTime);
+
+        tbody.appendChild(tr);
+    });
+
+    var totalSeconds = 0;
+    sorted.forEach(function(rec) { totalSeconds += timeToSeconds(rec.time); });
+
+    var trTotal = document.createElement('tr');
+    trTotal.className = 'summary-total-row';
+
+    var tdTotalLeft = document.createElement('td');
+    tdTotalLeft.colSpan = 4;
+    tdTotalLeft.className = 'summary-total-label';
+    tdTotalLeft.textContent = 'Общее время:';
+    trTotal.appendChild(tdTotalLeft);
+
+    var tdTotalValue = document.createElement('td');
+    tdTotalValue.className = 'summary-total-value';
+    tdTotalValue.textContent = secondsToTime(totalSeconds);
+    trTotal.appendChild(tdTotalValue);
+
+    tbody.appendChild(trTotal);
+
+    if (statsEl) {
+        statsEl.innerHTML = 'Всего записей: <strong>' + sorted.length + '</strong> · Общее время: <strong>' + secondsToTime(totalSeconds) + '</strong>';
+    }
+}
+
+function openSummaryModal() {
+    var modal = document.getElementById('summaryModal');
+    if (!modal) return;
+    buildSummaryTable();
+    modal.classList.add('active');
+}
+
+function closeSummaryModal() {
+    var modal = document.getElementById('summaryModal');
+    if (modal) modal.classList.remove('active');
+}
+
+// ============================================================
+// МОДАЛКА ВОССТАНОВЛЕНИЯ СОХРАНЕНИЯ
+// ============================================================
+function showSaveLoadModal(data, onContinue, onRestart) {
+    var modal = document.getElementById('saveLoadModal');
+    if (!modal) return;
+
+    var s = data.escState;
+
+    document.getElementById('saveInfoLevel').textContent = s.level ? ('#' + s.level) : '—';
+    document.getElementById('saveInfoPlayers').textContent = (s.players && s.players.length) || 0;
+    document.getElementById('saveInfoRecords').textContent = (data.collectedRecords && data.collectedRecords.length) || 0;
+
+    var dateStr = '—';
+    if (data.savedAt) {
+        try {
+            var d = new Date(data.savedAt);
+            dateStr = d.toLocaleDateString('ru-RU') + ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        } catch (e) { dateStr = '—'; }
+    }
+    document.getElementById('saveInfoDate').textContent = dateStr;
+
+    var continueBtn = document.getElementById('saveLoadContinue');
+    var restartBtn = document.getElementById('saveLoadRestart');
+
+    var newContinueBtn = continueBtn.cloneNode(true);
+    var newRestartBtn = restartBtn.cloneNode(true);
+    continueBtn.parentNode.replaceChild(newContinueBtn, continueBtn);
+    restartBtn.parentNode.replaceChild(newRestartBtn, restartBtn);
+
+    newContinueBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+        if (typeof onContinue === 'function') onContinue();
+    });
+
+    newRestartBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+        if (typeof onRestart === 'function') onRestart();
+    });
+
+    modal.classList.add('active');
+}
+
+function hideSaveLoadModal() {
+    var modal = document.getElementById('saveLoadModal');
+    if (modal) modal.classList.remove('active');
+}
+
+// ============================================================
+// ПЕРЕРЫВ (Между уровнями)
+// ============================================================
+function showBreakModal() {
+    var hasAvailable = false;
+    escState.players.forEach(function(_, idx) {
+        if (!areAllCategoriesComplete(idx)) hasAvailable = true;
+    });
+
+    if (!hasAvailable) {
+        generateEscResult();
+        return;
+    }
+
+    var oldModal = document.getElementById('breakModal');
+    if (oldModal) oldModal.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'amp-modal-overlay active';
+    overlay.id = 'breakModal';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; padding: 20px; box-sizing: border-box;';
+
+    var modal = document.createElement('div');
+    modal.className = 'amp-modal';
+    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative;';
+
+    modal.style.backgroundImage = "url('images/фон эскалация.webp')";
+    modal.style.backgroundSize = "cover";
+    modal.style.backgroundPosition = "center";
+    modal.style.backgroundBlendMode = "overlay";
+
+    var content = document.createElement('div');
+    content.style.cssText = 'width: 100%; display: flex; flex-direction: column; align-items: center;';
+
+    function renderStep() {
+        if (escState.currentBreakPlayerIndex >= escState.players.length) {
+            overlay.remove();
+            generateEscResult();
+            return;
+        }
+
+        var idx = escState.currentBreakPlayerIndex;
+        var player = escState.players[idx];
+
+        if (areAllCategoriesComplete(idx)) {
+            escState.currentBreakPlayerIndex++;
+            renderStep();
+            return;
+        }
+
+        var headerHtml = `
+            <div style="text-align: center; margin-bottom: 24px; width: 100%;">
+                <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-weight: 700; color: #fff; font-size: 1.2rem;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${player}</div>
+            </div>
+        `;
+
+        content.innerHTML = headerHtml;
+
+        var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
+        var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+        var availAmps = getAvailableAmpsByCategory(idx, randCat);
+        var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
+        var display = shuf.slice(0, 3);
+
+        var catLabel = document.createElement('div');
+        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 24px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
+        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
+        content.appendChild(catLabel);
+
+        var grid = document.createElement('div');
+        grid.className = 'player-break-grid';
+        grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 50px;';
+
+        display.forEach(function(amp) {
+            var item = document.createElement('div');
+            item.className = 'amp-card';
+            item.style.flex = '1 1 0';
+            item.style.maxWidth = '180px';
+
+            var tooltip = document.createElement('div');
+            tooltip.className = 'tooltip-box';
+            tooltip.innerHTML = `
+                <div class="tt-type">[АМФА]</div>
+                <div class="tt-name">${amp.name}</div>
+                <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+            `;
+
+            item.innerHTML = `
+                <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                <div class="amp-title">${amp.name}</div>
+                <div class="amp-category">${amp.category}</div>
+            `;
+            item.appendChild(tooltip);
+
+            item.addEventListener('click', function() {
+                var cat = ampCategories.find(function(c) {
+                    var a = ampsData.find(function(x) { return x.name === amp.name; });
+                    return a && a.category === c;
+                });
+                if (cat) {
+                    if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                    escState.ampSelections[idx][cat] = amp.name;
+                    if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                    if (escState.usedAmps[idx].indexOf(amp.name) === -1) escState.usedAmps[idx].push(amp.name);
+                    unlockAmpForPlayer(idx, amp.name);
+                }
+                escState.currentBreakPlayerIndex++;
+                renderStep();
+            });
+            grid.appendChild(item);
+        });
+
+        content.appendChild(grid);
+    }
+
+    modal.appendChild(content);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    escState.currentBreakPlayerIndex = 0;
+    renderStep();
+}
+
+// ============================================================
+// ИНИЦИАЛИЗАЦИЯ
+// ============================================================
+function initEscalation() {
+    if (!checkDataLoaded()) {
+        var checkInterval = setInterval(function() {
+            if (checkDataLoaded()) { clearInterval(checkInterval); doInit(); }
+        }, 500);
+        setTimeout(function() { clearInterval(checkInterval); doInit(); }, 10000);
+        return;
+    }
+    doInit();
+}
+
+function checkSavedOnStart() {
+    var saved = loadSavedEscalation();
+    if (saved) {
+        showSaveLoadModal(saved,
+            function() {
+                applySavedEscalation(saved);
+                updateLevelCounter();
+                if (escState.currentStep === 3) {
+                    goToEscStep(3);
+                    renderEscEquipment();
+                } else if (escState.currentStep === 4) {
+                    goToEscStep(4);
+                    renderEscAmps();
+                } else if (escState.currentStep >= 5 && escState.trial && escState.map) {
+                    showFullResult();
+                    prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
+                    // [NEW] если в сохранении был незавершённый догон — продолжим
+                    if (escState.pendingNewPlayer) {
+                        setTimeout(function() { processCatchUpQueue(); }, 400);
+                    }
+                } else if (escState.currentStep === 2) {
+                    goToEscStep(2);
+                    renderEscPlayerNames();
+                } else {
+                    goToEscStep(1);
+                }
+            },
+            function() {
+                clearSavedEscalation();
+                escState = {
+                    level: 1, playerCount: 0, players: [],
+                    equipSelections: {}, ampSelections: {}, usedAmps: {},
+                    unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
+                    map: null, trial: null, difficulty: null, variators: [],
+                    isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
+                    nostophobiaCount: 0, currentEquipPlayerIndex: 0,
+                    currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
+                    // [NEW]
+                    initialPlayerCount: 0,
+                    pendingNewPlayer: null,
+                    catchUpQueue: [],
+                    catchUpMode: null
+                };
+                collectedRecords = [];
+                updateLevelCounter();
+                goToEscStep(1);
+            }
+        );
+    }
+}
+
+function doInit() {
+    var options = document.querySelectorAll('#escPlayerCountOptions .player-count-btn');
+    var s1Next = document.getElementById('escStep1Next');
+    var s2Back = document.getElementById('escStep2Back');
+    var s2Next = document.getElementById('escStep2Next');
+    var nextLevel = document.getElementById('escNextLevelBtn');
+    var exitBtn = document.getElementById('escExitBtn');
+    var saveBtn = document.getElementById('escSaveBtn');
+
+    if (options) {
+        options.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                options.forEach(function(b) { b.classList.remove('selected'); });
+                this.classList.add('selected');
+                escState.playerCount = parseInt(this.dataset.count);
+                escState.initialPlayerCount = escState.playerCount; // [NEW]
+                if (s1Next) s1Next.disabled = false;
+            });
+        });
+    }
+
+    if (s1Next) s1Next.addEventListener('click', function() { goToEscStep(2); renderEscPlayerNames(); });
+    if (s2Back) s2Back.addEventListener('click', function() { goToEscStep(1); });
+    if (s2Next) s2Next.addEventListener('click', function() {
+        var inputs = document.querySelectorAll('#escPlayerNameInputs input');
+        escState.players = [];
+        inputs.forEach(function(input, i) { escState.players.push(input.value.trim() || 'Игрок ' + (i + 1)); });
+        escState.players.forEach(function(_, idx) {
+            if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+            if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+            if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
+        });
+        escState.initialPlayerCount = escState.players.length; // [NEW]
+
+        escState.currentEquipPlayerIndex = 0;
+        
+        goToEscStep(3);
+        renderEscEquipment();
+    });
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            var ok = saveEscalation();
+            if (ok) {
+                var notif = document.createElement('div');
+                notif.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 0.95rem; z-index: 5000; box-shadow: 0 8px 30px rgba(46, 204, 113, 0.5); animation: modalFadeIn 0.3s ease;';
+                notif.innerHTML = '<i class="fas fa-check-circle"></i> Сохранено! Выход...';
+                document.body.appendChild(notif);
+                setTimeout(function() {
+                    notif.style.opacity = '0';
+                    notif.style.transition = 'opacity 0.4s';
+                    setTimeout(function() { window.location.href = 'roulette.html'; }, 500);
+                }, 1200);
+            } else {
+                alert('Не удалось сохранить. Возможно, localStorage недоступен.');
+            }
+        });
+    }
+
+    if (nextLevel) {
+        nextLevel.addEventListener('click', function() {
+            openInfoModal();
+        });
+    }
+
+    if (exitBtn) {
+        exitBtn.addEventListener('click', function() {
+            openSummaryModal();
+        });
+    }
+
+    var infoModalClose = document.getElementById('infoModalClose');
+    var infoModalCancel = document.getElementById('infoModalCancel');
+    var infoModalSave = document.getElementById('infoModalSave');
+    var infoTime = document.getElementById('infoTime');
+    var timeHint = document.getElementById('infoTimeHint');
+
+    if (infoModalClose) infoModalClose.addEventListener('click', closeInfoModal);
+    if (infoModalCancel) infoModalCancel.addEventListener('click', closeInfoModal);
+
+    if (infoTime) {
+        infoTime.addEventListener('input', function() {
+            var digits = this.value.replace(/\D/g, '').slice(0, 4);
+            var formatted = digits;
+            if (digits.length > 2) {
+                formatted = digits.slice(0, 2) + ':' + digits.slice(2);
+            }
+            this.value = formatted;
+            infoFormState.time = formatted;
+
+            var isValid = isValidTimeFormat(formatted);
+
+            if (formatted.length === 0) {
+                this.classList.remove('input-error', 'input-valid');
+                timeHint.textContent = 'Введите время в формате ММ:СС (например 02:46)';
+                timeHint.className = 'info-form-hint';
+            } else if (isValid) {
+                this.classList.remove('input-error');
+                this.classList.add('input-valid');
+                timeHint.textContent = '✓ Формат корректен';
+                timeHint.className = 'info-form-hint valid';
+            } else {
+                this.classList.remove('input-valid');
+                this.classList.add('input-error');
+                if (formatted.length < 5) {
+                    timeHint.textContent = 'Введите время полностью: ММ:СС (например 02:46)';
+                } else {
+                    timeHint.textContent = 'Неверное время (секунды 00–59, минуты 00–99)';
+                }
+                timeHint.className = 'info-form-hint error';
+            }
+
+            updateInfoModalSaveButton();
+        });
+
+        infoTime.addEventListener('keypress', function(e) {
+            var char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) e.preventDefault();
+        });
+
+        infoTime.addEventListener('paste', function(e) {
+            e.preventDefault();
+            var pasted = (e.clipboardData || window.clipboardData).getData('text');
+            var digits = pasted.replace(/\D/g, '').slice(0, 4);
+            var formatted = digits;
+            if (digits.length > 2) formatted = digits.slice(0, 2) + ':' + digits.slice(2);
+            this.value = formatted;
+            infoFormState.time = formatted;
+            this.dispatchEvent(new Event('input'));
+        });
+    }
+
+    if (infoModalSave) {
+        infoModalSave.addEventListener('click', function() {
+            if (!isValidTimeFormat(infoFormState.time)) {
+                alert('Пожалуйста, введите корректное время в формате ММ:СС (например 02:46)');
+                return;
+            }
+
+            var record = {
+                levelNum: infoFormState.levelNum,
+                trialName: infoFormState.trialName,
+                trialObj: infoFormState.trialObj,
+                variators: infoFormState.variatorNames.slice(),
+                time: infoFormState.time,
+                mapImage: escState.map ? escState.map.image : null,
+                timestamp: Date.now()
+            };
+            collectedRecords.push(record);
+            closeInfoModal();
+
+            escState.level++;
+            updateLevelCounter();
+
+            escState.currentEquipPlayerIndex = 0;
+
+            var hasAvailable = false;
+            escState.players.forEach(function(_, idx) {
+                if (!areAllCategoriesComplete(idx)) hasAvailable = true;
+            });
+
+            if (hasAvailable) {
+                showBreakModal();
+            } else {
+                generateEscResult();
+            }
+        });
+    }
+
+    var summaryClose = document.getElementById('summaryClose');
+    var summaryCloseBtn = document.getElementById('summaryCloseBtn');
+    var summaryCopy = document.getElementById('summaryCopy');
+
+    if (summaryClose) summaryClose.addEventListener('click', closeSummaryModal);
+    if (summaryCloseBtn) {
+        summaryCloseBtn.addEventListener('click', function() {
+            closeSummaryModal();
+            
+            // СБОР ДАННЫХ ДЛЯ БД
+            let totalSeconds = 0;
+            collectedRecords.forEach(function(rec) { 
+                totalSeconds += timeToSeconds(rec.time); 
+            });
+            const totalTimeStr = secondsToTime(totalSeconds);
+            const levelsCompleted = collectedRecords.length;
+            
+            // Отправляем данные по каждому игроку, который был в команде
+            escState.players.forEach(playerName => {
+                sendResultToDB(
+                    MODE_NAME, 
+                    playerName,
+                    levelsCompleted,
+                    totalTimeStr,
+                    'steam' // Можно потом сделать выбор платформы
+                );
+            });
+
+            clearSavedEscalation();
+            location.reload();
+        });
+    }
+
+    if (summaryCopy) {
+        summaryCopy.addEventListener('click', function() {
+            var text = 'ЭСКАЛАЦИОННАЯ ТЕРАПИЯ\n';
+            text += '='.repeat(40) + '\n';
+            var sorted = collectedRecords.slice().sort(function(a, b) { return (a.levelNum || 0) - (b.levelNum || 0); });
+            var totalSeconds = 0;
+            sorted.forEach(function(rec) {
+                text += '#' + (rec.levelNum || '?') + ' | ' + (rec.trialName || '') + ' | ';
+                text += (rec.variators || []).join(', ') + ' | ' + (rec.time || '?') + '\n';
+                totalSeconds += timeToSeconds(rec.time);
+            });
+            text += '\nОБЩЕЕ ВРЕМЯ: ' + secondsToTime(totalSeconds) + '\n';
+            navigator.clipboard.writeText(text).then(function() {
+                summaryCopy.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+                setTimeout(function() {
+                    summaryCopy.innerHTML = '<i class="fas fa-copy"></i> Скопировать';
+                }, 2000);
+            });
+        });
+    }
+
+    var confirmCancel = document.getElementById('confirmCancel');
+    var confirmExit = document.getElementById('confirmExit');
+    var confirmModal = document.getElementById('confirmModal');
+
+    if (confirmCancel) {
+        confirmCancel.addEventListener('click', function() {
+            if (confirmModal) confirmModal.classList.remove('active');
+        });
+    }
+
+    if (confirmExit) {
+        confirmExit.addEventListener('click', function() {
+            if (confirmModal) confirmModal.classList.remove('active');
+            location.reload();
+        });
+    }
+
+    if (confirmModal) {
+        confirmModal.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    }
+
+    updateLevelCounter();
+}
+
+function initAmpModal() {
+    var modal = document.getElementById('ampModal');
+    var closeBtn = document.getElementById('ampModalClose');
+    var confirmBtn = document.getElementById('ampModalConfirm');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+        });
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+        });
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (modalState.playerIndex !== null && modalState.selectedAmp && modalState.selectedCategory) {
+                var idx = modalState.playerIndex;
+                var category = modalState.selectedCategory;
+                var currentAmps = escState.ampSelections[idx] || {};
+                var oldAmp = currentAmps[category];
+
+                if (oldAmp === modalState.selectedAmp) {
+                    if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+                    return;
+                }
+
+                if (oldAmp && escState.usedAmps[idx]) {
+                    escState.usedAmps[idx] = escState.usedAmps[idx].filter(function(a) { return a !== oldAmp; });
+                }
+
+                if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                escState.ampSelections[idx][category] = modalState.selectedAmp;
+
+                if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                if (escState.usedAmps[idx].indexOf(modalState.selectedAmp) === -1) {
+                    escState.usedAmps[idx].push(modalState.selectedAmp);
+                }
+                unlockAmpForPlayer(idx, modalState.selectedAmp);
+
+                renderEscResultPlayers();
+
+                if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+            }
+        });
+    }
+}
+
+var modalState = { playerIndex: null, selectedAmp: null, selectedCategory: "Инструмент" };
+
+function openAmpModal(playerIndex, category) {
+    if (checkAllAmpsUsed(playerIndex)) { alert('Все улучшения уже применены. Смена амф невозможна.'); return; }
+    if (isCategoryComplete(playerIndex, category)) { alert('Все амфы в этой категории уже использованы.'); return; }
+
+    var playerName = escState.players[playerIndex];
+    var currentAmp = getAmpForCategory(playerIndex, category);
+
+    modalState.playerIndex = playerIndex;
+    modalState.selectedCategory = category;
+    modalState.selectedAmp = currentAmp;
+
+    var playerNameEl = document.getElementById('ampModalPlayerName');
+    if (playerNameEl) playerNameEl.textContent = playerName + ' — ' + category;
+
+    var tabsContainer = document.getElementById('ampCategoryTabs');
+    if (tabsContainer) {
+        tabsContainer.innerHTML = '';
+        var availableCategories = ampCategories.filter(function(cat) { return !isCategoryComplete(playerIndex, cat); });
+
+        if (availableCategories.length === 0) {
+            var grid = document.getElementById('ampModalGrid');
+            if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #2ecc71; padding: 2rem;"><i class="fas fa-check-circle" style="font-size: 2rem;"></i><div style="margin-top: 0.5rem;">Все улучшения применены</div></div>`;
+            var confirmBtn = document.getElementById('ampModalConfirm');
+            if (confirmBtn) confirmBtn.disabled = true;
+            var modal = document.getElementById('ampModal');
+            if (modal) { modal.classList.add('active'); modal.style.display = 'flex'; }
+            return;
+        }
+
+        availableCategories.forEach(function(cat) {
+            var tab = document.createElement('button');
+            tab.textContent = cat;
+            tab.dataset.category = cat;
+            if (cat === category) tab.classList.add('active');
+            tab.addEventListener('click', function() {
+                if (tabsContainer) {
+                    tabsContainer.querySelectorAll('button').forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+                    var newCategory = this.dataset.category;
+                    modalState.selectedCategory = newCategory;
+                    modalState.selectedAmp = getAmpForCategory(playerIndex, newCategory);
+                    renderAmpModalGrid(playerIndex, newCategory);
+                }
+            });
+            tabsContainer.appendChild(tab);
+        });
+    }
+
+    renderAmpModalGrid(playerIndex, category);
+    var modal = document.getElementById('ampModal');
+    if (modal) { modal.classList.add('active'); modal.style.display = 'flex'; }
+}
+
+function renderAmpModalGrid(playerIndex, category) {
+    var grid = document.getElementById('ampModalGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    if (typeof ampsData === 'undefined' || ampsData.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #e16d48; padding: 2rem;">Ошибка: данные амф не загружены</div>';
+        return;
+    }
+
+    var categoryAmps = getAmpsByCategory(category);
+    var unlocked = escState.unlockedAmps[playerIndex] || [];
+    var currentAmp = getAmpForCategory(playerIndex, category);
+    var hasAvailable = false;
+
+    categoryAmps.forEach(function(amp) {
+        var isUnlocked = unlocked.indexOf(amp.name) !== -1;
+        var isCurrent = currentAmp === amp.name;
+        var isAvailable = isUnlocked || isCurrent;
+
+        var item = document.createElement('div');
+        item.className = 'amp-modal-item';
+        if (isCurrent) item.classList.add('selected');
+
+        if (!isAvailable) {
+            item.classList.add('locked');
+            item.innerHTML = `
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span>Засекречено</span></div>
+                <img src="${amp.image}" alt="${amp.name}" style="opacity: 0.3;" onerror="this.src='https://placehold.co/65x65/1a1a2e/e16d48?text=?'">
+                <div class="amp-name">${amp.name}</div>
+                <div class="amp-category-label">${amp.category}</div>
+                <div class="amp-status locked">🔒 Засекречено</div>
+            `;
+        } else {
+            hasAvailable = true;
+            item.innerHTML = `
+                <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/65x65/1a1a2e/e16d48?text=?'">
+                <div class="amp-name">${amp.name}</div>
+                <div class="amp-category-label">${amp.category}</div>
+                <div class="amp-status ${isCurrent ? 'current' : 'available'}">${isCurrent ? '✓ Текущая' : 'Доступна'}</div>
+            `;
+            item.addEventListener('click', function() {
+                if (this.classList.contains('locked')) return;
+                grid.querySelectorAll('.amp-modal-item').forEach(function(el) { el.classList.remove('selected'); });
+                this.classList.add('selected');
+                modalState.selectedAmp = amp.name;
+                var confirmBtn = document.getElementById('ampModalConfirm');
+                if (confirmBtn) confirmBtn.disabled = false;
+            });
+        }
+        grid.appendChild(item);
+    });
+
+    if (!hasAvailable) {
+        var emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'grid-column: 1 / -1; text-align: center; color: #888; padding: 2rem;';
+        emptyMsg.textContent = 'В этой категории нет доступных амф. Выберите другую категорию.';
+        grid.appendChild(emptyMsg);
+    }
+
+    var confirmBtn = document.getElementById('ampModalConfirm');
+    if (confirmBtn) confirmBtn.disabled = true;
+}
+
+// ============================================================
+// ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB)
+// ============================================================
+async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                data: [
+                    {
+                        mode: mode,
+                        playerName: playerName,
+                        levelsCompleted: levelsCompleted.toString(),
+                        totalTime: totalTime,
+                        platform: platform || 'steam'
+                    }
+                ]
+            })
+        });
+        const result = await response.json();
+        if(result.created) {
+            console.log('Успешно сохранено в БД:', playerName);
+        } else {
+            console.error('Ошибка сохранения:', result);
+        }
+    } catch (error) {
+        console.error('Ошибка отправки в БД:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('escalationWrapper')) {
+        setTimeout(function() {
+            initEscalation();
+            initAmpModal();
+            checkSavedOnStart();
+        }, 300);
+    }
+});
+</script>
+
+</body>
+</html>
