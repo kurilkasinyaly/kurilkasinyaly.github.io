@@ -543,13 +543,11 @@
             width: 100%;
             max-width: 240px;
             flex-shrink: 0;
-            /* отступ картинки от края рамки (подберите под свои рамки) */
             --frame-inset-top: 7%;
             --frame-inset-right: 7%;
             --frame-inset-bottom: 7%;
             --frame-inset-left: 7%;
         }
-        /* рамка задаёт размер блока, картинка испытания лежит поверх неё и закрывает чёрную подложку */
         .trial-frame .trial-frame-border {
             display: block;
             width: 100%;
@@ -574,9 +572,6 @@
             object-fit: cover;
             display: block;
         }
-        /* отдельная подгонка под каждую рамку, если у них разная толщина */
-        /* Картинка лежит ПОВЕРХ рамки и закрывает чёрную подложку внутри неё.
-           Отступы = толщина видимого бортика рамки (бумага / белая кайма). */
         .trial-frame.frame-mk {
             --frame-inset-top: 15%;
             --frame-inset-right: 7.5%;
@@ -621,7 +616,7 @@
         }
 
         /* ============================================================
-           ВАРИАТОРЫ (ФОН ВМЕСТО БОРТИКОВ)
+           ВАРИАТОРЫ
            ============================================================ */
         .variator-list {
             display: flex;
@@ -792,7 +787,7 @@
             display: flex; align-items: center; justify-content: center;
             padding: 24px; box-sizing: border-box;
             backdrop-filter: blur(10px);
-            overflow: visible; /* никакого скролла у оверлея */
+            overflow: visible;
         }
         .catchup-modal {
             background: rgba(18, 12, 28, 0.97);
@@ -801,8 +796,8 @@
             border: 2px solid rgba(220, 90, 50, 0.4);
             padding: 2.2rem 2.4rem;
             width: min(1400px, 96vw);
-            max-height: none;          /* без ограничения по высоте */
-            overflow: visible;         /* без внутреннего скролла */
+            max-height: none;
+            overflow: visible;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
             animation: modalFadeIn 0.3s ease-out;
             display: flex;
@@ -813,9 +808,8 @@
             gap: 34px;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 10px 0 55px 0;    /* место под тултипы */
+            padding: 10px 0 55px 0;
         }
-        /* Карточки в догоне — чуть крупнее, чтобы всё читалось */
         .catchup-modal .equip-card {
             width: 220px;
             height: 320px;
@@ -1253,7 +1247,7 @@
             content: '';
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: url('images/фон эскалация.webp') center/cover no-repeat;
-            opacity: 0.15; /* Можно увеличить, если хотите, чтобы картинка внутри была ярче */
+            opacity: 0.15; 
             z-index: 0;
         }
 
@@ -1900,6 +1894,12 @@ var collectedRecords = [];
 var STORAGE_KEY = 'escalation_save_v1';
 
 // ============================================================
+// НАСТРОЙКИ БАЗЫ ДАННЫХ (SheetDB)
+// ============================================================
+const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
+const MODE_NAME = 'Infinite'; // Для бесконечной эскалации
+
+// ============================================================
 // ПРОВЕРКА ЗАГРУЗКИ
 // ============================================================
 function checkDataLoaded() {
@@ -2440,6 +2440,21 @@ function renderEscPlayerNames() {
     else if (pc === 2 || pc === 3) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '500px'; }
     else if (pc === 4) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '550px'; }
 
+    var datalistHTML = `<datalist id="knownPlayers">
+        <option value="Майор Гом 2.0">
+        <option value="joysk_o">
+        <option value="Майор СУЕТЛАНА">
+        <option value="crøssfade">
+        <option value="Генерал Героиня">
+        <option value="Shugar">
+        <option value="blablablacreek">
+        <option value="humiliated">
+        <option value="Barricade Guy">
+        <option value="LARIK_LOL">
+        <option value="Garlik_Darlik">
+        <option value="Takuya_Satori">
+    </datalist>`;
+
     for (var i = 0; i < pc; i++) {
         var row = document.createElement('div');
         row.style.cssText = 'display: flex; flex-direction: column; gap: 4px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(220,90,50,0.08);';
@@ -2448,7 +2463,7 @@ function renderEscPlayerNames() {
                 <i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>
                 Игрок ${i + 1}
             </label>
-            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+            <input type="text" list="knownPlayers" placeholder="Начните вводить или выберите..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
         `;
         grid.appendChild(row);
 
@@ -2459,6 +2474,7 @@ function renderEscPlayerNames() {
             row.style.width = '100%';
         }
     }
+    container.innerHTML = datalistHTML;
     container.appendChild(grid);
 
     var inputs = container.querySelectorAll('input');
@@ -3858,6 +3874,26 @@ function doInit() {
     if (summaryCloseBtn) {
         summaryCloseBtn.addEventListener('click', function() {
             closeSummaryModal();
+            
+            // СБОР ДАННЫХ ДЛЯ БД
+            let totalSeconds = 0;
+            collectedRecords.forEach(function(rec) { 
+                totalSeconds += timeToSeconds(rec.time); 
+            });
+            const totalTimeStr = secondsToTime(totalSeconds);
+            const levelsCompleted = collectedRecords.length;
+            
+            // Отправляем данные по каждому игроку, который был в команде
+            escState.players.forEach(playerName => {
+                sendResultToDB(
+                    MODE_NAME, 
+                    playerName,
+                    levelsCompleted,
+                    totalTimeStr,
+                    'steam' // Можно потом сделать выбор платформы
+                );
+            });
+
             clearSavedEscalation();
             location.reload();
         });
@@ -4080,11 +4116,46 @@ function renderAmpModalGrid(playerIndex, category) {
     if (confirmBtn) confirmBtn.disabled = true;
 }
 
+// ============================================================
+// ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB)
+// ============================================================
+async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                data: [
+                    {
+                        mode: mode,
+                        playerName: playerName,
+                        levelsCompleted: levelsCompleted.toString(),
+                        totalTime: totalTime,
+                        platform: platform || 'steam'
+                    }
+                ]
+            })
+        });
+        const result = await response.json();
+        if(result.created) {
+            console.log('Успешно сохранено в БД:', playerName);
+        } else {
+            console.error('Ошибка сохранения:', result);
+        }
+    } catch (error) {
+        console.error('Ошибка отправки в БД:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('escalationWrapper')) {
         setTimeout(function() {
             initEscalation();
             initAmpModal();
+            checkSavedOnStart();
         }, 300);
     }
 });
