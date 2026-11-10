@@ -10,863 +10,300 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #0b0811;
-            color: #f0eef7;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 100vh;
+            background: #0b0811; color: #f0eef7;
+            display: flex; align-items: flex-start; justify-content: center;
+            position: relative; overflow: hidden; min-height: 100vh;
         }
-
-        body.scroll-enabled {
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        .bg-slider {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            overflow: hidden;
-        }
-
+        body.scroll-enabled { overflow-y: auto; overflow-x: hidden; }
+        .bg-slider { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
         .bg-slider img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 3s ease-in-out;
-            will-change: opacity;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0; transition: opacity 3s ease-in-out; will-change: opacity;
         }
-
-        .bg-slider img.active {
-            opacity: 1;
-        }
-
-        .bg-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: -1;
-        }
-
+        .bg-slider img.active { opacity: 1; }
+        .bg-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: -1; }
         .smoke-overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
             background: radial-gradient(ellipse at 10% 80%, rgba(120, 60, 30, 0.05) 0%, transparent 50%),
                 radial-gradient(ellipse at 90% 20%, rgba(160, 80, 40, 0.03) 0%, transparent 40%);
         }
-
         @keyframes floatParticle {
             0% { transform: translateY(0) scale(0.8); opacity: 0; }
             30% { opacity: 0.12; }
             80% { opacity: 0.06; }
             100% { transform: translateY(-180px) scale(2.2); opacity: 0; }
         }
-
         .smoke-particle {
-            position: fixed;
-            bottom: -40px;
-            width: 120px;
-            height: 120px;
+            position: fixed; bottom: -40px; width: 120px; height: 120px;
             background: radial-gradient(circle, rgba(200, 100, 50, 0.05) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
+            border-radius: 50%; pointer-events: none; z-index: 0;
             animation: floatParticle 16s linear infinite;
         }
-
         .main-wrapper {
-            width: 100%;
-            max-width: 1400px;
-            padding: 1.5rem 2rem;
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            width: 100%; max-width: 1400px; padding: 1.5rem 2rem;
+            position: relative; z-index: 10; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: flex-start;
         }
-
         /* ===== ЭКРАН ПОДКЛЮЧЕНИЯ ===== */
         .connect-screen {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            animation: fadeInScale 0.6s ease-out;
-            cursor: pointer;
-            background: rgba(8, 6, 15, 0.6);
-            pointer-events: auto;
+            display: none; position: fixed; inset: 0; z-index: 50;
+            align-items: center; justify-content: center; flex-direction: column;
+            animation: fadeInScale 0.6s ease-out; cursor: pointer;
+            background: rgba(8, 6, 15, 0.6); pointer-events: auto;
         }
-
-        .connect-screen.active {
-            display: flex;
-        }
-
-        .connect-content {
-            text-align: center;
-            user-select: none;
-            padding: 2rem;
-            pointer-events: none;
-        }
-
+        .connect-screen.active { display: flex; }
+        .connect-content { text-align: center; user-select: none; padding: 2rem; pointer-events: none; }
         .connect-logo .line1 {
-            display: block;
-            font-size: 2.2rem;
-            font-weight: 300;
-            letter-spacing: 10px;
-            color: rgba(255, 255, 255, 0.35);
-            margin-bottom: 0.5rem;
+            display: block; font-size: 2.2rem; font-weight: 300;
+            letter-spacing: 10px; color: rgba(255, 255, 255, 0.35); margin-bottom: 0.5rem;
         }
-
-        .connect-logo .logo-img {
-            max-width: 340px;
-            width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
+        .connect-logo .logo-img { max-width: 340px; width: 100%; height: auto; display: block; margin: 0 auto; }
         .connect-logo .line3 {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 6px;
-            color: rgba(255, 255, 255, 0.25);
-            margin-top: 0.5rem;
+            display: block; font-size: 1.8rem; font-weight: 300;
+            letter-spacing: 6px; color: rgba(255, 255, 255, 0.25); margin-top: 0.5rem;
         }
-
         .connect-prompt {
-            margin-top: 3rem;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: rgba(200, 190, 210, 0.7);
-            letter-spacing: 3px;
-            text-transform: uppercase;
+            margin-top: 3rem; font-size: 1.2rem; font-weight: 500;
+            color: rgba(200, 190, 210, 0.7); letter-spacing: 3px; text-transform: uppercase;
             animation: pulseText 2s ease-in-out infinite;
-            border: 1px solid rgba(220, 90, 50, 0.15);
-            padding: 0.8rem 2.2rem;
-            border-radius: 60px;
-            display: inline-block;
-            backdrop-filter: blur(4px);
-            background: rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-            pointer-events: auto;
-            cursor: pointer;
+            border: 1px solid rgba(220, 90, 50, 0.15); padding: 0.8rem 2.2rem; border-radius: 60px;
+            display: inline-block; backdrop-filter: blur(4px); background: rgba(0, 0, 0, 0.2);
+            transition: all 0.3s; pointer-events: auto; cursor: pointer;
         }
-
-        .connect-prompt:hover {
-            border-color: rgba(220, 90, 50, 0.4);
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .connect-prompt i {
-            margin-right: 10px;
-            color: #e25d32;
-        }
-
+        .connect-prompt:hover { border-color: rgba(220, 90, 50, 0.4); background: rgba(0, 0, 0, 0.3); }
+        .connect-prompt i { margin-right: 10px; color: #e25d32; }
         .connect-status {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 3rem;
-            pointer-events: none;
+            display: none; align-items: center; justify-content: center;
+            gap: 1.5rem; margin-top: 3rem; pointer-events: none;
         }
-
-        .connect-status.active {
-            display: flex;
-        }
-
+        .connect-status.active { display: flex; }
         .connect-status .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(220, 90, 50, 0.15);
-            border-top: 3px solid #e25d32;
-            border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-            flex-shrink: 0;
+            width: 40px; height: 40px; border: 3px solid rgba(220, 90, 50, 0.15);
+            border-top: 3px solid #e25d32; border-radius: 50%; animation: spin 0.9s linear infinite; flex-shrink: 0;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .connect-status .label {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 4px;
+            font-size: 1.8rem; font-weight: 700; letter-spacing: 4px;
             background: linear-gradient(135deg, #ffbc9a, #e25d32);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: pulseText 1.2s ease-in-out infinite;
-            text-transform: uppercase;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: pulseText 1.2s ease-in-out infinite; text-transform: uppercase;
         }
-
-        @keyframes pulseText {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .connect-hint {
-            position: fixed;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem;
-            color: rgba(120, 100, 130, 0.4);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            z-index: 51;
-            pointer-events: none;
+            position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%);
+            font-size: 0.7rem; color: rgba(120, 100, 130, 0.4);
+            letter-spacing: 2px; text-transform: uppercase; z-index: 51; pointer-events: none;
         }
-
         /* ===== ЭКРАН ОШИБКИ ===== */
         .error-screen {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 60;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            animation: fadeInScale 0.6s ease-out;
-            background: rgba(8, 6, 15, 0.7);
-            backdrop-filter: blur(8px);
-            pointer-events: auto;
-            padding: 2rem;
+            display: none; position: fixed; inset: 0; z-index: 60;
+            align-items: center; justify-content: center; flex-direction: column;
+            animation: fadeInScale 0.6s ease-out; background: rgba(8, 6, 15, 0.7);
+            backdrop-filter: blur(8px); pointer-events: auto; padding: 2rem;
         }
-
-        .error-screen.active {
-            display: flex;
-        }
-
+        .error-screen.active { display: flex; }
         .error-box {
-            background: rgba(10, 7, 18, 0.92);
-            border: 1px solid rgba(200, 60, 40, 0.4);
-            border-radius: 60px;
-            padding: 3rem 3.5rem;
-            max-width: 580px;
-            width: 100%;
-            text-align: center;
+            background: rgba(10, 7, 18, 0.92); border: 1px solid rgba(200, 60, 40, 0.4);
+            border-radius: 60px; padding: 3rem 3.5rem; max-width: 580px; width: 100%; text-align: center;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(200, 60, 40, 0.15);
             animation: fadeInScale 0.5s ease-out;
         }
-
-        .error-box .error-icon {
-            font-size: 4rem;
-            color: #e25d32;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .error-box h2 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #ff6b4a;
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-
-        .error-box .error-sub {
-            color: #b5a8c8;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        .error-box .error-desc {
-            color: #8a7a9a;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            padding: 0 0.5rem;
-        }
-
+        .error-box .error-icon { font-size: 4rem; color: #e25d32; margin-bottom: 1rem; display: block; }
+        .error-box h2 { font-size: 2.2rem; font-weight: 800; color: #ff6b4a; margin-bottom: 0.5rem; letter-spacing: 1px; }
+        .error-box .error-sub { color: #b5a8c8; font-size: 1rem; margin-bottom: 1.5rem; font-weight: 500; }
+        .error-box .error-desc { color: #8a7a9a; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; padding: 0 0.5rem; }
         .error-box .error-code {
-            display: inline-block;
-            background: rgba(200, 60, 40, 0.1);
-            border: 1px solid rgba(200, 60, 40, 0.2);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #e25d32;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
+            display: inline-block; background: rgba(200, 60, 40, 0.1); border: 1px solid rgba(200, 60, 40, 0.2);
+            padding: 0.4rem 1.5rem; border-radius: 40px; font-size: 0.85rem; font-weight: 600;
+            color: #e25d32; letter-spacing: 1px; margin-bottom: 2rem;
         }
-
-        .error-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        .error-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
         .error-btn {
-            padding: 12px 32px;
-            border: none;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            padding: 12px 32px; border: none; border-radius: 60px; font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.3s; font-family: inherit; display: inline-flex; align-items: center; gap: 8px;
         }
-
-        .error-btn-primary {
-            background: linear-gradient(135deg, #bc4627, #e25d32);
-            color: white;
-            box-shadow: 0 4px 20px rgba(188, 70, 39, 0.3);
-        }
-
-        .error-btn-primary:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 28px rgba(188, 70, 39, 0.5);
-        }
-
+        .error-btn-primary { background: linear-gradient(135deg, #bc4627, #e25d32); color: white; box-shadow: 0 4px 20px rgba(188, 70, 39, 0.3); }
+        .error-btn-primary:hover { transform: scale(1.03); box-shadow: 0 6px 28px rgba(188, 70, 39, 0.5); }
         /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
-        .main-content {
-            display: none;
-            animation: fadeInScale 0.6s ease-out;
-            position: relative;
-            z-index: 5;
-            width: 100%;
-        }
-
-        .main-content.active {
-            display: block;
-        }
-
+        .main-content { display: none; animation: fadeInScale 0.6s ease-out; position: relative; z-index: 5; width: 100%; }
+        .main-content.active { display: block; }
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 0.8rem 2rem;
-            background: rgba(8, 6, 15, 0.6);
-            backdrop-filter: blur(16px);
-            border-radius: 80px;
-            margin-bottom: 2rem;
-            gap: 1rem;
-            border: 1px solid rgba(220, 90, 50, 0.2);
-            transition: all 0.3s;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+            padding: 0.8rem 2rem; background: rgba(8, 6, 15, 0.6); backdrop-filter: blur(16px);
+            border-radius: 80px; margin-bottom: 2rem; gap: 1rem;
+            border: 1px solid rgba(220, 90, 50, 0.2); transition: all 0.3s;
         }
-
-        .header:hover {
-            border-color: rgba(220, 90, 50, 0.4);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .logo .logo-img {
-            max-height: 55px;
-            width: auto;
-            display: block;
-        }
-
+        .header:hover { border-color: rgba(220, 90, 50, 0.4); }
+        .logo { display: flex; align-items: center; gap: 0.8rem; }
+        .logo .logo-img { max-height: 55px; width: auto; display: block; }
         .logo .logo-text {
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fbc2a0, #e25d32);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            white-space: nowrap;
+            font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, #fbc2a0, #e25d32);
+            -webkit-background-clip: text; background-clip: text; color: transparent; white-space: nowrap;
         }
-
-        .logo p {
-            font-size: 0.65rem;
-            color: #7a6a8a;
-            margin-top: 0px;
-        }
-
+        .logo p { font-size: 0.65rem; color: #7a6a8a; margin-top: 0px; }
         .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.4rem;
-            background: rgba(15, 10, 20, 0.4);
-            backdrop-filter: blur(8px);
-            padding: 0.4rem 0.8rem;
-            border-radius: 60px;
-            border: 1px solid rgba(210, 100, 55, 0.15);
+            display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+            background: rgba(15, 10, 20, 0.4); backdrop-filter: blur(8px);
+            padding: 0.4rem 0.8rem; border-radius: 60px; border: 1px solid rgba(210, 100, 55, 0.15);
         }
-
         .nav-btn {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 0.9rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.78rem;
-            cursor: pointer;
-            color: #b5a8c8;
-            transition: all 0.3s;
-            font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            background: transparent; border: none; padding: 0.5rem 0.9rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; cursor: pointer; color: #b5a8c8;
+            transition: all 0.3s; font-family: inherit; display: inline-flex; align-items: center; gap: 5px;
             text-decoration: none;
         }
-
-        .nav-btn:hover {
-            color: white;
-            text-shadow: 0 0 8px rgba(220, 90, 50, 0.3);
-        }
-
-        .nav-btn.active {
-            background: linear-gradient(135deg, #bc4627, #e25d32);
-            color: white;
-            box-shadow: 0 3px 12px rgba(188, 70, 39, 0.25);
-        }
-
+        .nav-btn:hover { color: white; text-shadow: 0 0 8px rgba(220, 90, 50, 0.3); }
+        .nav-btn.active { background: linear-gradient(135deg, #bc4627, #e25d32); color: white; box-shadow: 0 3px 12px rgba(188, 70, 39, 0.25); }
         /* ===== СТРАНИЦА LEADERBOARD ===== */
-        .page-title {
-            text-align: center;
-            margin: 0.5rem 0 1.5rem 0;
-        }
-
+        .page-title { text-align: center; margin: 0.5rem 0 1.5rem 0; }
         .page-title h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #e25d32);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: 1px;
+            font-size: 2.8rem; font-weight: 800; background: linear-gradient(135deg, #fff, #e25d32);
+            -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 1px;
         }
-
-        .page-title .sub {
-            color: #a090b0;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            margin-top: 0.2rem;
-        }
-
+        .page-title .sub { color: #a090b0; font-size: 0.9rem; letter-spacing: 2px; margin-top: 0.2rem; }
         .big-banner {
-            width: 100%;
-            border-radius: 28px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(220, 90, 50, 0.2);
-            position: relative;
-            background: rgba(18, 12, 28, 0.3);
-            cursor: default;
-            pointer-events: none;
+            width: 100%; border-radius: 28px; overflow: hidden; margin-bottom: 1.5rem;
+            border: 1px solid rgba(220, 90, 50, 0.2); position: relative;
+            background: rgba(18, 12, 28, 0.3); cursor: default; pointer-events: none;
         }
-
-        .big-banner img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
+        .big-banner img { width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
         .alert-block {
-            background: rgba(220, 90, 50, 0.12);
-            border-left: 4px solid #e25d32;
-            border-radius: 16px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 0.9rem;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(220, 90, 50, 0.15);
+            background: rgba(220, 90, 50, 0.12); border-left: 4px solid #e25d32; border-radius: 16px;
+            padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px;
+            font-size: 0.9rem; backdrop-filter: blur(8px); border: 1px solid rgba(220, 90, 50, 0.15);
         }
-
-        .alert-block i {
-            color: #e25d32;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-        }
-
-        .alert-block span {
-            color: #ffbc9a;
-            font-weight: 500;
-        }
-
-        .alert-block .highlight {
-            color: #ffbc9a;
-            font-weight: 700;
-        }
-
-        .mode-banners {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
+        .alert-block i { color: #e25d32; font-size: 1.4rem; flex-shrink: 0; }
+        .alert-block span { color: #ffbc9a; font-weight: 500; }
+        .alert-block .highlight { color: #ffbc9a; font-weight: 700; }
+        .mode-banners { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .mode-banner {
-            flex: 1;
-            min-width: 280px;
-            border-radius: 20px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid rgba(220, 90, 50, 0.15);
-            transition: all 0.4s ease;
-            position: relative;
-            background: rgba(18, 12, 28, 0.3);
-            aspect-ratio: 16/9;
-            pointer-events: auto;
+            flex: 1; min-width: 280px; border-radius: 20px; overflow: hidden; cursor: pointer;
+            border: 2px solid rgba(220, 90, 50, 0.15); transition: all 0.4s ease; position: relative;
+            background: rgba(18, 12, 28, 0.3); aspect-ratio: 16/9; pointer-events: auto;
         }
-
-        .mode-banner:hover {
-            border-color: rgba(220, 90, 50, 0.4);
-            transform: scale(1.01);
-        }
-
-        .mode-banner.active {
-            border-color: #e25d32;
-            box-shadow: 0 0 30px rgba(220, 90, 50, 0.15);
-        }
-
-        .mode-banner img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
+        .mode-banner:hover { border-color: rgba(220, 90, 50, 0.4); transform: scale(1.01); }
+        .mode-banner.active { border-color: #e25d32; box-shadow: 0 0 30px rgba(220, 90, 50, 0.15); }
+        .mode-banner img { width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
         .mode-banner .banner-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 0.8rem 1rem;
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 0.8rem 1rem;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            text-align: center;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            pointer-events: none;
-            user-select: none;
+            font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center;
+            letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            pointer-events: none; user-select: none;
         }
-
-        .mode-banner.active .banner-label {
-            color: #e25d32;
-        }
-
+        .mode-banner.active .banner-label { color: #e25d32; }
         .leaderboard-section {
-            background: rgba(18, 12, 28, 0.45);
-            backdrop-filter: blur(12px);
-            border-radius: 28px;
-            border: 1px solid rgba(220, 90, 50, 0.25);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 2rem;
+            background: rgba(18, 12, 28, 0.45); backdrop-filter: blur(12px);
+            border-radius: 28px; border: 1px solid rgba(220, 90, 50, 0.25); overflow: hidden;
+            display: flex; flex-direction: column; margin-bottom: 2rem;
         }
-
         .leaderboard-section .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 1.5rem;
-            border-bottom: 1px solid rgba(220, 90, 50, 0.1);
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.8rem 1.5rem; border-bottom: 1px solid rgba(220, 90, 50, 0.1);
+            flex-wrap: wrap; gap: 0.5rem;
         }
-
-        .leaderboard-section .section-header .title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ffbc9a;
-            letter-spacing: 0.5px;
-        }
-
-        .leaderboard-section .section-header .title i {
-            color: #e25d32;
-        }
-
+        .leaderboard-section .section-header .title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #ffbc9a; letter-spacing: 0.5px; }
+        .leaderboard-section .section-header .title i { color: #e25d32; }
         .leaderboard-section .section-header .sub-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #ffbc9a;
-            background: rgba(220, 90, 50, 0.12);
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            border: 1px solid rgba(220, 90, 50, 0.15);
-            letter-spacing: 0.5px;
+            font-size: 0.8rem; font-weight: 600; color: #ffbc9a; background: rgba(220, 90, 50, 0.12);
+            padding: 0.3rem 1rem; border-radius: 40px; border: 1px solid rgba(220, 90, 50, 0.15); letter-spacing: 0.5px;
         }
-
-        .leaderboard-section .section-header .sub-title i {
-            color: #e25d32;
-            margin-right: 5px;
-        }
-
+        .leaderboard-section .section-header .sub-title i { color: #e25d32; margin-right: 5px; }
+        /* ===== ВКЛАДКИ ПОДРАЗДЕЛОВ ===== */
         .sub-tabs {
-            display: flex;
-            gap: 0.8rem;
-            padding: 0.6rem 1.5rem;
-            border-bottom: 1px solid rgba(220, 90, 50, 0.08);
-            flex-wrap: wrap;
-            justify-content: center;
+            display: flex; gap: 0.8rem; padding: 0.6rem 1.5rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.08); flex-wrap: wrap; justify-content: center;
         }
-
         .sub-tab {
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #b5a8c8;
-            transition: all 0.3s;
-            border: 1px solid transparent;
-            background: rgba(255, 255, 255, 0.03);
-            letter-spacing: 0.5px;
+            padding: 0.5rem 1.5rem; border-radius: 40px; cursor: pointer; font-size: 0.9rem;
+            font-weight: 700; color: #b5a8c8; transition: all 0.3s; border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.03); letter-spacing: 0.5px;
         }
-
-        .sub-tab:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.06);
+        .sub-tab:hover { color: white; background: rgba(255, 255, 255, 0.06); }
+        .sub-tab.active { color: #e25d32; border-color: rgba(220, 90, 50, 0.3); background: rgba(220, 90, 50, 0.08); }
+        /* Вкладки сообществ */
+        .community-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; padding: 0 1.5rem; }
+        .community-tab {
+            padding: 0.6rem 2rem; border-radius: 40px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(220, 90, 50, 0.2);
+            color: #c2b9d4; transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase;
         }
-
-        .sub-tab.active {
-            color: #e25d32;
-            border-color: rgba(220, 90, 50, 0.3);
-            background: rgba(220, 90, 50, 0.08);
-        }
-
-        /* ===== ТАБЛИЦА (НОВЫЙ СТИЛЬ) ===== */
+        .community-tab:hover { border-color: rgba(220, 90, 50, 0.5); color: white; }
+        .community-tab.active { background: linear-gradient(135deg, #bc4627, #e25d32); border-color: #e25d32; color: white; box-shadow: 0 5px 20px rgba(220, 90, 50, 0.3); }
+        /* ===== ТАБЛИЦА ===== */
         .table-wrapper {
-            padding: 1rem 1rem 1.5rem 1rem;
-            overflow-x: auto;
-            flex: 1;
-            position: relative;
-            border-radius: 0 0 28px 28px;
-            min-height: 400px;
-            background: transparent;
+            padding: 1rem 1rem 1.5rem 1rem; overflow-x: auto; flex: 1; position: relative;
+            border-radius: 0 0 28px 28px; min-height: 400px; background: transparent;
         }
-
         table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
-            font-size: 0.9rem;
-            position: relative;
-            z-index: 2;
+            width: 100%; border-collapse: separate; border-spacing: 0 8px;
+            font-size: 0.9rem; position: relative; z-index: 2;
         }
-
         th {
-            text-align: center;
-            padding: 1rem 0.8rem;
-            background: linear-gradient(180deg, #1a2a4a 0%, #0f1a30 100%);
-            color: #8aa8d0;
-            font-weight: 700;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: none;
+            text-align: center; padding: 1rem 0.8rem; background: linear-gradient(180deg, #1a2a4a 0%, #0f1a30 100%);
+            color: #8aa8d0; font-weight: 700; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 2px; border: none;
         }
-
-        th:first-child {
-            border-radius: 12px 0 0 12px;
-        }
-
-        th:last-child {
-            border-radius: 0 12px 12px 0;
-        }
-
+        th:first-child { border-radius: 12px 0 0 12px; }
+        th:last-child { border-radius: 0 12px 12px 0; }
         td {
-            text-align: center;
-            padding: 1rem 0.8rem;
+            text-align: center; padding: 1rem 0.8rem;
             background: linear-gradient(90deg, #1e3a5f 0%, #1a3352 50%, #142a45 100%);
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            vertical-align: middle;
+            color: #ffffff; font-weight: 600; border: none; vertical-align: middle;
         }
-
-        tr td:first-child {
-            border-radius: 12px 0 0 12px;
-        }
-
-        tr td:last-child {
-            border-radius: 0 12px 12px 0;
-        }
-
-        tr:hover td {
-            background: linear-gradient(90deg, #2a4a73 0%, #254a70 50%, #1e3d5e 100%);
-        }
-
-        td:first-child {
-            text-align: center;
-            width: 60px;
-            font-weight: 800;
-            color: #7dd3fc;
-            font-size: 1.1rem;
-        }
-
-        td:nth-child(2) {
-            text-align: left;
-            font-weight: 700;
-            color: #ffffff;
-            font-size: 1rem;
-        }
-
-        .platform-icon {
-            width: 22px;
-            height: 22px;
-            margin-right: 8px;
-            vertical-align: middle;
-            display: inline-block;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
-        .player-name {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        tr td:first-child { border-radius: 12px 0 0 12px; }
+        tr td:last-child { border-radius: 0 12px 12px 0; }
+        tr:hover td { background: linear-gradient(90deg, #2a4a73 0%, #254a70 50%, #1e3d5e 100%); }
+        td:first-child { text-align: center; width: 60px; font-weight: 800; color: #7dd3fc; font-size: 1.1rem; }
+        td:nth-child(2) { text-align: left; font-weight: 700; color: #ffffff; font-size: 1rem; }
+        .platform-icon { width: 22px; height: 22px; margin-right: 8px; vertical-align: middle; display: inline-block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+        .player-name { display: inline-flex; align-items: center; gap: 6px; }
         /* ===== ПРЕСТИЖ И УРОВЕНЬ ===== */
         .player-prestige-level {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-start;
-            position: relative;
-            margin-right: 12px;
-            flex-shrink: 0;
-            padding-right: 4px;
+            display: inline-flex; align-items: center; justify-content: flex-start;
+            position: relative; margin-right: 12px; flex-shrink: 0; padding-right: 4px;
         }
-
         .shield-wrapper {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 42px;
-            z-index: 2;
-            flex-shrink: 0;
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 42px; z-index: 2; flex-shrink: 0;
         }
-
         .prestige-shield-img {
-            width: 100%;
-            height: 100%;
-            display: block;
+            width: 100%; height: 100%; display: block;
             filter: drop-shadow(0 0 5px rgba(232, 144, 46, 0.6));
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
+            pointer-events: none; user-select: none; -webkit-user-drag: none;
         }
-
         .prestige-number {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3;
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #e8902e;
-            text-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
-            line-height: 1;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 3; font-size: 0.9rem; font-weight: 800; color: #e8902e;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.9); line-height: 1;
         }
-
         .level-oval {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: -14px;
-            padding: 0 14px 0 18px;
-            border: 2px solid #8a8a8a;
-            border-radius: 50px;
-            background: rgba(0, 0, 0, 0.75);
-            min-width: 44px;
-            height: 26px;
-            box-sizing: border-box;
-            z-index: 1;
-            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-left: -14px; padding: 0 14px 0 18px; border: 2px solid #8a8a8a;
+            border-radius: 50px; background: rgba(0, 0, 0, 0.75); min-width: 44px;
+            height: 26px; box-sizing: border-box; z-index: 1; position: relative;
         }
-
-        .level-number {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #ffffff;
-            text-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
-            line-height: 1;
-        }
-
+        .level-number { font-size: 0.9rem; font-weight: 800; color: #ffffff; text-shadow: 0 0 4px rgba(0, 0, 0, 0.9); line-height: 1; }
         /* ===== МЕДАЛИ ===== */
         .rank-1 td:first-child { color: #ffd700; }
         .rank-2 td:first-child { color: #c0c0c0; }
         .rank-3 td:first-child { color: #cd7f32; }
-
         .medal { display: inline-block; width: 28px; text-align: center; }
         .medal-gold { color: #ffd700; }
         .medal-silver { color: #c0c0c0; }
         .medal-bronze { color: #cd7f32; }
-
         .unranked-text { color: #7a6a8a; font-style: italic; letter-spacing: 0.5px; }
-
         footer {
-            margin-top: 3rem;
-            text-align: center;
-            padding: 1.8rem 0;
-            border-top: 1px solid rgba(105, 58, 40, 0.2);
-            font-size: 0.7rem;
-            background: rgba(8, 6, 15, 0.3);
-            backdrop-filter: blur(8px);
-            border-radius: 50px;
+            margin-top: 3rem; text-align: center; padding: 1.8rem 0;
+            border-top: 1px solid rgba(105, 58, 40, 0.2); font-size: 0.7rem;
+            background: rgba(8, 6, 15, 0.3); backdrop-filter: blur(8px); border-radius: 50px;
         }
-
         .footer-logo { max-height: 32px; width: auto; margin-bottom: 0.5rem; }
-
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.96) translateY(12px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
+        @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.96) translateY(12px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         @media (max-width: 850px) {
             .main-wrapper { padding: 1rem; }
             .header { flex-direction: column; padding: 0.8rem 1rem; }
@@ -898,13 +335,12 @@
             .error-box { padding: 2rem 1.5rem; }
             .error-box h2 { font-size: 1.8rem; }
             .error-box .error-icon { font-size: 3rem; }
-
             .shield-wrapper { width: 30px; height: 36px; }
             .level-oval { height: 22px; min-width: 36px; margin-left: -12px; padding: 0 12px 0 16px; }
             .level-number { font-size: 0.8rem; }
             .prestige-number { font-size: 0.8rem; }
+            .community-tab { padding: 0.5rem 1rem; font-size: 0.8rem; }
         }
-
         @media (max-width: 500px) {
             .main-wrapper { padding: 0.8rem; }
             .header { padding: 0.6rem 0.8rem; }
@@ -942,11 +378,12 @@
             .error-box .error-desc { font-size: 0.8rem; }
             .error-actions { flex-direction: column; align-items: center; }
             .error-btn { width: 100%; justify-content: center; }
-
             .shield-wrapper { width: 26px; height: 32px; }
             .level-oval { height: 20px; min-width: 30px; margin-left: -10px; padding: 0 10px 0 14px; }
             .level-number { font-size: 0.7rem; }
             .prestige-number { font-size: 0.7rem; }
+            .community-tabs { flex-direction: column; gap: 0.5rem; }
+            .community-tab { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -1007,7 +444,7 @@
                     <a href="roles.html" class="nav-btn"><i class="fas fa-tags"></i> Роли</a>
                     <a href="news.html" class="nav-btn"><i class="fas fa-newspaper"></i> Новости</a>
                     <a href="roulette.html" class="nav-btn"><i class="fas fa-dice-d6"></i> Рулетка</a>
-                    <a href="invasion.html" class="nav-btn"><i class="fas fa-trophy"></i> Leaderboard</a>
+                    <a href="invasion.html" class="nav-btn active"><i class="fas fa-trophy"></i> Leaderboard</a>
                     <a href="about.html" class="nav-btn"><i class="fas fa-book-open"></i> Об игре</a>
                 </div>
             </div>
@@ -1039,6 +476,11 @@
                 </div>
             </div>
 
+            <div class="community-tabs" id="communityTabs" style="display:none;">
+                <button class="community-tab active" data-community="kurilka" onclick="switchCommunity('kurilka')">Курилка Синьялы</button>
+                <button class="community-tab" data-community="global" onclick="switchCommunity('global')">Глобальный</button>
+            </div>
+
             <div class="leaderboard-section" id="leaderboardSection">
                 <div class="section-header">
                     <div class="title">
@@ -1050,10 +492,7 @@
                     </div>
                 </div>
 
-                <div class="sub-tabs" id="subTabs">
-                    <span class="sub-tab active" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
-                    <span class="sub-tab" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
-                </div>
+                <div class="sub-tabs" id="subTabs"></div>
 
                 <div class="table-wrapper" id="tableWrapper">
                     <div id="tableContainer"></div>
@@ -1166,7 +605,7 @@
                 if (connectScreen) connectScreen.classList.remove('active');
                 if (mainContent) mainContent.classList.add('active');
                 document.body.classList.add('scroll-enabled');
-                setTimeout(function() { updateTableContent(); }, 100);
+                setTimeout(function() { updateTableContent(); loadEscalationDataFromDB(); }, 100);
             }
         });
 
@@ -1200,6 +639,7 @@
                     if (mainContent) mainContent.classList.add('active');
                     document.body.classList.add('scroll-enabled');
                     updateTableContent();
+                    loadEscalationDataFromDB();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -1272,13 +712,13 @@
             'Barricade Guy': 'epic',
             'LARIK_LOL': 'steam',
             'Garlik_Darlik': 'steam',
-            'Takuya_Satori': 'ps'
+            'Takuya_Satori': 'ps',
+            'Despektr': 'steam'
         };
 
          // ============================================================
         // ===== ДАННЫЕ ПРЕСТИЖА И УРОВНЯ ============================
         // ============================================================
-        // Формат из скриншота: "Престиж(Уровень)"
         var playerPrestigeLevels = {
             'Майор Гом 2.0': { prestige: 99, level: 16 },
             'joysk_o': { prestige: 49, level: 74 },
@@ -1291,7 +731,8 @@
             'Barricade Guy': { prestige: 59, level: 42 },
             'LARIK_LOL': { prestige: 24, level: 87 },
             'Garlik_Darlik': { prestige: 43, level: 79 },
-            'Takuya_Satori': { prestige: 4, level: 60 }
+            'Takuya_Satori': { prestige: 4, level: 60 },
+            'Despektr': { prestige: 10, level: 50 }
         };
 
         function getPrestigeLevel(name) {
@@ -1313,12 +754,77 @@
             </span>`;
         }
 
-        var TEMP_PLAYER_NAME = 'Курилка Синьялы';
+        // ============================================================
+        // ===== НАСТРОЙКИ БАЗЫ ДАННЫХ (SheetDB) =====================
+        // ============================================================
+        const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
+
+        var escalationDBData = {
+            weekly: [],
+            infinite: []
+        };
+
+        async function loadEscalationDataFromDB() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                escalationDBData.weekly = [];
+                escalationDBData.infinite = [];
+
+                data.forEach(row => {
+                    if (!row.playerName) return;
+
+                    const mode = row.mode; 
+                    const playerName = row.playerName;
+                    const levels = parseInt(row.levelsCompleted, 10) || 0;
+                    const time = row.totalTime || 'unranked';
+                    const platform = row.platform || 'steam';
+
+                    if (mode === 'Weekly') {
+                        escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
+                    } else if (mode === 'Infinite') {
+                        escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
+                    }
+                });
+
+                // Сортировка Еженедельной (по времени от меньшего к большему). Если время равно — по алфавиту.
+                escalationDBData.weekly.sort((a, b) => {
+                    let secA = timeToSeconds(a.time);
+                    let secB = timeToSeconds(b.time);
+                    if (secA === secB) return a.name.localeCompare(b.name);
+                    return secA - secB;
+                });
+                
+                // Сортировка Бесконечной (по уровням от большего к меньшему). Если уровни равны — по алфавиту.
+                escalationDBData.infinite.sort((a, b) => {
+                    if (b.level === a.level) return a.name.localeCompare(b.name);
+                    return b.level - a.level;
+                });
+
+                // Проставляем ранги
+                escalationDBData.weekly.forEach((p, i) => p.rank = i + 1);
+                escalationDBData.infinite.forEach((p, i) => p.rank = i + 1);
+
+                updateTableContent();
+            } catch (error) {
+                console.error('Ошибка загрузки из БД:', error);
+            }
+        }
+
+        function timeToSeconds(timeStr) {
+            if (!timeStr || timeStr === 'unranked') return 9999999;
+            const parts = timeStr.split(':').map(Number);
+            if (parts.length === 2) return parts[0] * 60 + parts[1];
+            if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+            return 9999999;
+        }
 
         // ============================================================
-        // ===== ДАННЫЕ ТАБЛИЦ =====================================
+        // ===== ДАННЫЕ ГЛОБАЛЬНОГО ЛИДЕРБОРДА =======================
         // ============================================================
-        var escalationData = {
+        var escalationGlobalData = {
             weekly: [
                 { rank: 1, name: "DASCERA" },
                 { rank: 2, name: "TSUQUOIA" },
@@ -1342,8 +848,7 @@
             ]
         };
 
-        // Общая таблица — сортировка по очкам (points) по убыванию
-        // Очки взяты из скриншота "ОБЩАЯ ТАБЛИЦА", рейтинг из "РЕАГЕНТЫ" / "САМОЗВАНЦЫ"
+        // ===== ДАННЫЕ ВТОРЖЕНИЯ =====
         var invasionGeneralData = [
             { rank: 1, name: "Майор Гом 2.0", points: 156695, rating: "#16" },
             { rank: 2, name: "joysk_o", points: 40735, rating: "#334" },
@@ -1359,7 +864,6 @@
             { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#10347" }
         ];
 
-        // Реагенты — сортировка по матчам (matches) по убыванию
         var invasionData = {
             reagent: [
                 { rank: 1, name: "Майор Гом 2.0", matches: 2535, wins: 2421, losses: 114, rating: "#16" },
@@ -1392,7 +896,7 @@
         };
 
         // ============================================================
-        // ===== ФУНКЦИИ ===========================================
+        // ===== ФУНКЦИИ РЕНДЕРА ====================================
         // ============================================================
         function getPlatformForPlayer(name) {
             return playerPlatforms[name] || 'steam';
@@ -1437,6 +941,7 @@
 
         var currentMode = 'escalation';
         var currentSubTab = 'weekly';
+        var currentCommunity = 'kurilka';
 
         function switchMode(mode) {
             currentMode = mode;
@@ -1444,22 +949,33 @@
             banners.forEach(function(banner) {
                 banner.classList.toggle('active', banner.dataset.mode === mode);
             });
-            if (mode === 'invasion') { currentSubTab = 'general'; } else { currentSubTab = 'weekly'; }
+            
+            var commTabs = document.getElementById('communityTabs');
+            if (mode === 'escalation') {
+                if (commTabs) commTabs.style.display = 'flex';
+                currentSubTab = 'weekly';
+            } else {
+                if (commTabs) commTabs.style.display = 'none';
+                currentSubTab = 'general';
+            }
+            
             updateTableContent();
         }
 
         function switchSubTab(sub) {
             currentSubTab = sub;
-            var tabs = document.querySelectorAll('.sub-tab');
+            updateTableContent();
+        }
+
+        function switchCommunity(community) {
+            currentCommunity = community;
+            var tabs = document.querySelectorAll('.community-tab');
             tabs.forEach(function(tab) {
-                tab.classList.toggle('active', tab.dataset.sub === sub);
+                tab.classList.toggle('active', tab.dataset.community === community);
             });
             updateTableContent();
         }
 
-        // ============================================================
-        // ===== СОРТИРОВКА ПО УБЫВАНИЮ ==============================
-        // ============================================================
         function sortByPointsDesc(data) {
             return data.slice().sort(function(a, b) {
                 return (b.points || 0) - (a.points || 0);
@@ -1484,75 +1000,150 @@
             if (currentMode === 'escalation') {
                 title.textContent = 'ЭСКАЛАЦИЯ';
 
-                if (currentSubTab === 'weekly') {
-                    subTabs.innerHTML = `
-                        <span class="sub-tab active" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
-                        <span class="sub-tab" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
-                    `;
-                    var data = escalationData.weekly;
-                    var html = `<table>
-                        <thead>
-                            <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ПРОЙДЕНО</th><th>ОЦЕНКА</th><th>ВРЕМЯ</th></tr>
-                        </thead>
-                        <tbody>`;
-                    data.forEach(function(player) {
-                        var platform = getPlatformForPlayer(player.name);
-                        var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                        var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                        html += `
-                            <tr class="${getRankClass(player.rank)}">
-                                <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                    <span class="player-name">
-                                        ${getPrestigeLevelBadge(player.name)}
-                                        ${getPlatformIcon(platform)}
-                                        ${TEMP_PLAYER_NAME}
-                                    </span>
-                                </td>
-                                <td>${formatCell('unranked')}</td>
-                                <td>${formatCell('unranked')}</td>
-                                <td>${formatCell('unranked')}</td>
-                            </tr>
-                        `;
-                    });
-                    html += `</tbody></table>`;
-                    container.innerHTML = html;
+                subTabs.innerHTML = `
+                    <span class="sub-tab ${currentSubTab === 'weekly' ? 'active' : ''}" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
+                    <span class="sub-tab ${currentSubTab === 'infinite' ? 'active' : ''}" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
+                `;
+
+                if (currentCommunity === 'kurilka') {
+                    if (currentSubTab === 'weekly') {
+                        var dataK = escalationDBData.weekly;
+                        if (dataK.length === 0) {
+                            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
+                                <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
+                                Данные появятся после первого прохождения<br>еженедельной эскалации участниками Курилки.
+                            </div>`;
+                        } else {
+                            var htmlK = `<table>
+                                <thead>
+                                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ПРОЙДЕНО</th><th>ВРЕМЯ</th></tr>
+                                </thead>
+                                <tbody>`;
+                            dataK.forEach(function(player) {
+                                var platform = getPlatformForPlayer(player.name);
+                                var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
+                                var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                                htmlK += `
+                                    <tr class="${getRankClass(player.rank)}">
+                                        <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                                        <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                            <span class="player-name">
+                                                ${getPrestigeLevelBadge(player.name)}
+                                                ${getPlatformIcon(platform)}
+                                                ${player.name}
+                                            </span>
+                                        </td>
+                                        <td>${player.completed}</td>
+                                        <td>${formatCell(player.time)}</td>
+                                    </tr>
+                                `;
+                            });
+                            htmlK += `</tbody></table>`;
+                            container.innerHTML = htmlK;
+                        }
+                    } else {
+                        var dataKI = escalationDBData.infinite;
+                        if (dataKI.length === 0) {
+                            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
+                                <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
+                                Данные появятся после первого прохождения<br>бесконечной эскалации участниками Курилки.
+                            </div>`;
+                        } else {
+                            var htmlKI = `<table>
+                                <thead>
+                                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (УРОВЕНЬ)</th><th>ВРЕМЯ</th></tr>
+                                </thead>
+                                <tbody>`;
+                            dataKI.forEach(function(player) {
+                                var platform = getPlatformForPlayer(player.name);
+                                var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
+                                var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                                htmlKI += `
+                                    <tr class="${getRankClass(player.rank)}">
+                                        <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                                        <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                            <span class="player-name">
+                                                ${getPrestigeLevelBadge(player.name)}
+                                                ${getPlatformIcon(platform)}
+                                                ${player.name}
+                                            </span>
+                                        </td>
+                                        <td>${player.level}</td>
+                                        <td>${formatCell(player.time)}</td>
+                                    </tr>
+                                `;
+                            });
+                            htmlKI += `</tbody></table>`;
+                            container.innerHTML = htmlKI;
+                        }
+                    }
                 } else {
-                    subTabs.innerHTML = `
-                        <span class="sub-tab" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
-                        <span class="sub-tab active" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
-                    `;
-                    var data2 = escalationData.infinite;
-                    var html2 = `<table>
-                        <thead>
-                            <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (ВРЕМЯ)</th></tr>
-                        </thead>
-                        <tbody>`;
-                    data2.forEach(function(player) {
-                        var platform = getPlatformForPlayer(player.name);
-                        var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                        var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                        html2 += `
-                            <tr class="${getRankClass(player.rank)}">
-                                <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                    <span class="player-name">
-                                        ${getPrestigeLevelBadge(player.name)}
-                                        ${getPlatformIcon(platform)}
-                                        ${TEMP_PLAYER_NAME}
-                                    </span>
-                                </td>
-                                <td>${formatCell('unranked')}</td>
-                            </tr>
-                        `;
-                    });
-                    html2 += `</tbody></table>`;
-                    container.innerHTML = html2;
+                    // === ГЛОБАЛЬНАЯ ТАБЛИЦА ===
+                    if (currentSubTab === 'weekly') {
+                        var dataG = escalationGlobalData.weekly;
+                        var htmlG = `<table>
+                            <thead>
+                                <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ПРОЙДЕНО</th><th>ОЦЕНКА</th><th>ВРЕМЯ</th></tr>
+                            </thead>
+                            <tbody>`;
+                        dataG.forEach(function(player) {
+                            var platform = getPlatformForPlayer(player.name);
+                            var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
+                            var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                            htmlG += `
+                                <tr class="${getRankClass(player.rank)}">
+                                    <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                                    <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                        <span class="player-name">
+                                            ${getPrestigeLevelBadge(player.name)}
+                                            ${getPlatformIcon(platform)}
+                                            ${player.name}
+                                        </span>
+                                    </td>
+                                    <td>${formatCell('unranked')}</td>
+                                    <td>${formatCell('unranked')}</td>
+                                    <td>${formatCell('unranked')}</td>
+                                </tr>
+                            `;
+                        });
+                        htmlG += `</tbody></table>`;
+                        container.innerHTML = htmlG;
+                    } else {
+                        var dataGI = escalationGlobalData.infinite;
+                        var htmlGI = `<table>
+                            <thead>
+                                <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (ВРЕМЯ)</th></tr>
+                            </thead>
+                            <tbody>`;
+                        dataGI.forEach(function(player) {
+                            var platform = getPlatformForPlayer(player.name);
+                            var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
+                            var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                            htmlGI += `
+                                <tr class="${getRankClass(player.rank)}">
+                                    <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                                    <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                        <span class="player-name">
+                                            ${getPrestigeLevelBadge(player.name)}
+                                            ${getPlatformIcon(platform)}
+                                            ${player.name}
+                                        </span>
+                                    </td>
+                                    <td>${formatCell('unranked')}</td>
+                                </tr>
+                            `;
+                        });
+                        htmlGI += `</tbody></table>`;
+                        container.innerHTML = htmlGI;
+                    }
                 }
+
             } else {
+                // === РЕЖИМ ВТОРЖЕНИЕ ===
                 title.textContent = 'ВТОРЖЕНИЕ';
 
-                if (currentSubTab === 'general') {
+                if (currentSubTab === 'general' || !currentSubTab) {
+                    currentSubTab = 'general';
                     subTabs.innerHTML = `
                         <span class="sub-tab active" data-sub="general" onclick="switchSubTab('general')">Общая</span>
                         <span class="sub-tab" data-sub="reagent" onclick="switchSubTab('reagent')">Реагент</span>
