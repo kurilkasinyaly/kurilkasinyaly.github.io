@@ -4117,36 +4117,60 @@ function renderAmpModalGrid(playerIndex, category) {
 }
 
 // ============================================================
-// ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB)
+// ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB) С ОБНОВЛЕНИЕМ
 // ============================================================
 async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
     try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                data: [
-                    {
-                        mode: mode,
-                        playerName: playerName,
+        // 1. Проверяем, есть ли уже запись для этого игрока в этом режиме
+        const checkUrl = `${API_URL}/search?mode=${mode}&playerName=${encodeURIComponent(playerName)}`;
+        const checkResponse = await fetch(checkUrl);
+        const existingData = await checkResponse.json();
+
+        if (existingData && existingData.length > 0) {
+            // 2. Если запись есть — обновляем её (PATCH)
+            const patchUrl = `${API_URL}/playerName/${encodeURIComponent(playerName)}?mode=${mode}`;
+            
+            const res = await fetch(patchUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: {
                         levelsCompleted: levelsCompleted.toString(),
                         totalTime: totalTime,
                         platform: platform || 'steam'
                     }
-                ]
-            })
-        });
-        const result = await response.json();
-        if(result.created) {
-            console.log('Успешно сохранено в БД:', playerName);
+                })
+            });
+            const result = await res.json();
+            console.log('Обновление:', result);
         } else {
-            console.error('Ошибка сохранения:', result);
+            // 3. Если записи нет — создаём новую (POST)
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: [
+                        {
+                            mode: mode,
+                            playerName: playerName,
+                            levelsCompleted: levelsCompleted.toString(),
+                            totalTime: totalTime,
+                            platform: platform || 'steam'
+                        }
+                    ]
+                })
+            });
+            const result = await res.json();
+            console.log('Создание:', result);
         }
     } catch (error) {
-        console.error('Ошибка отправки в БД:', error);
+        console.error('Ошибка синхронизации с БД:', error);
     }
 }
 
