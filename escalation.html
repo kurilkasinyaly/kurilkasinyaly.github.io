@@ -3852,10 +3852,13 @@ function doInit() {
     var summaryCopy = document.getElementById('summaryCopy');
 
     if (summaryClose) summaryClose.addEventListener('click', closeSummaryModal);
+
+    // ==== ИСПРАВЛЕНО: ждём завершения отправки в БД перед перезагрузкой страницы ====
     if (summaryCloseBtn) {
-        summaryCloseBtn.addEventListener('click', function() {
-            closeSummaryModal();
-            
+        summaryCloseBtn.addEventListener('click', async function() {
+            summaryCloseBtn.disabled = true;
+            summaryCloseBtn.textContent = 'Сохранение...';
+
             // СБОР ДАННЫХ ДЛЯ БД
             let totalSeconds = 0;
             collectedRecords.forEach(function(rec) { 
@@ -3863,18 +3866,14 @@ function doInit() {
             });
             const totalTimeStr = secondsToTime(totalSeconds);
             const levelsCompleted = collectedRecords.length;
-            
-            // Отправляем данные по каждому игроку, который был в команде
-            escState.players.forEach(playerName => {
-                sendResultToDB(
-                    MODE_NAME, 
-                    playerName,
-                    levelsCompleted,
-                    totalTimeStr,
-                    'steam'
-                );
-            });
 
+            // Ждём, пока данные всех игроков реально отправятся
+            // (по очереди, чтобы не было гонки при расчёте ID)
+            for (const playerName of escState.players) {
+                await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, 'steam');
+            }
+
+            closeSummaryModal();
             clearSavedEscalation();
             location.reload();
         });
