@@ -1091,7 +1091,7 @@ function updateWeeklyTimer() {
     var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
     if (days > 0) {
-        timerText.textContent = days + " Д. " + hours + " Ч.";
+        timerText.textContent = days + " ДН. " + hours + " Ч.";
     } else if (hours > 0) {
         timerText.textContent = hours + " Ч. " + minutes + " М.";
     } else {
