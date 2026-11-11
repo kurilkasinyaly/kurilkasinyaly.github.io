@@ -611,31 +611,28 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
         }
 
-        /* [NEW] Бейдж "В процессе" */
+         /* [NEW] Бейдж "В процессе" (без обводки и фона) */
         .save-status-badge {
             display: none; /* По умолчанию скрыт */
             align-items: center;
             gap: 6px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #ffbc9a;
             font-weight: 800;
             letter-spacing: 0.5px;
             white-space: nowrap;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
-            background: rgba(0, 0, 0, 0.75);
-            padding: 4px 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 188, 154, 0.3);
-            margin-left: 8px;
+            margin-left: 10px;
         }
         .save-status-badge.active { display: flex; }
+        
+        /* Увеличили картинку с 18px до 26px */
         .save-status-badge img {
-            width: 18px;
-            height: 18px;
+            width: 26px;
+            height: 26px;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
         }
-
         /* ===== ОСОБЫЕ ИСПЫТАНИЯ ===== */
         .special-trials { margin-bottom: 2.5rem; }
         .special-trials h2 {
