@@ -237,6 +237,102 @@
         .player-name-inputs .input-row input::placeholder { color: #555; }
 
         /* ============================================================
+           ПЛАТФОРМЫ
+           ============================================================ */
+        .platform-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .platform-select-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(220, 90, 50, 0.25);
+            background: rgba(0, 0, 0, 0.35);
+            color: #ffbc9a;
+            font-size: 0.95rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+            text-align: left;
+        }
+        .platform-select-btn:hover {
+            border-color: #e16d48;
+            background: rgba(220, 90, 50, 0.1);
+        }
+        .platform-select-btn .platform-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .platform-select-btn .platform-arrow {
+            margin-left: auto;
+            color: #888;
+            transition: transform 0.3s;
+            font-size: 0.75rem;
+        }
+        .platform-select-btn.open .platform-arrow {
+            transform: rotate(180deg);
+        }
+        .platform-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: rgba(20, 15, 28, 0.98);
+            border: 1px solid rgba(220, 90, 50, 0.4);
+            border-radius: 12px;
+            padding: 6px;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            display: none;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .platform-dropdown.open {
+            display: block;
+        }
+        .platform-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #c2b9d4;
+            font-size: 0.9rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .platform-option:hover {
+            background: rgba(220, 90, 50, 0.2);
+            color: #fff;
+        }
+        .platform-option.selected {
+            background: rgba(220, 90, 50, 0.25);
+            color: #ffbc9a;
+            font-weight: 600;
+        }
+        .platform-option .platform-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .platform-option .platform-check {
+            margin-left: auto;
+            color: #2ecc71;
+            font-size: 0.8rem;
+            opacity: 0;
+        }
+        .platform-option.selected .platform-check {
+            opacity: 1;
+        }
+
+        /* ============================================================
            КАРТОЧКИ СНАРЯЖЕНИЯ
            ============================================================ */
         .equip-card {
@@ -1599,24 +1695,37 @@
         <div class="step-container hidden" id="escStep3">
             <div class="step-title">
                 <span class="step-number">Шаг 3</span>
-                <i class="fas fa-backpack"></i> Выбор снаряжения
+                <i class="fas fa-gamepad"></i> Игровые платформы
             </div>
-            <div class="step-subtitle" id="escStep3Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
-            <div id="escStep3Content"></div>
-            <div class="step-actions" id="escStep3Actions">
-                <button class="back-btn" id="escStep3Back" disabled>← Назад</button>
+            <div class="step-subtitle">Выберите платформу для каждого игрока</div>
+            <div class="player-name-inputs" id="escPlatformInputs"></div>
+            <div class="step-actions">
+                <button class="back-btn" id="escStep3Back">← Назад</button>
+                <button class="next-btn" id="escStep3Next" disabled>Далее →</button>
             </div>
         </div>
 
         <div class="step-container hidden" id="escStep4">
             <div class="step-title">
                 <span class="step-number">Шаг 4</span>
+                <i class="fas fa-backpack"></i> Выбор снаряжения
+            </div>
+            <div class="step-subtitle" id="escStep4Subtitle">Каждому игроку предлагается 3 случайных снаряжения на выбор</div>
+            <div id="escStep4Content"></div>
+            <div class="step-actions" id="escStep4Actions">
+                <button class="back-btn" id="escStep4Back" disabled>← Назад</button>
+            </div>
+        </div>
+
+        <div class="step-container hidden" id="escStep5">
+            <div class="step-title">
+                <span class="step-number">Шаг 5</span>
                 <i class="fas fa-capsules"></i> Выбор амф
             </div>
-            <div class="step-subtitle" id="escStep4Subtitle">Каждому игроку предлагается 3 случайных амфы на выбор (нужно выбрать 1)</div>
-            <div id="escStep4Content"></div>
+            <div class="step-subtitle" id="escStep5Subtitle">Каждому игроку предлагается 3 случайных амфы на выбор (нужно выбрать 1)</div>
+            <div id="escStep5Content"></div>
             <div class="step-actions">
-                <button class="back-btn" id="escStep4Back" disabled>← Назад</button>
+                <button class="back-btn" id="escStep5Back" disabled>← Назад</button>
             </div>
         </div>
 
@@ -1828,6 +1937,20 @@ var ampsData = [
 ];
 
 // ============================================================
+// ПЛАТФОРМЫ
+// ============================================================
+var platformsData = [
+    { id: 'steam', name: 'Steam', icon: 'images/иконка стим.webp' },
+    { id: 'epic', name: 'Epic Games', icon: 'images/иконка эпик.webp' },
+    { id: 'ps', name: 'PlayStation', icon: 'images/иконка пс.webp' },
+    { id: 'xbox', name: 'Xbox', icon: 'images/иконка х-бокс.webp' }
+];
+
+function getPlatformById(id) {
+    return platformsData.find(function(p) { return p.id === id; }) || platformsData[0];
+}
+
+// ============================================================
 // БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ СНАРЯЖЕНИЯ
 // ============================================================
 if (typeof equipmentData !== 'undefined' && Array.isArray(equipmentData)) {
@@ -1866,6 +1989,7 @@ var EXCLUDED_VARIATORS = [
 // ============================================================
 let escState = {
     level: 1, playerCount: 0, players: [],
+    playerPlatforms: {},
     equipSelections: {}, ampSelections: {}, usedAmps: {},
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
@@ -1906,6 +2030,7 @@ function checkDataLoaded() {
     if (typeof trialsData === 'undefined') return false;
     if (typeof ampCategories === 'undefined') return false;
     if (typeof ampsData === 'undefined') return false;
+    if (typeof platformsData === 'undefined') return false;
     return true;
 }
 
@@ -2301,7 +2426,7 @@ function getDifficultyByLevel(level) {
 
 function goToEscStep(step) {
     escState.currentStep = step;
-    var steps = { 1: 'escStep1', 2: 'escStep2', 3: 'escStep3', 4: 'escStep4' };
+    var steps = { 1: 'escStep1', 2: 'escStep2', 3: 'escStep3', 4: 'escStep4', 5: 'escStep5' };
     var result = document.getElementById('escResult');
     for (var key in steps) {
         var el = document.getElementById(steps[key]);
@@ -2330,6 +2455,7 @@ function saveEscalation() {
                 level: escState.level,
                 playerCount: escState.playerCount,
                 players: escState.players.slice(),
+                playerPlatforms: JSON.parse(JSON.stringify(escState.playerPlatforms || {})),
                 equipSelections: JSON.parse(JSON.stringify(escState.equipSelections)),
                 ampSelections: JSON.parse(JSON.stringify(escState.ampSelections)),
                 usedAmps: JSON.parse(JSON.stringify(escState.usedAmps)),
@@ -2394,6 +2520,7 @@ function applySavedEscalation(data) {
     escState.level = s.level || 1;
     escState.playerCount = s.playerCount || 0;
     escState.players = (s.players || []).slice();
+    escState.playerPlatforms = s.playerPlatforms || {};
     escState.equipSelections = s.equipSelections || {};
     escState.ampSelections = s.ampSelections || {};
     escState.usedAmps = s.usedAmps || {};
@@ -2469,6 +2596,116 @@ function renderEscPlayerNames() {
     setTimeout(checkFilled, 100);
 }
 
+// ============================================================
+// ШАГ 3 — ПЛАТФОРМЫ
+// ============================================================
+function renderEscPlatforms() {
+    var container = document.getElementById('escPlatformInputs');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var pc = escState.playerCount;
+    var grid = document.createElement('div');
+    grid.style.cssText = 'display: grid; gap: 12px 20px; max-width: 600px; margin: 0 auto;';
+
+    if (pc === 1) { grid.style.gridTemplateColumns = '1fr'; grid.style.maxWidth = '300px'; }
+    else if (pc === 2 || pc === 3) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '500px'; }
+    else if (pc === 4) { grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.maxWidth = '550px'; }
+
+    for (var i = 0; i < pc; i++) {
+        (function(idx) {
+            var row = document.createElement('div');
+            row.style.cssText = 'display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(220,90,50,0.08);';
+
+            if (pc === 3 && idx === 2) {
+                row.style.gridColumn = '1 / -1';
+                row.style.maxWidth = '50%';
+                row.style.justifySelf = 'center';
+                row.style.width = '100%';
+            }
+
+            var label = document.createElement('label');
+            label.style.cssText = 'font-size: 0.8rem; color: #888; font-weight: 500; letter-spacing: 0.5px;';
+            label.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>' + (escState.players[idx] || ('Игрок ' + (idx + 1)));
+
+            var wrapper = document.createElement('div');
+            wrapper.className = 'platform-select-wrapper';
+
+            var currentId = escState.playerPlatforms[idx] || 'steam';
+            var currentP = getPlatformById(currentId);
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'platform-select-btn';
+            btn.innerHTML =
+                '<img class="platform-icon" src="' + currentP.icon + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+                '<span class="platform-label">' + currentP.name + '</span>' +
+                '<i class="fas fa-chevron-down platform-arrow"></i>';
+
+            var dropdown = document.createElement('div');
+            dropdown.className = 'platform-dropdown';
+
+            platformsData.forEach(function(p) {
+                var opt = document.createElement('div');
+                opt.className = 'platform-option' + (p.id === currentId ? ' selected' : '');
+                opt.dataset.pid = p.id;
+                opt.innerHTML =
+                    '<img class="platform-icon" src="' + p.icon + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+                    '<span>' + p.name + '</span>' +
+                    '<i class="fas fa-check platform-check"></i>';
+                opt.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    escState.playerPlatforms[idx] = p.id;
+                    btn.querySelector('.platform-label').textContent = p.name;
+                    var btnIcon = btn.querySelector('.platform-icon');
+                    btnIcon.src = p.icon;
+                    btnIcon.style.visibility = '';
+                    dropdown.querySelectorAll('.platform-option').forEach(function(o) { o.classList.remove('selected'); });
+                    opt.classList.add('selected');
+                    dropdown.classList.remove('open');
+                    btn.classList.remove('open');
+                    checkPlatformsFilled();
+                });
+                dropdown.appendChild(opt);
+            });
+
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.platform-dropdown.open').forEach(function(d) { d.classList.remove('open'); });
+                document.querySelectorAll('.platform-select-btn.open').forEach(function(b) { b.classList.remove('open'); });
+                if (!isOpen) {
+                    dropdown.classList.add('open');
+                    btn.classList.add('open');
+                }
+            });
+
+            wrapper.appendChild(btn);
+            wrapper.appendChild(dropdown);
+            row.appendChild(label);
+            row.appendChild(wrapper);
+            grid.appendChild(row);
+        })(i);
+    }
+    container.appendChild(grid);
+
+    function checkPlatformsFilled() {
+        var nextBtn = document.getElementById('escStep3Next');
+        var all = true;
+        for (var k = 0; k < escState.playerCount; k++) {
+            if (!escState.playerPlatforms[k]) all = false;
+        }
+        if (nextBtn) nextBtn.disabled = !all;
+    }
+    setTimeout(checkPlatformsFilled, 50);
+}
+
+// Закрытие дропдаунов платформ при клике вне
+document.addEventListener('click', function() {
+    document.querySelectorAll('.platform-dropdown.open').forEach(function(d) { d.classList.remove('open'); });
+    document.querySelectorAll('.platform-select-btn.open').forEach(function(b) { b.classList.remove('open'); });
+});
+
 function buildPlayerRows(players, renderBlock) {
     var c = document.createElement('div');
     c.style.cssText = 'display: flex; flex-direction: column; gap: 20px; align-items: center; max-width: 1000px; margin: 0 auto;';
@@ -2490,10 +2727,10 @@ function buildPlayerRows(players, renderBlock) {
 }
 
 // ============================================================
-// ШАГ 3 — СНАРЯЖЕНИЕ
+// ШАГ 4 — СНАРЯЖЕНИЕ
 // ============================================================
 function renderEscEquipment() {
-    var container = document.getElementById('escStep3Content');
+    var container = document.getElementById('escStep4Content');
     if (!container) return;
     container.innerHTML = '';
 
@@ -2503,7 +2740,7 @@ function renderEscEquipment() {
     }
 
     if (escState.currentEquipPlayerIndex >= escState.playerCount) {
-        goToEscStep(4);
+        goToEscStep(5);
         escState.currentAmpPlayerIndex = 0;
         renderEscAmps();
         return;
@@ -2511,7 +2748,7 @@ function renderEscEquipment() {
 
     var currentPlayer = escState.players[escState.currentEquipPlayerIndex];
     
-    var sub = document.getElementById('escStep3Subtitle');
+    var sub = document.getElementById('escStep4Subtitle');
     if (sub) {
         sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
     }
@@ -2559,10 +2796,10 @@ function renderEscEquipment() {
 }
 
 // ============================================================
-// ШАГ 4 — АМФЫ
+// ШАГ 5 — АМФЫ
 // ============================================================
 function renderEscAmps() {
-    var container = document.getElementById('escStep4Content');
+    var container = document.getElementById('escStep5Content');
     if (!container) return;
     container.innerHTML = '';
 
@@ -2578,7 +2815,7 @@ function renderEscAmps() {
 
     var currentPlayer = escState.players[escState.currentAmpPlayerIndex];
     
-    var sub = document.getElementById('escStep4Subtitle');
+    var sub = document.getElementById('escStep5Subtitle');
     if (sub) {
         sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
     }
@@ -3002,6 +3239,7 @@ function addPlayerDuringEscalation() {
     var newIndex = escState.players.length;
     escState.players.push(name);
 
+    escState.playerPlatforms[newIndex] = 'steam';
     escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
     escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
     escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
@@ -3011,10 +3249,11 @@ function addPlayerDuringEscalation() {
     // После добавления игрок становится кооперативом автоматически (players.length > 1)
     // → при следующей генерации будут доступны кооп-вариаторы
 
-    // Очередь догона: снаряжение + (уровень-1) раундов по 3 амфы
+    // Очередь догона: платформа + снаряжение + (уровень-1) раундов по 3 амфы
     var catchUpAmpRounds = Math.max(0, escState.level - 1);
 
     escState.catchUpQueue = [];
+    escState.catchUpQueue.push({ type: 'platform' });
     escState.catchUpQueue.push({ type: 'equip' });
     for (var r = 0; r < catchUpAmpRounds; r++) {
         escState.catchUpQueue.push({ type: 'amp' });
@@ -3050,6 +3289,7 @@ function removePlayerDuringEscalation(idx) {
         });
         return out;
     }
+    escState.playerPlatforms = remap(escState.playerPlatforms);
     escState.equipSelections = remap(escState.equipSelections);
     escState.ampSelections   = remap(escState.ampSelections);
     escState.usedAmps        = remap(escState.usedAmps);
@@ -3087,7 +3327,9 @@ function processCatchUpQueue() {
     }
 
     var step = escState.catchUpQueue.shift();
-    if (step.type === 'equip') {
+    if (step.type === 'platform') {
+        openCatchUpPlatformModal();
+    } else if (step.type === 'equip') {
         openCatchUpEquipModal();
     } else {
         openCatchUpAmpModal();
@@ -3104,6 +3346,46 @@ function showToast(text, color) {
         notif.style.transition = 'opacity 0.4s';
         setTimeout(function() { notif.remove(); }, 500);
     }, 1800);
+}
+
+function openCatchUpPlatformModal() {
+    var idx = escState.pendingNewPlayer.index;
+    var name = escState.pendingNewPlayer.name;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'catchUpModal';
+    overlay.className = 'catchup-modal-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'catchup-modal';
+
+    var totalSteps = 2 + Math.max(0, escState.level - 1);
+    var currentId = escState.playerPlatforms[idx] || 'steam';
+
+    var cardsHtml = platformsData.map(function(p) {
+        return '<div class="platform-option' + (p.id === currentId ? ' selected' : '') + '" data-pid="' + p.id + '" style="flex-direction:column; padding:16px; min-width:120px; background:rgba(0,0,0,0.3); border:1px solid rgba(220,90,50,0.2); border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer;">' +
+            '<img class="platform-icon" src="' + p.icon + '" alt="" style="width:40px;height:40px;object-fit:contain;" onerror="this.style.visibility=\'hidden\'">' +
+            '<span style="margin-top:8px; font-weight:600; color:#ffbc9a;">' + p.name + '</span>' +
+        '</div>';
+    }).join('');
+
+    modal.innerHTML =
+        '<div class="catchup-header">' +
+            '<h2><i class="fas fa-gamepad"></i> ' + name + ' — платформа</h2>' +
+        '</div>' +
+        '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
+        '<div class="catchup-cards" style="gap:16px; padding-bottom:10px;">' + cardsHtml + '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    modal.querySelectorAll('.platform-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            escState.playerPlatforms[idx] = this.dataset.pid;
+            overlay.remove();
+            processCatchUpQueue();
+        });
+    });
 }
 
 function openCatchUpEquipModal() {
@@ -3126,13 +3408,13 @@ function openCatchUpEquipModal() {
         '</div>';
     }).join('');
 
-    var totalSteps = 1 + Math.max(0, escState.level - 1);
+    var totalSteps = 2 + Math.max(0, escState.level - 1);
 
     modal.innerHTML =
         '<div class="catchup-header">' +
             '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
         '</div>' +
-        '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
+        '<div class="catchup-step">Шаг 2 из ' + totalSteps + '</div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
 
     overlay.appendChild(modal);
@@ -3147,6 +3429,7 @@ function openCatchUpEquipModal() {
         });
     });
 }
+
 function openCatchUpAmpModal() {
     var idx = escState.pendingNewPlayer.index;
     var name = escState.pendingNewPlayer.name;
@@ -3636,11 +3919,14 @@ function checkSavedOnStart() {
                 updateLevelCounter();
                 if (escState.currentStep === 3) {
                     goToEscStep(3);
-                    renderEscEquipment();
+                    renderEscPlatforms();
                 } else if (escState.currentStep === 4) {
                     goToEscStep(4);
+                    renderEscEquipment();
+                } else if (escState.currentStep === 5) {
+                    goToEscStep(5);
                     renderEscAmps();
-                } else if (escState.currentStep >= 5 && escState.trial && escState.map) {
+                } else if (escState.currentStep >= 6 && escState.trial && escState.map) {
                     showFullResult();
                     prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
                     // [NEW] если в сохранении был незавершённый догон — продолжим
@@ -3658,6 +3944,7 @@ function checkSavedOnStart() {
                 clearSavedEscalation();
                 escState = {
                     level: 1, playerCount: 0, players: [],
+                    playerPlatforms: {},
                     equipSelections: {}, ampSelections: {}, usedAmps: {},
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
@@ -3709,12 +3996,22 @@ function doInit() {
             if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
             if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
             if (!escState.unlockedAmps[idx]) escState.unlockedAmps[idx] = [];
+            if (!escState.playerPlatforms[idx]) escState.playerPlatforms[idx] = 'steam';
         });
         escState.initialPlayerCount = escState.players.length; // [NEW]
 
         escState.currentEquipPlayerIndex = 0;
-        
+
         goToEscStep(3);
+        renderEscPlatforms();
+    });
+
+    var s3Back = document.getElementById('escStep3Back');
+    var s3Next = document.getElementById('escStep3Next');
+    if (s3Back) s3Back.addEventListener('click', function() { goToEscStep(2); renderEscPlayerNames(); });
+    if (s3Next) s3Next.addEventListener('click', function() {
+        escState.currentEquipPlayerIndex = 0;
+        goToEscStep(4);
         renderEscEquipment();
     });
 
@@ -3869,8 +4166,10 @@ function doInit() {
 
             // Ждём, пока данные всех игроков реально отправятся
             // (по очереди, чтобы не было гонки при расчёте ID)
-            for (const playerName of escState.players) {
-                await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, 'steam');
+            for (let pIdx = 0; pIdx < escState.players.length; pIdx++) {
+                const playerName = escState.players[pIdx];
+                const platformId = escState.playerPlatforms[pIdx] || 'steam';
+                await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, platformId);
             }
 
             closeSummaryModal();
@@ -4101,7 +4400,7 @@ function renderAmpModalGrid(playerIndex, category) {
 // ============================================================
 async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
     try {
-        console.log(`[БД] Начинаем отправку для ${playerName}...`);
+        console.log(`[БД] Начинаем отправку для ${playerName} (${platform})...`);
 
         // 1. Ищем существующую запись для этого игрока в этом режиме
         const checkUrl = `${API_URL}/search?Mode=${mode}&PlayerName=${encodeURIComponent(playerName)}`;
