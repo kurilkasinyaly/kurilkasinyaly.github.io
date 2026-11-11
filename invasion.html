@@ -206,6 +206,7 @@
             display: flex; flex-direction: column; margin-bottom: 2rem;
         }
         
+        /* Измененный хедер секции: дата теперь справа на всю ширину */
         .leaderboard-section .section-header {
             display: flex; justify-content: flex-end; align-items: center;
             padding: 0.8rem 1.5rem; border-bottom: 1px solid rgba(220, 90, 50, 0.1);
@@ -218,6 +219,7 @@
         }
         .leaderboard-section .section-header .sub-title i { color: #e25d32; margin-right: 5px; }
         
+        /* Динамический заголовок */
         .escalation-dynamic-title {
             text-align: center;
             margin: 1rem 0 0.5rem 0;
@@ -233,6 +235,7 @@
         }
         .escalation-dynamic-title span { color: #e25d32; }
 
+        /* ===== ВКЛАДКИ ПОДРАЗДЕЛОВ ===== */
         .sub-tabs {
             display: flex; gap: 0.8rem; padding: 0.6rem 1.5rem;
             border-bottom: 1px solid rgba(220, 90, 50, 0.08); flex-wrap: wrap; justify-content: center;
@@ -244,7 +247,7 @@
         }
         .sub-tab:hover { color: white; background: rgba(255, 255, 255, 0.06); }
         .sub-tab.active { color: #e25d32; border-color: rgba(220, 90, 50, 0.3); background: rgba(220, 90, 50, 0.08); }
-        
+        /* Вкладки сообществ */
         .community-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; padding: 0 1.5rem; }
         .community-tab {
             padding: 0.6rem 2rem; border-radius: 40px; font-size: 0.95rem; font-weight: 700;
@@ -253,7 +256,7 @@
         }
         .community-tab:hover { border-color: rgba(220, 90, 50, 0.5); color: white; }
         .community-tab.active { background: linear-gradient(135deg, #bc4627, #e25d32); border-color: #e25d32; color: white; box-shadow: 0 5px 20px rgba(220, 90, 50, 0.3); }
-        
+        /* ===== ТАБЛИЦА ===== */
         .table-wrapper {
             padding: 1rem 1rem 1.5rem 1rem; overflow-x: auto; flex: 1; position: relative;
             border-radius: 0 0 28px 28px; min-height: 400px; background: transparent;
@@ -280,9 +283,11 @@
         td:first-child { text-align: center; width: 60px; font-weight: 800; color: #7dd3fc; font-size: 1.1rem; }
         td:nth-child(2) { text-align: left; font-weight: 700; color: #ffffff; font-size: 1.15rem; }
         
+        /* Иконки платформ */
         .platform-icon { width: 28px; height: 28px; margin-right: 10px; vertical-align: middle; display: inline-block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
         .player-name { display: inline-flex; align-items: center; gap: 6px; }
         
+        /* ===== ПРЕСТИЖ И УРОВЕНЬ ===== */
         .player-prestige-level {
             display: inline-flex; align-items: center; justify-content: flex-start;
             position: relative; margin-right: 12px; flex-shrink: 0; padding-right: 4px;
@@ -308,7 +313,7 @@
             height: 26px; box-sizing: border-box; z-index: 1; position: relative;
         }
         .level-number { font-size: 0.9rem; font-weight: 800; color: #ffffff; text-shadow: 0 0 4px rgba(0, 0, 0, 0.9); line-height: 1; }
-        
+        /* ===== МЕДАЛИ ===== */
         .rank-1 td:first-child { color: #ffd700; }
         .rank-2 td:first-child { color: #c0c0c0; }
         .rank-3 td:first-child { color: #cd7f32; }
@@ -1229,7 +1234,9 @@
 
             } else {
                 // === РЕЖИМ ВТОРЖЕНИЕ ===
-                dynamicTitle.innerHTML = ''; // Скрываем динамический заголовок для вторжения
+                
+                // ДОБАВЛЯЕМ ЗАГОЛОВОК (как на скриншоте)
+                dynamicTitle.innerHTML = 'ВТОРЖЕНИЕ'; 
 
                 if (currentSubTab === 'general' || !currentSubTab) {
                     currentSubTab = 'general';
