@@ -461,7 +461,7 @@
             <div class="alert-block">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>
-                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 21:00</span> по МСК.
+                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00</span> по времени Астаны.
                 </span>
             </div>
 
@@ -476,9 +476,10 @@
                 </div>
             </div>
 
-            <div class="community-tabs" id="communityTabs" style="display:none;">
+            <!-- Вкладки сообществ (изначально видны) -->
+            <div class="community-tabs" id="communityTabs">
                 <button class="community-tab active" data-community="kurilka" onclick="switchCommunity('kurilka')">Курилка Синьялы</button>
-                <button class="community-tab" data-community="global" onclick="switchCommunity('global')">Глобальный</button>
+                <button class="community-tab" data-community="global" onclick="switchCommunity('global')">Глобальная</button>
             </div>
 
             <div class="leaderboard-section" id="leaderboardSection">
@@ -605,7 +606,11 @@
                 if (connectScreen) connectScreen.classList.remove('active');
                 if (mainContent) mainContent.classList.add('active');
                 document.body.classList.add('scroll-enabled');
-                setTimeout(function() { updateTableContent(); loadEscalationDataFromDB(); }, 100);
+                setTimeout(function() { 
+                    updateTableContent(); 
+                    loadEscalationDataFromDB();
+                    checkAndResetWeekly();
+                }, 100);
             }
         });
 
@@ -640,6 +645,7 @@
                     document.body.classList.add('scroll-enabled');
                     updateTableContent();
                     loadEscalationDataFromDB();
+                    checkAndResetWeekly();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -774,13 +780,13 @@
                 escalationDBData.infinite = [];
 
                 data.forEach(row => {
-                    if (!row.playerName) return;
+                    if (!row.PlayerName) return; // Используем точные названия колонок
 
-                    const mode = row.mode; 
-                    const playerName = row.playerName;
-                    const levels = parseInt(row.levelsCompleted, 10) || 0;
-                    const time = row.totalTime || 'unranked';
-                    const platform = row.platform || 'steam';
+                    const mode = row.Mode; 
+                    const playerName = row.PlayerName;
+                    const levels = parseInt(row.LevelsCompleted, 10) || 0;
+                    const time = row.TotalTime || 'unranked';
+                    const platform = row.Platform || 'steam';
 
                     if (mode === 'Weekly') {
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
@@ -819,6 +825,58 @@
             if (parts.length === 2) return parts[0] * 60 + parts[1];
             if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
             return 9999999;
+        }
+
+        // ============================================================
+        // ===== АВТОСБРОС ЕЖЕНЕДЕЛЬНОЙ ТАБЛИЦЫ =======================
+        // ============================================================
+        async function checkAndResetWeekly() {
+            try {
+                // Проверяем, не пора ли сбросить (каждый вторник в 19:00 по Астане / UTC+5)
+                // В JS время всегда локальное, поэтому используем UTC для точности
+                const now = new Date();
+                
+                // Получаем текущее время в UTC+5
+                const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const astanaTime = new Date(utcTime + (3600000 * 5));
+                
+                const day = astanaTime.getDay(); // 0 - Вс, 1 - Пн, 2 - Вт, ...
+                const hours = astanaTime.getHours();
+                const minutes = astanaTime.getMinutes();
+
+                // Если сегодня вторник и время >= 19:00 (и меньше 19:05, чтобы не спамить)
+                if (day === 2 && hours === 19 && minutes >= 0 && minutes < 5) {
+                    // Проверяем в localStorage, не сбрасывали ли мы уже сегодня
+                    const lastReset = localStorage.getItem('lastWeeklyReset');
+                    const todayStr = astanaTime.toISOString().split('T')[0]; // YYYY-MM-DD
+
+                    if (lastReset !== todayStr) {
+                        console.log('[АВТОСБРОС] Пришло время сбрасывать Weekly...');
+                        
+                        // Ищем все записи с Mode: Weekly и удаляем их
+                        const checkUrl = `${API_URL}/search?Mode=Weekly`;
+                        const res = await fetch(checkUrl);
+                        const data = await res.json();
+
+                        if (data && data.length > 0) {
+                            const deleteUrl = `${API_URL}/Mode/Weekly`;
+                            await fetch(deleteUrl, { method: 'DELETE' });
+                            console.log('[АВТОСБРОС] Успешно удалено записей: ' + data.length);
+                            
+                            // Запоминаем, что сброс прошел
+                            localStorage.setItem('lastWeeklyReset', todayStr);
+                            
+                            // Перезагружаем таблицу
+                            loadEscalationDataFromDB();
+                        } else {
+                            console.log('[АВТОСБРОС] Нет данных для сброса.');
+                            localStorage.setItem('lastWeeklyReset', todayStr);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Ошибка при автосбросе:', e);
+            }
         }
 
         // ============================================================
@@ -1009,6 +1067,7 @@
                     if (currentSubTab === 'weekly') {
                         var dataK = escalationDBData.weekly;
                         if (dataK.length === 0) {
+                            // ПУСТОЙ ЭКРАН
                             container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
                                 <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
                                 Данные появятся после первого прохождения<br>еженедельной эскалации участниками Курилки.
@@ -1044,6 +1103,7 @@
                     } else {
                         var dataKI = escalationDBData.infinite;
                         if (dataKI.length === 0) {
+                            // ПУСТОЙ ЭКРАН
                             container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
                                 <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
                                 Данные появятся после первого прохождения<br>бесконечной эскалации участниками Курилки.
