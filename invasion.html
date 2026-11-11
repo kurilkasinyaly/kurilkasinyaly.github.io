@@ -9,6 +9,10 @@
     <link rel="apple-touch-icon" href="images/лого.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Подключаем расписание вариаторов для заголовка -->
+    <script src="weekly-schedule.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
@@ -213,6 +217,23 @@
             padding: 0.3rem 1rem; border-radius: 40px; border: 1px solid rgba(220, 90, 50, 0.15); letter-spacing: 0.5px;
         }
         .leaderboard-section .section-header .sub-title i { color: #e25d32; margin-right: 5px; }
+        
+        /* Динамический заголовок */
+        .escalation-dynamic-title {
+            text-align: center;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .escalation-dynamic-title span { color: #e25d32; }
+
         /* ===== ВКЛАДКИ ПОДРАЗДЕЛОВ ===== */
         .sub-tabs {
             display: flex; gap: 0.8rem; padding: 0.6rem 1.5rem;
@@ -259,9 +280,12 @@
         tr td:last-child { border-radius: 0 12px 12px 0; }
         tr:hover td { background: linear-gradient(90deg, #2a4a73 0%, #254a70 50%, #1e3d5e 100%); }
         td:first-child { text-align: center; width: 60px; font-weight: 800; color: #7dd3fc; font-size: 1.1rem; }
-        td:nth-child(2) { text-align: left; font-weight: 700; color: #ffffff; font-size: 1.15rem; } /* Увеличен ник */
-        .platform-icon { width: 22px; height: 22px; margin-right: 8px; vertical-align: middle; display: inline-block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+        td:nth-child(2) { text-align: left; font-weight: 700; color: #ffffff; font-size: 1.15rem; }
+        
+        /* Иконки платформ */
+        .platform-icon { width: 28px; height: 28px; margin-right: 10px; vertical-align: middle; display: inline-block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
         .player-name { display: inline-flex; align-items: center; gap: 6px; }
+        
         /* ===== ПРЕСТИЖ И УРОВЕНЬ ===== */
         .player-prestige-level {
             display: inline-flex; align-items: center; justify-content: flex-start;
@@ -323,8 +347,8 @@
             .sub-tab { font-size: 0.75rem; padding: 0.35rem 1rem; }
             th, td { padding: 0.6rem 0.4rem; font-size: 0.75rem; }
             th { font-size: 0.6rem; letter-spacing: 1px; }
-            td:nth-child(2) { font-size: 0.95rem; } /* Адаптив для увеличенного ника */
-            .platform-icon { width: 18px; height: 18px; margin-right: 4px; }
+            td:nth-child(2) { font-size: 0.95rem; }
+            .platform-icon { width: 22px; height: 22px; margin-right: 6px; }
             .table-wrapper { min-height: 300px; padding: 0.8rem 0.5rem 1rem 0.5rem; }
             table { border-spacing: 0 6px; }
             .connect-logo .line1 { font-size: 1.8rem; letter-spacing: 6px; }
@@ -341,6 +365,7 @@
             .level-number { font-size: 0.8rem; }
             .prestige-number { font-size: 0.8rem; }
             .community-tab { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .escalation-dynamic-title { font-size: 1.1rem; }
         }
         @media (max-width: 500px) {
             .main-wrapper { padding: 0.8rem; }
@@ -360,8 +385,8 @@
             .sub-tab { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
             th, td { padding: 0.4rem 0.2rem; font-size: 0.6rem; }
             th { font-size: 0.5rem; letter-spacing: 0.5px; }
-            td:nth-child(2) { font-size: 0.8rem; } /* Адаптив для увеличенного ника */
-            .platform-icon { width: 14px; height: 14px; margin-right: 2px; }
+            td:nth-child(2) { font-size: 0.8rem; }
+            .platform-icon { width: 18px; height: 18px; margin-right: 4px; }
             .medal { width: 20px; font-size: 0.6rem; }
             .table-wrapper { min-height: 250px; padding: 0.5rem 0.3rem 0.8rem 0.3rem; }
             table { border-spacing: 0 4px; }
@@ -386,6 +411,7 @@
             .prestige-number { font-size: 0.7rem; }
             .community-tabs { flex-direction: column; gap: 0.5rem; }
             .community-tab { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+            .escalation-dynamic-title { font-size: 0.9rem; flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
@@ -478,11 +504,13 @@
                 </div>
             </div>
 
-            <!-- Вкладки сообществ -->
             <div class="community-tabs" id="communityTabs">
                 <button class="community-tab active" data-community="kurilka" onclick="switchCommunity('kurilka')">Курилка Синьялы</button>
                 <button class="community-tab" data-community="global" onclick="switchCommunity('global')">Глобальная</button>
             </div>
+
+            <!-- Динамический заголовок -->
+            <div class="escalation-dynamic-title" id="dynamicEscalationTitle"></div>
 
             <div class="leaderboard-section" id="leaderboardSection">
                 <div class="section-header">
@@ -611,7 +639,6 @@
                 setTimeout(function() { 
                     updateTableContent(); 
                     loadEscalationDataFromDB();
-                    checkAndResetWeekly();
                 }, 100);
             }
         });
@@ -647,7 +674,6 @@
                     document.body.classList.add('scroll-enabled');
                     updateTableContent();
                     loadEscalationDataFromDB();
-                    checkAndResetWeekly();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -772,6 +798,33 @@
             infinite: []
         };
 
+        // Функция для получения времени последнего вторника 21:00 (Астана)
+        function getLastTuesdayCutoffTime() {
+            const now = new Date();
+            
+            // Получаем текущее время в UTC+5 (Астана)
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const astanaTime = new Date(utcTime + (3600000 * 5));
+            
+            const day = astanaTime.getDay(); // 0 - Вс, 1 - Пн, 2 - Вт, ...
+            const hours = astanaTime.getHours();
+            
+            const cutoff = new Date(astanaTime);
+            
+            // Вычисляем, сколько дней назад был последний вторник
+            let daysToSubtract = (day >= 2) ? (day - 2) : (day + 7 - 2);
+            
+            // Если сегодня вторник, но время еще меньше 21:00, то отсечка - прошлый вторник
+            if (day === 2 && hours < 21) {
+                daysToSubtract = 7;
+            }
+            
+            cutoff.setDate(cutoff.getDate() - daysToSubtract);
+            cutoff.setHours(21, 0, 0, 0);
+            
+            return cutoff.getTime();
+        }
+
         async function loadEscalationDataFromDB() {
             try {
                 const response = await fetch(API_URL);
@@ -781,6 +834,9 @@
                 escalationDBData.weekly = [];
                 escalationDBData.infinite = [];
 
+                // Получаем время отсечки (последний вторник 21:00)
+                const cutoffTime = getLastTuesdayCutoffTime();
+
                 data.forEach(row => {
                     if (!row.PlayerName) return;
 
@@ -789,10 +845,39 @@
                     const levels = parseInt(row.LevelsCompleted, 10) || 0;
                     const time = row.TotalTime || 'unranked';
                     const platform = row.Platform || 'steam';
+                    const dateStr = row.Date;
 
-                    if (mode === 'Weekly') {
+                    // Проверяем дату записи (если она есть)
+                    let isRecent = true;
+                    if (dateStr) {
+                        // Пытаемся распарсить дату из Google Sheets (обычно формат DD.MM.YYYY, HH:MM:SS)
+                        // Или стандартный ISO
+                        let recordDate = new Date(dateStr);
+                        
+                        // Если браузер не смог распарсить, пробуем ручной формат
+                        if (isNaN(recordDate.getTime())) {
+                            const parts = dateStr.split(', ');
+                            if (parts.length === 2) {
+                                const dParts = parts[0].split('.');
+                                const tParts = parts[1].split(':');
+                                if (dParts.length === 3 && tParts.length >= 2) {
+                                    recordDate = new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1]);
+                                }
+                            }
+                        }
+
+                        if (!isNaN(recordDate.getTime())) {
+                            // Переводим в Астану для сравнения
+                            const recordUtc = recordDate.getTime() + (recordDate.getTimezoneOffset() * 60000);
+                            const recordAstana = recordUtc + (3600000 * 5);
+                            isRecent = recordAstana >= cutoffTime;
+                        }
+                    }
+
+                    if (mode === 'Weekly' && isRecent) {
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
                     } else if (mode === 'Infinite') {
+                        // Для бесконечной показываем все записи (или можно тоже фильтровать, если нужно)
                         escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
                     }
                 });
@@ -827,57 +912,6 @@
             if (parts.length === 2) return parts[0] * 60 + parts[1];
             if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
             return 9999999;
-        }
-
-        // ============================================================
-        // ===== АВТОСБРОС ЕЖЕНЕДЕЛЬНОЙ ТАБЛИЦЫ =======================
-        // ============================================================
-        async function checkAndResetWeekly() {
-            try {
-                // Проверяем, не пора ли сбросить (каждый вторник в 19:00 по МСК / 21:00 по Астане)
-                const now = new Date();
-                
-                // Получаем текущее время в UTC+5 (Астана)
-                const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-                const astanaTime = new Date(utcTime + (3600000 * 5));
-                
-                const day = astanaTime.getDay(); // 0 - Вс, 1 - Пн, 2 - Вт, ...
-                const hours = astanaTime.getHours();
-                const minutes = astanaTime.getMinutes();
-
-                // Если сегодня вторник и время >= 21:00 (Астана), но < 21:05
-                if (day === 2 && hours === 21 && minutes >= 0 && minutes < 5) {
-                    // Проверяем в localStorage, не сбрасывали ли мы уже сегодня
-                    const lastReset = localStorage.getItem('lastWeeklyReset');
-                    const todayStr = astanaTime.toISOString().split('T')[0]; // YYYY-MM-DD
-
-                    if (lastReset !== todayStr) {
-                        console.log('[АВТОСБРОС] Пришло время сбрасывать Weekly...');
-                        
-                        // Ищем все записи с Mode: Weekly и удаляем их
-                        const checkUrl = `${API_URL}/search?Mode=Weekly`;
-                        const res = await fetch(checkUrl);
-                        const data = await res.json();
-
-                        if (data && data.length > 0) {
-                            const deleteUrl = `${API_URL}/Mode/Weekly`;
-                            await fetch(deleteUrl, { method: 'DELETE' });
-                            console.log('[АВТОСБРОС] Успешно удалено записей: ' + data.length);
-                            
-                            // Запоминаем, что сброс прошел
-                            localStorage.setItem('lastWeeklyReset', todayStr);
-                            
-                            // Перезагружаем таблицу
-                            loadEscalationDataFromDB();
-                        } else {
-                            console.log('[АВТОСБРОС] Нет данных для сброса.');
-                            localStorage.setItem('lastWeeklyReset', todayStr);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error('Ошибка при автосбросе:', e);
-            }
         }
 
         // ============================================================
@@ -1032,6 +1066,14 @@
             tabs.forEach(function(tab) {
                 tab.classList.toggle('active', tab.dataset.community === community);
             });
+            
+            // Если выбрана Глобальная, принудительно ставим Бесконечную
+            if (community === 'global') {
+                currentSubTab = 'infinite';
+            } else {
+                currentSubTab = 'weekly'; // Для Курилки по умолчанию Еженедельная
+            }
+            
             updateTableContent();
         }
 
@@ -1054,15 +1096,37 @@
             var container = document.getElementById('tableContainer');
             var title = document.getElementById('sectionTitle');
             var subTabs = document.getElementById('subTabs');
+            var dynamicTitle = document.getElementById('dynamicEscalationTitle');
+            
             if (!container || !title || !subTabs) return;
 
             if (currentMode === 'escalation') {
                 title.textContent = 'ЭСКАЛАЦИЯ';
+                
+                // Формируем динамический заголовок
+                if (currentCommunity === 'kurilka') {
+                    if (currentSubTab === 'weekly') {
+                        var weeklyVar = (typeof getActiveWeeklyVariator === 'function') ? getActiveWeeklyVariator() : null;
+                        var varName = weeklyVar ? weeklyVar.name.toUpperCase() : '...';
+                        dynamicTitle.innerHTML = `ЕЖЕНЕДЕЛЬНАЯ ЭСКАЛАЦИЯ ЛИДЕРБОРД <span>«${varName}»</span>`;
+                    } else {
+                        dynamicTitle.innerHTML = `БЕСКОНЕЧНАЯ ЭСКАЛАЦИЯ ЛИДЕРБОРД`;
+                    }
+                } else {
+                    dynamicTitle.innerHTML = 'ГЛОБАЛЬНЫЙ ЛИДЕРБОРД';
+                }
 
-                subTabs.innerHTML = `
-                    <span class="sub-tab ${currentSubTab === 'weekly' ? 'active' : ''}" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
-                    <span class="sub-tab ${currentSubTab === 'infinite' ? 'active' : ''}" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
-                `;
+                // Если Глобальная - убираем вкладки, оставляем только Бесконечную
+                if (currentCommunity === 'global') {
+                    subTabs.innerHTML = `
+                        <span class="sub-tab active" data-sub="infinite">Бесконечная</span>
+                    `;
+                } else {
+                    subTabs.innerHTML = `
+                        <span class="sub-tab ${currentSubTab === 'weekly' ? 'active' : ''}" data-sub="weekly" onclick="switchSubTab('weekly')">Еженедельная</span>
+                        <span class="sub-tab ${currentSubTab === 'infinite' ? 'active' : ''}" data-sub="infinite" onclick="switchSubTab('infinite')">Бесконечная</span>
+                    `;
+                }
 
                 if (currentCommunity === 'kurilka') {
                     if (currentSubTab === 'weekly') {
@@ -1135,67 +1199,38 @@
                         }
                     }
                 } else {
-                    // === ГЛОБАЛЬНАЯ ТАБЛИЦА ===
-                    if (currentSubTab === 'weekly') {
-                        var dataG = escalationGlobalData.weekly;
-                        var htmlG = `<table>
-                            <thead>
-                                <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ПРОЙДЕНО</th><th>ОЦЕНКА</th><th>ВРЕМЯ</th></tr>
-                            </thead>
-                            <tbody>`;
-                        dataG.forEach(function(player) {
-                            var platform = getPlatformForPlayer(player.name);
-                            var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                            var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                            htmlG += `
-                                <tr class="${getRankClass(player.rank)}">
-                                    <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                    <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                        <span class="player-name">
-                                            ${getPlatformIcon(platform)}
-                                            ${player.name}
-                                        </span>
-                                    </td>
-                                    <td>${formatCell('unranked')}</td>
-                                    <td>${formatCell('unranked')}</td>
-                                    <td>${formatCell('unranked')}</td>
-                                </tr>
-                            `;
-                        });
-                        htmlG += `</tbody></table>`;
-                        container.innerHTML = htmlG;
-                    } else {
-                        var dataGI = escalationGlobalData.infinite;
-                        var htmlGI = `<table>
-                            <thead>
-                                <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (ВРЕМЯ)</th></tr>
-                            </thead>
-                            <tbody>`;
-                        dataGI.forEach(function(player) {
-                            var platform = getPlatformForPlayer(player.name);
-                            var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                            var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                            htmlGI += `
-                                <tr class="${getRankClass(player.rank)}">
-                                    <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                    <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                        <span class="player-name">
-                                            ${getPlatformIcon(platform)}
-                                            ${player.name}
-                                        </span>
-                                    </td>
-                                    <td>${formatCell('unranked')}</td>
-                                </tr>
-                            `;
-                        });
-                        htmlGI += `</tbody></table>`;
-                        container.innerHTML = htmlGI;
-                    }
+                    // === ГЛОБАЛЬНАЯ ТАБЛИЦА (Только Бесконечная) ===
+                    var dataGI = escalationGlobalData.infinite;
+                    var htmlGI = `<table>
+                        <thead>
+                            <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (ВРЕМЯ)</th></tr>
+                        </thead>
+                        <tbody>`;
+                    dataGI.forEach(function(player) {
+                        var platform = getPlatformForPlayer(player.name);
+                        var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
+                        var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                        htmlGI += `
+                            <tr class="${getRankClass(player.rank)}">
+                                <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                                <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                    <span class="player-name">
+                                        ${getPlatformIcon(platform)}
+                                        ${player.name}
+                                    </span>
+                                </td>
+                                <td>${formatCell('unranked')}</td>
+                            </tr>
+                        `;
+                    });
+                    htmlGI += `</tbody></table>`;
+                    container.innerHTML = htmlGI;
                 }
 
             } else {
                 // === РЕЖИМ ВТОРЖЕНИЕ ===
                 title.textContent = 'ВТОРЖЕНИЕ';
+                dynamicTitle.innerHTML = ''; // Скрываем динамический заголовок для вторжения
 
                 if (currentSubTab === 'general' || !currentSubTab) {
                     currentSubTab = 'general';
