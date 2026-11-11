@@ -611,6 +611,31 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
         }
 
+        /* [NEW] Бейдж "В процессе" */
+        .save-status-badge {
+            display: none; /* По умолчанию скрыт */
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #ffbc9a;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.75);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 188, 154, 0.3);
+            margin-left: 8px;
+        }
+        .save-status-badge.active { display: flex; }
+        .save-status-badge img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+        }
+
         /* ===== ОСОБЫЕ ИСПЫТАНИЯ ===== */
         .special-trials { margin-bottom: 2.5rem; }
         .special-trials h2 {
@@ -936,6 +961,11 @@
                             <img src="images/часы.webp" alt="Время">
                             <span id="weeklyTimerText">Загрузка...</span>
                         </div>
+                        <!-- [NEW] Бейдж сохранения для еженедельной -->
+                        <div class="save-status-badge" id="weeklySaveBadge">
+                            <img src="images/иконка сохранения.webp" alt="Сохранение">
+                            <span>В ПРОЦЕССЕ...</span>
+                        </div>
                     </div>
                     <!-- Иконка вариатора -->
                     <div class="rule-variator-slot" id="weeklyVariatorSlot">
@@ -956,7 +986,15 @@
             <a href="escalation.html" class="escalation-rule-card">
                 <img class="rule-bg" src="images/бесконечная эскалация баннер.webp" alt="">
                 <div class="rule-overlay">
-                <div class="rule-top"></div>
+                <div class="rule-top">
+                    <div class="rule-left">
+                        <!-- [NEW] Бейдж сохранения для бесконечной -->
+                        <div class="save-status-badge" id="infiniteSaveBadge">
+                            <img src="images/иконка сохранения.webp" alt="Сохранение">
+                            <span>В ПРОЦЕССЕ...</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="rule-center-content">
                     <div class="rule-name-box">
                         <div class="rule-name">БЕСКОНЕЧНАЯ</div>
@@ -991,17 +1029,35 @@
 
 <script>
 // ================================================================
-//  АВТОМАТИЧЕСКАЯ ПОДСТАНОВКА ВАРИАТОРА НА БАННЕР
+//  АВТОМАТИЧЕСКАЯ ПОДСТАНОВКА ВАРИАТОРА НА БАННЕР И ПРОВЕРКА СОХРАНЕНИЙ
 // ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof getActiveWeeklyVariator !== 'function') return;
-    var active = getActiveWeeklyVariator();
-    if (!active) return;
+    // 1. Подстановка вариатора
+    if (typeof getActiveWeeklyVariator === 'function') {
+        var active = getActiveWeeklyVariator();
+        if (active) {
+            var nameEl = document.getElementById('weeklyVariatorName');
+            var imgEl = document.getElementById('weeklyVariatorImage');
+            if (nameEl) nameEl.textContent = '«' + active.name.toUpperCase() + '»';
+            if (imgEl && active.image) imgEl.src = active.image;
+        }
+    }
 
-    var nameEl = document.getElementById('weeklyVariatorName');
-    var imgEl = document.getElementById('weeklyVariatorImage');
-    if (nameEl) nameEl.textContent = '«' + active.name.toUpperCase() + '»';
-    if (imgEl && active.image) imgEl.src = active.image;
+    // 2. Проверка сохранений
+    // Проверяем наличие сохранений в localStorage
+    var weeklySaved = localStorage.getItem('weekly_escalation_save_v1');
+    var infiniteSaved = localStorage.getItem('escalation_save_v1');
+
+    // Отображаем бейдж "В ПРОЦЕССЕ...", если сохранение есть
+    if (weeklySaved) {
+        var weeklyBadge = document.getElementById('weeklySaveBadge');
+        if (weeklyBadge) weeklyBadge.classList.add('active');
+    }
+
+    if (infiniteSaved) {
+        var infiniteBadge = document.getElementById('infiniteSaveBadge');
+        if (infiniteBadge) infiniteBadge.classList.add('active');
+    }
 });
 
 // ================================================================
@@ -1373,7 +1429,6 @@ function generateDailyVariators(count, trialName) {
     var shuffled = shuffleArray(available);
 
     for (var i = 0; i < shuffled.length && result.length < count; i++) {
-        // Используем логику из Эскалации (передаем фейковый уровень 10, игроков 1)
         if (isVariatorCompatible(shuffled[i], result, trialName, 1, 10)) {
             result.push(shuffled[i]);
         }
@@ -1406,7 +1461,6 @@ function getDailyMission() {
 
     var trial = mapData.trials[Math.floor(Math.random() * mapData.trials.length)];
     
-    // Генерируем вариаторы с учетом названия испытания
     var variators = generateDailyVariators(8, trial.name);
 
     var missionData = {
