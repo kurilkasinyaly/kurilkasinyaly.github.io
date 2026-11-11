@@ -1580,6 +1580,43 @@
             margin-bottom: 18px;
         }
 
+        /* Стили для кастомного prompt */
+        .custom-prompt-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 3500; justify-content: center;
+            align-items: center; backdrop-filter: blur(10px);
+        }
+        .custom-prompt-overlay.active { display: flex; }
+        .custom-prompt {
+            background: rgba(18, 12, 28, 0.95); border-radius: 24px;
+            border: 2px solid rgba(220, 90, 50, 0.4); padding: 2rem;
+            max-width: 450px; width: 90%; text-align: center;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        .custom-prompt h3 { color: #e16d48; font-size: 1.3rem; margin-bottom: 1rem; }
+        .custom-prompt input {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            border: 1px solid rgba(220, 90, 50, 0.3); background: rgba(0,0,0,0.4);
+            color: #ffbc9a; font-size: 1rem; font-family: inherit;
+            outline: none; margin-bottom: 1.5rem;
+        }
+        .custom-prompt input:focus { border-color: #e16d48; }
+        .custom-prompt .actions { display: flex; gap: 10px; justify-content: center; }
+        .custom-prompt .actions button {
+            padding: 0.7rem 2rem; border-radius: 40px; font-size: 0.95rem;
+            font-weight: 600; cursor: pointer; font-family: inherit; border: none;
+            transition: all 0.3s;
+        }
+        .custom-prompt .actions .btn-confirm {
+            background: linear-gradient(135deg, #bc4627, #e25d32); color: white;
+        }
+        .custom-prompt .actions .btn-confirm:hover { transform: scale(1.05); }
+        .custom-prompt .actions .btn-cancel {
+            background: rgba(220, 90, 50, 0.15); border: 1px solid rgba(220, 90, 50, 0.25);
+            color: #c2b9d4;
+        }
+        .custom-prompt .actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
+
         @media (max-width: 992px) {
             .result-grid { grid-template-columns: 1fr; }
             .info-form-grid { grid-template-columns: 1fr; }
@@ -1836,7 +1873,7 @@
 
             <div class="info-form-group">
                 <label><i class="fas fa-clock"></i> Время прохождения</label>
-                <input type="text" id="infoTime" placeholder="ММ:СС, например 02:46" maxlength="5" inputmode="numeric">
+                <input type="text" id="infoTime" placeholder="ММ:СС, например 02:46" maxlength="5" inputmode="numeric" autocomplete="off">
                 <div class="info-form-hint" id="infoTimeHint">Введите время в формате ММ:СС (например 02:46)</div>
             </div>
 
@@ -1912,6 +1949,18 @@
     </div>
 </div>
 
+<!-- ====== КАСТОМНЫЙ PROMPT ДЛЯ ВВОДА ИМЕНИ ====== -->
+<div class="custom-prompt-overlay" id="customPromptModal">
+    <div class="custom-prompt">
+        <h3><i class="fas fa-user-plus"></i> Новый игрок</h3>
+        <input type="text" id="customPromptInput" placeholder="Введите ник..." autocomplete="off" autocomplete="new-password">
+        <div class="actions">
+            <button class="btn-cancel" id="customPromptCancel">Отмена</button>
+            <button class="btn-confirm" id="customPromptConfirm">Добавить</button>
+        </div>
+    </div>
+</div>
+
 <script src="weekly-schedule.js"></script>
 <script src="maps.js"></script>
 <script src="variators.js"></script>
@@ -1961,10 +2010,10 @@ var WEEKLY_POOL_NAMES = [
 // ПЛАТФОРМЫ
 // ============================================================
 var platformsData = [
-    { id: 'steam', name: 'Steam', icon: 'images/платформа-steam.png' },
-    { id: 'epic', name: 'Epic Games', icon: 'images/платформа-epic.png' },
-    { id: 'ps', name: 'PlayStation', icon: 'images/платформа-ps.png' },
-    { id: 'xbox', name: 'Xbox', icon: 'images/платформа-xbox.png' }
+    { id: 'steam', name: 'Steam', icon: 'images/иконка стим.webp' },
+    { id: 'epic', name: 'Epic Games', icon: 'images/иконка эпик.webp' },
+    { id: 'ps', name: 'PlayStation', icon: 'images/иконка пс.webp' },
+    { id: 'xbox', name: 'Xbox', icon: 'images/иконка х-бокс.webp' }
 ];
 
 function getPlatformById(id) {
@@ -2025,7 +2074,7 @@ var ampCategories = ["Инструмент", "Навык", "Лекарство"]
 var ampsData = [
     // ===== ИНСТРУМЕНТЫ =====
     { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
-    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
+    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и булки отвлекают вторгшихся игроков, создавая ложные сигналы." },
     { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
     { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
     { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
@@ -2709,7 +2758,7 @@ function renderEscPlayerNames() {
                 <i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>
                 Игрок ${i + 1}
             </label>
-            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" autocomplete="off" autocomplete="new-password" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
         `;
         grid.appendChild(row);
 
@@ -3410,42 +3459,62 @@ function renderEscResultPlayers() {
 // ============================================================
 // [NEW] ДОБАВЛЕНИЕ / УДАЛЕНИЕ ИГРОКА ВО ВРЕМЯ ЭСКАЛАЦИИ
 // ============================================================
+var promptCallback = null;
+
+function openCustomPrompt(callback) {
+    var modal = document.getElementById('customPromptModal');
+    var input = document.getElementById('customPromptInput');
+    if (!modal || !input) return;
+    
+    input.value = '';
+    modal.classList.add('active');
+    setTimeout(function() { input.focus(); }, 100);
+    
+    promptCallback = callback;
+}
+
+function closeCustomPrompt() {
+    var modal = document.getElementById('customPromptModal');
+    if (modal) modal.classList.remove('active');
+    promptCallback = null;
+}
+
 function addPlayerDuringEscalation() {
     if (escState.players.length >= 4) {
         alert('Максимум 4 игрока.');
         return;
     }
 
-    var name = prompt('Введите ник нового игрока:');
-    if (name === null) return;
-    name = name.trim();
-    if (!name) { alert('Имя не может быть пустым.'); return; }
-    if (escState.players.indexOf(name) !== -1) { alert('Игрок с таким именем уже есть.'); return; }
+    openCustomPrompt(function(name) {
+        if (name === null || name.trim() === '') return;
+        name = name.trim();
+        if (escState.players.indexOf(name) !== -1) { alert('Игрок с таким именем уже есть.'); return; }
 
-    var newIndex = escState.players.length;
-    escState.players.push(name);
+        var newIndex = escState.players.length;
+        escState.players.push(name);
 
-    escState.playerPlatforms[newIndex] = 'steam';
-    escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
-    escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
-    escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
-    escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
-    escState.allAmpsUsed[newIndex] = false;
+        escState.playerPlatforms[newIndex] = 'steam';
+        escState.equipSelections[newIndex] = escState.equipSelections[newIndex] || null;
+        escState.ampSelections[newIndex] = escState.ampSelections[newIndex] || {};
+        escState.usedAmps[newIndex] = escState.usedAmps[newIndex] || [];
+        escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
+        escState.allAmpsUsed[newIndex] = false;
 
-    var catchUpAmpRounds = Math.max(0, escState.level - 1);
+        var catchUpAmpRounds = Math.max(0, escState.level - 1);
 
-    escState.catchUpQueue = [];
-    escState.catchUpQueue.push({ type: 'platform' });
-    escState.catchUpQueue.push({ type: 'equip' });
-    for (var r = 0; r < catchUpAmpRounds; r++) {
-        escState.catchUpQueue.push({ type: 'amp' });
-    }
+        escState.catchUpQueue = [];
+        escState.catchUpQueue.push({ type: 'platform' });
+        escState.catchUpQueue.push({ type: 'equip' });
+        for (var r = 0; r < catchUpAmpRounds; r++) {
+            escState.catchUpQueue.push({ type: 'amp' });
+        }
 
-    escState.pendingNewPlayer = { index: newIndex, name: name };
-    escState.catchUpMode = null;
+        escState.pendingNewPlayer = { index: newIndex, name: name };
+        escState.catchUpMode = null;
 
-    renderEscResultPlayers();
-    processCatchUpQueue();
+        renderEscResultPlayers();
+        processCatchUpQueue();
+    });
 }
 
 function removePlayerDuringEscalation(idx) {
@@ -4405,6 +4474,39 @@ function doInit() {
     if (confirmModal) {
         confirmModal.addEventListener('click', function(e) {
             if (e.target === this) this.classList.remove('active');
+        });
+    }
+
+    // Кастомный prompt
+    var customPromptCancel = document.getElementById('customPromptCancel');
+    var customPromptConfirm = document.getElementById('customPromptConfirm');
+    var customPromptInput = document.getElementById('customPromptInput');
+    var customPromptModal = document.getElementById('customPromptModal');
+
+    if (customPromptCancel) {
+        customPromptCancel.addEventListener('click', closeCustomPrompt);
+    }
+
+    if (customPromptConfirm) {
+        customPromptConfirm.addEventListener('click', function() {
+            if (promptCallback) {
+                promptCallback(customPromptInput.value);
+                closeCustomPrompt();
+            }
+        });
+    }
+
+    if (customPromptInput) {
+        customPromptInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                customPromptConfirm.click();
+            }
+        });
+    }
+
+    if (customPromptModal) {
+        customPromptModal.addEventListener('click', function(e) {
+            if (e.target === this) closeCustomPrompt();
         });
     }
 
