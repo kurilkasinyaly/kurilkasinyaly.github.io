@@ -4439,15 +4439,14 @@ async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, plat
             body: JSON.stringify({
                 data: [{
                     id: newId,
-                    Date: new Date().toLocaleString('ru-RU'), // Дата
-                    Mode: mode,                               // Режим
-                    PlayerName: playerName,                   // Ник
-                    LevelsCompleted: levelsCompleted.toString(), // Уровни
-                    TotalTime: totalTime,                     // Время
-                    Platform: platform || 'steam'             // Платформа
+                    Date: "'" + new Date().toLocaleString('ru-RU'), // Апостроф делает дату текстом
+                    Mode: mode,
+                    PlayerName: playerName,
+                    LevelsCompleted: levelsCompleted.toString(),
+                    TotalTime: "'" + totalTime,                     // Апостроф делает время текстом
+                    Platform: platform || 'steam'
                 }]
             })
-        });
         
         const result = await res.json();
         console.log('[БД] Ответ от сервера (POST):', result);
