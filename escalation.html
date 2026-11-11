@@ -1940,10 +1940,10 @@ var ampsData = [
 // ПЛАТФОРМЫ
 // ============================================================
 var platformsData = [
-    { id: 'steam', name: 'Steam', icon: 'images/иконка стим.webp' },
-    { id: 'epic', name: 'Epic Games', icon: 'images/иконка эпик.webp' },
-    { id: 'ps', name: 'PlayStation', icon: 'images/иконка пс.webp' },
-    { id: 'xbox', name: 'Xbox', icon: 'images/иконка х-бокс.webp' }
+    { id: 'steam', name: 'Steam', icon: 'images/платформа-steam.png' },
+    { id: 'epic', name: 'Epic Games', icon: 'images/платформа-epic.png' },
+    { id: 'ps', name: 'PlayStation', icon: 'images/платформа-ps.png' },
+    { id: 'xbox', name: 'Xbox', icon: 'images/платформа-xbox.png' }
 ];
 
 function getPlatformById(id) {
@@ -4430,6 +4430,10 @@ async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, plat
             }
         } catch(e) { console.warn('[БД] Не удалось получить список для ID, ставим 1'); }
 
+        // Форматируем дату в нужный вид: ДД.ММ.ГГГГ, ЧЧ:ММ:СС
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU');
+
         const res = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -4439,14 +4443,15 @@ async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, plat
             body: JSON.stringify({
                 data: [{
                     id: newId,
-                    Date: "'" + new Date().toLocaleString('ru-RU'), // Апостроф делает дату текстом
-                    Mode: mode,
-                    PlayerName: playerName,
-                    LevelsCompleted: levelsCompleted.toString(),
-                    TotalTime: "'" + totalTime,                     // Апостроф делает время текстом
-                    Platform: platform || 'steam'
+                    Date: "'" + formattedDate, // Апостроф сохраняет как текст "11.11.2026, 11:38:57"
+                    Mode: mode,                               // Режим
+                    PlayerName: playerName,                   // Ник
+                    LevelsCompleted: levelsCompleted.toString(), // Уровни
+                    TotalTime: "'" + totalTime,               // Апостроф сохраняет текст "25:30"
+                    Platform: platform || 'steam'             // Платформа
                 }]
             })
+        });
         
         const result = await res.json();
         console.log('[БД] Ответ от сервера (POST):', result);
