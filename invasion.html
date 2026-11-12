@@ -489,8 +489,7 @@
             <div class="alert-block">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>
-                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span> (21:00 по времени Астаны).
-                </span>
+                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span>
             </div>
 
             <div class="mode-banners" id="modeBanners">
@@ -746,26 +745,28 @@
             'LARIK_LOL': 'steam',
             'Garlik_Darlik': 'steam',
             'Takuya_Satori': 'ps',
-            'Despektr': 'steam'
+            'InTim na Ade❤️': 'steam',
+            'TheDarkness': 'steam'
         };
 
          // ============================================================
         // ===== ДАННЫЕ ПРЕСТИЖА И УРОВНЯ ============================
         // ============================================================
         var playerPrestigeLevels = {
-            'Майор Гом 2.0': { prestige: 99, level: 16 },
-            'joysk_o': { prestige: 49, level: 74 },
-            'Майор СУЕТЛАНА': { prestige: 41, level: 82 },
-            'crøssfade': { prestige: 63, level: 61 },
-            'Генерал Героиня': { prestige: 26, level: 65 },
-            'Shugar': { prestige: 41, level: 95 },
-            'blablablacreek': { prestige: 8, level: 55 },
-            'humiliated': { prestige: 48, level: 1 },
-            'Barricade Guy': { prestige: 59, level: 42 },
-            'LARIK_LOL': { prestige: 24, level: 87 },
+            'Майор Гом 2.0': { prestige: 99, level: 90 },
+            'joysk_o': { prestige: 51, level: 67 },
+            'Майор СУЕТЛАНА': { prestige: 44, level: 86 },
+            'crøssfade': { prestige: 65, level: 94 },
+            'Генерал Героиня': { prestige: 29, level: 79 },
+            'Shugar': { prestige: 48, level: 36 },
+            'blablablacreek': { prestige: 8, level: 61 },
+            'humiliated': { prestige: 48, level: 69 },
+            'Barricade Guy': { prestige: 63, level: 21 },
+            'LARIK_LOL': { prestige: 28, level: 79 },
             'Garlik_Darlik': { prestige: 43, level: 79 },
             'Takuya_Satori': { prestige: 4, level: 60 },
-            'Despektr': { prestige: 10, level: 50 }
+            'InTim na Ade❤️': { prestige: 3, level: 75 },
+            'TheDarkness': { prestige: 10, level: 42 }
         };
 
         function getPrestigeLevel(name) {
@@ -855,13 +856,6 @@
                     }
                 });
 
-                // ==========================================
-                // ЕДИНАЯ ЛОГИКА СОРТИРОВКИ ДЛЯ ВСЕХ РЕЖИМОВ
-                // 1. Уровни (убывание)
-                // 2. Время (возрастание)
-                // 3. Ник (алфавит)
-                // ==========================================
-
                 // Еженедельная
                 escalationDBData.weekly.sort((a, b) => {
                     if (b.completed !== a.completed) return b.completed - a.completed;
@@ -925,73 +919,74 @@
         // ===== ДАННЫЕ ГЛОБАЛЬНОГО ЛИДЕРБОРДА =======================
         // ============================================================
         var escalationGlobalData = {
-            weekly: [
-                { rank: 1, name: "DASCERA", level: 15, time: "02:30:00" },
-                { rank: 2, name: "TSUQUOIA", level: 14, time: "02:15:00" },
-                { rank: 3, name: "BLUE F", level: 14, time: "02:15:00" },
-                { rank: 4, name: "魔法桃心蛋 (证人BUG不修)", level: 14, time: "02:20:00" },
-                { rank: 5, name: "绿猫大人", level: 13, time: "01:50:00" },
-                { rank: 6, name: "LEI_GE", level: 13, time: "01:50:00" },
-                { rank: 7, name: "小虎阿", level: 12, time: "01:40:00" },
-                { rank: 8, name: "冰", level: 10, time: "01:30:00" },
-                { rank: 9, name: "封心", level: 10, time: "01:30:00" },
-                { rank: 10, name: "蓉蓉", level: 8, time: "01:00:00" },
-                { rank: 11, name: "荔枝冻", level: 7, time: "00:50:00" },
-                { rank: 12, name: "它的狗", level: 6, time: "00:40:00" }
-            ],
             infinite: [
-                { rank: 1, name: "Legend_Player", level: 120, time: "06:00:00" },
-                { rank: 2, name: "Infinity_Master", level: 110, time: "05:30:00" },
-                { rank: 3, name: "Endless_Runner", level: 105, time: "05:00:00" },
-                { rank: 4, name: "Бесконечность", level: 100, time: "04:30:00" },
-                { rank: 5, name: "Nightmare_Endless", level: 95, time: "04:00:00" }
+                { rank: 1, name: "Майор Гом 2.0", level: 29, time: "05:11:00" },
+                { rank: 2, name: "joysk_o", level: 11, time: "01:47:00" },
+                { rank: 3, name: "Майор СУЕТЛАНА", level: 25, time: "04:55:00" },
+                { rank: 4, name: "crøssfade", level: 15, time: "01:15:00" },
+                { rank: 5, name: "Генерал Героиня", level: 29, time: "04:45:00" },
+                { rank: 6, name: "Shugar", level: 20, time: "04:48:00" },
+                { rank: 7, name: "blablablacreek", level: 11, time: "02:15:00" },
+                { rank: 8, name: "humiliated", level: 12, time: "01:58:00" },
+                { rank: 9, name: "Barricade Guy", level: 30, time: "06:13:00" },
+                { rank: 10, name: "LARIK_LOL", level: 23, time: "05:27:00" },
+                { rank: 11, name: "Garlik_Darlik", level: 8, time: "01:20:00" },
+                { rank: 12, name: "Takuya_Satori", level: 2, time: "00:46:00" },
+                { rank: 13, name: "InTim na Ade❤️", level: 16, time: "03:08:00" },
+                { rank: 14, name: "TheDarkness", level: 20, time: "04:25:00" }
             ]
         };
 
         // ===== ДАННЫЕ ВТОРЖЕНИЯ =====
         var invasionGeneralData = [
-            { rank: 1, name: "Майор Гом 2.0", points: 156695, rating: "#16" },
-            { rank: 2, name: "joysk_o", points: 40735, rating: "#334" },
-            { rank: 3, name: "Майор СУЕТЛАНА", points: 97980, rating: "#88" },
-            { rank: 4, name: "crøssfade", points: 54850, rating: "#218" },
-            { rank: 5, name: "Генерал Героиня", points: 40050, rating: "#339" },
-            { rank: 6, name: "Shugar", points: 64755, rating: "#174" },
-            { rank: 7, name: "blablablacreek", points: 5330, rating: "#3125" },
-            { rank: 8, name: "humiliated", points: 15560, rating: "#983" },
-            { rank: 9, name: "Barricade Guy", points: 42540, rating: "#307" },
-            { rank: 10, name: "LARIK_LOL", points: 37690, rating: "#370" },
+            { rank: 1, name: "Майор Гом 2.0", points: 158925, rating: "#24" },
+            { rank: 2, name: "joysk_o", points: 43975, rating: "#340" },
+            { rank: 3, name: "Майор СУЕТЛАНА", points: 106095, rating: "#94" },
+            { rank: 4, name: "crøssfade", points: 61655, rating: "#214" },
+            { rank: 5, name: "Генерал Героиня", points: 45075, rating: "#327" },
+            { rank: 6, name: "Shugar", points: 75905, rating: "#155" },
+            { rank: 7, name: "blablablacreek", points: 5330, rating: "#3435" },
+            { rank: 8, name: "humiliated", points: 15560, rating: "#1071" },
+            { rank: 9, name: "Barricade Guy", points: 46785, rating: "#310" },
+            { rank: 10, name: "LARIK_LOL", points: 44075, rating: "#338" },
             { rank: 11, name: "Garlik_Darlik", points: 13685, rating: "#1126" },
-            { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#10347" }
+            { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#11566" },
+            { rank: 13, name: "InTim na Ade❤️", points: 3105, rating: "#9461" },
+            { rank: 14, name: "TheDarkness", points: 18330, rating: "#899" }
         ];
 
         var invasionData = {
             reagent: [
-                { rank: 1, name: "Майор Гом 2.0", matches: 2535, wins: 2421, losses: 114, rating: "#16" },
-                { rank: 2, name: "joysk_o", matches: 1251, wins: 1189, losses: 62, rating: "#334" },
-                { rank: 3, name: "Майор СУЕТЛАНА", matches: 1414, wins: 1346, losses: 68, rating: "#88" },
-                { rank: 4, name: "crøssfade", matches: 1748, wins: 1628, losses: 120, rating: "#218" },
-                { rank: 5, name: "Генерал Героиня", matches: 607, wins: 583, losses: 24, rating: "#339" },
-                { rank: 6, name: "Shugar", matches: 1064, wins: 976, losses: 88, rating: "#174" },
-                { rank: 7, name: "blablablacreek", matches: 148, wins: 110, losses: 38, rating: "#3125" },
-                { rank: 8, name: "humiliated", matches: 1171, wins: 1113, losses: 58, rating: "#983" },
-                { rank: 9, name: "Barricade Guy", matches: 1400, wins: 1267, losses: 133, rating: "#307" },
-                { rank: 10, name: "LARIK_LOL", matches: 526, wins: 504, losses: 22, rating: "#370" },
+                { rank: 1, name: "Майор Гом 2.0", matches: 2568, wins: 2454, losses: 114, rating: "#24" },
+                { rank: 2, name: "joysk_o", matches: 1298, wins: 1231, losses: 67, rating: "#340" },
+                { rank: 3, name: "Майор СУЕТЛАНА", matches: 1525, wins: 1449, losses: 76, rating: "#94" },
+                { rank: 4, name: "crøssfade", matches: 1835, wins: 1709, losses: 126, rating: "#214" },
+                { rank: 5, name: "Генерал Героиня", matches: 683, wins: 675, losses: 26, rating: "#327" },
+                { rank: 6, name: "Shugar", matches: 1232, wins: 1133, losses: 99, rating: "#155" },
+                { rank: 7, name: "blablablacreek", matches: 148, wins: 110, losses: 38, rating: "#3435" },
+                { rank: 8, name: "humiliated", matches: 1171, wins: 1113, losses: 58, rating: "#1071" },
+                { rank: 9, name: "Barricade Guy", matches: 1462, wins: 1321, losses: 141, rating: "#310" },
+                { rank: 10, name: "LARIK_LOL", matches: 610, wins: 583, losses: 27, rating: "#338" },
                 { rank: 11, name: "Garlik_Darlik", matches: 1429, wins: 1360, losses: 69, rating: "#1126" },
-                { rank: 12, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#10347" }
+                { rank: 12, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#11566" },
+                { rank: 13, name: "InTim na Ade❤️", matches: 54, wins: 51, losses: 3, rating: "#9461" },
+                { rank: 14, name: "TheDarkness", matches: 282, wins: 268, losses: 14, rating: "#899" }
             ],
             impostor: [
-                { rank: 1, name: "Майор Гом 2.0", matches: 793, wins: 281, losses: 512, rating: "#16" },
-                { rank: 2, name: "joysk_o", matches: 634, wins: 248, losses: 386, rating: "#334" },
-                { rank: 3, name: "Майор СУЕТЛАНА", matches: 584, wins: 216, losses: 368, rating: "#88" },
-                { rank: 4, name: "crøssfade", matches: 1086, wins: 447, losses: 639, rating: "#218" },
-                { rank: 5, name: "Генерал Героиня", matches: 264, wins: 103, losses: 161, rating: "#339" },
-                { rank: 6, name: "Shugar", matches: 300, wins: 62, losses: 238, rating: "#174" },
-                { rank: 7, name: "blablablacreek", matches: 61, wins: 26, losses: 35, rating: "#3125" },
-                { rank: 8, name: "humiliated", matches: 747, wins: 298, losses: 449, rating: "#983" },
-                { rank: 9, name: "Barricade Guy", matches: 566, wins: 255, losses: 311, rating: "#307" },
-                { rank: 10, name: "LARIK_LOL", matches: 213, wins: 63, losses: 150, rating: "#370" },
+                { rank: 1, name: "Майор Гом 2.0", matches: 800, wins: 282, losses: 518, rating: "#24" },
+                { rank: 2, name: "joysk_o", matches: 648, wins: 253, losses: 395, rating: "#340" },
+                { rank: 3, name: "Майор СУЕТЛАНА", matches: 521, wins: 233, losses: 388, rating: "#94" },
+                { rank: 4, name: "crøssfade", matches: 1129, wins: 464, losses: 665, rating: "#214" },
+                { rank: 5, name: "Генерал Героиня", matches: 282, wins: 110, losses: 172, rating: "#327" },
+                { rank: 6, name: "Shugar", matches: 352, wins: 77, losses: 275, rating: "#155" },
+                { rank: 7, name: "blablablacreek", matches: 61, wins: 26, losses: 35, rating: "#3435" },
+                { rank: 8, name: "humiliated", matches: 747, wins: 298, losses: 449, rating: "#1071" },
+                { rank: 9, name: "Barricade Guy", matches: 585, wins: 258, losses: 327, rating: "#310" },
+                { rank: 10, name: "LARIK_LOL", matches: 252, wins: 72, losses: 180, rating: "#338" },
                 { rank: 11, name: "Garlik_Darlik", matches: 886, wins: 471, losses: 415, rating: "#1126" },
-                { rank: 12, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#10347" }
+                { rank: 12, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#11566" },
+                { rank: 13, name: "InTim na Ade❤️", matches: 27, wins: 3, losses: 24, rating: "#9461" },
+                { rank: 14, name: "TheDarkness", matches: 95, wins: 28, losses: 67, rating: "#899" }
             ]
         };
 
@@ -1204,26 +1199,56 @@
                     }
                 } else {
                     // === ГЛОБАЛЬНАЯ ТАБЛИЦА (Только Бесконечная) ===
-                    var dataGI = escalationGlobalData.infinite;
+                    var dataGI = escalationGlobalData.infinite.slice(); // Делаем копию, чтобы не менять оригинал
+                    
+                    // 1. Сортируем по уровню (убывание)
+                    // 2. Если уровни равны, сортируем по времени (возрастание)
+                    // 3. Если время равно, сортируем по нику (алфавит)
+                    dataGI.sort((a, b) => {
+                        if (b.level !== a.level) return b.level - a.level;
+                        let secA = timeToSeconds(a.time);
+                        let secB = timeToSeconds(b.time);
+                        if (secA !== secB) return secA - secB;
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    // Расстановка мест с учетом ничьих (как в БД)
+                    let currentRankGI = 1;
+                    dataGI.forEach((p, i) => {
+                        if (i > 0) {
+                            let prev = dataGI[i - 1];
+                            if (p.level !== prev.level || timeToSeconds(p.time) !== timeToSeconds(prev.time)) {
+                                currentRankGI = i + 1;
+                            }
+                        } else {
+                            currentRankGI = 1;
+                        }
+                        p.rank = currentRankGI;
+                    });
+
                     var htmlGI = `<table>
                         <thead>
                             <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (УРОВЕНЬ)</th><th>ВРЕМЯ</th></tr>
                         </thead>
                         <tbody>`;
+                    
                     dataGI.forEach(function(player) {
                         var platform = getPlatformForPlayer(player.name);
-                        var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                        var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
+                        // Берем player.rank, который мы только что вычислили, а не index + 1
+                        var rank = player.rank; 
+                        var rankDisplay = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+                        var color = rank === 1 ? '#ffd700' : rank === 2 ? '#c0c0c0' : rank === 3 ? '#cd7f32' : '#7dd3fc';
+                        
                         htmlGI += `
-                            <tr class="${getRankClass(player.rank)}">
+                            <tr class="${getRankClass(rank)}">
                                 <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                                <td style="font-weight: ${rank <= 3 ? '600' : 'normal'}; text-align: left;">
                                     <span class="player-name">
                                         ${getPlatformIcon(platform)}
                                         ${player.name}
                                     </span>
                                 </td>
-                                <td>${player.level}</td>
+                                <td style="font-weight: 700; color: ${color};">${player.level}</td>
                                 <td>${formatCell(player.time)}</td>
                             </tr>
                         `;
