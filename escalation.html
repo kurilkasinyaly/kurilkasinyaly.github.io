@@ -602,12 +602,22 @@
         }
         .escalation-result.active { display: block; }
 
+        /* [FIX] Переделанная сетка: Испытание + Участники сверху, Вариаторы на всю ширину снизу */
         .result-grid {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* Две равные колонки для верхней части */
             gap: 2rem;
         }
+        .result-grid > div { min-width: 0; }
+        
+        /* Блок с вариаторами теперь занимает всю ширину */
+        .result-card.full-width-card {
+            grid-column: 1 / -1; 
+            width: 100%;
+        }
+
         .result-card {
+            min-width: 0;
             background: rgba(0, 0, 0, 0.25);
             border-radius: 24px;
             padding: 1.5rem;
@@ -621,23 +631,71 @@
             padding-bottom: 0.8rem;
         }
 
+        /* [FIX] Картинка испытания сверху, текст под ней */
         .result-map-row {
-            display: flex; gap: 1.5rem;
-            align-items: flex-start; flex-wrap: wrap;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 1.2rem;
+            align-items: flex-start;
         }
-        .result-map-row .map-image {
-            width: 160px; height: 160px;
-            object-fit: cover;
-            border-radius: 16px;
-            border: 2px solid rgba(220, 90, 50, 0.3);
-            flex-shrink: 0;
+        
+        /* Обновленный список вариаторов: распределяем по всей ширине */
+        .variator-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-around; /* Равномерно распределяем */
+            align-items: flex-start;
+            padding: 10px 0;
+        }
+        .variator-list .var-item {
+            display: flex; flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1 1 0; /* Позволяет элементам растягиваться */
+            min-width: 100px;
+            max-width: 140px; /* Чуть больше максимальная ширина */
+            text-align: center;
+        }
+        .variator-list .var-item .var-icon-wrapper {
+            width: 90px; /* Увеличили иконку */
+            height: 90px;
+            border-radius: 12px;
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .variator-list .var-item:hover .var-icon-wrapper {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.2);
+        }
+        .variator-list .var-item .var-icon-wrapper img {
+            width: 60px; /* Увеличили картинку внутри */
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+        }
+        .variator-list .var-item .var-name {
+            font-size: 0.7rem; /* Чуть больше шрифт */
+            color: #ffbc9a;
+            text-align: center;
+            line-height: 1.2;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            word-break: break-word; /* Чтобы длинные слова переносились */
         }
 
         /* ===== РАМКИ ИСПЫТАНИЙ (МК-стимуляция / Генезис) ===== */
         .trial-frame {
             position: relative;
             width: 100%;
-            max-width: 240px;
+            max-width: 280px;
             flex-shrink: 0;
             --frame-inset-top: 7%;
             --frame-inset-right: 7%;
@@ -681,7 +739,7 @@
             --frame-inset-left: 10%;
         }
 
-        .result-map-info { flex: 1; min-width: 200px; }
+        .result-map-info { flex: 1; min-width: 0; width: 100%; }
         .result-map-info .map-label {
             font-size: 0.75rem; color: #888;
             text-transform: uppercase; letter-spacing: 1px;
@@ -709,45 +767,6 @@
         }
         .result-map-info .map-meta-item strong {
             color: #ffbc9a; font-weight: 600;
-        }
-
-        /* ============================================================
-           ВАРИАТОРЫ
-           ============================================================ */
-        .variator-list {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .variator-list .var-item {
-            display: flex; flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            width: 95px;
-            text-align: center;
-        }
-        .variator-list .var-item img {
-            width: 70px; height: 70px;
-            object-fit: contain;
-            padding: 8px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat; 
-            border: none; 
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-        .variator-list .var-item:hover img {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.15);
-        }
-        .variator-list .var-item .var-name {
-            font-size: 0.62rem;
-            color: #ffbc9a;
-            text-align: center;
-            line-height: 1.2;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
 
         .player-result {
@@ -875,77 +894,6 @@
             max-height: 80vh;
             overflow-y: auto;
             animation: modalFadeIn 0.3s ease-out;
-        }
-        .catchup-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 2500;
-            display: flex; align-items: center; justify-content: center;
-            padding: 24px; box-sizing: border-box;
-            backdrop-filter: blur(10px);
-            overflow: visible;
-        }
-        .catchup-modal {
-            background: rgba(18, 12, 28, 0.97);
-            backdrop-filter: blur(16px);
-            border-radius: 30px;
-            border: 2px solid rgba(220, 90, 50, 0.4);
-            padding: 2.2rem 2.4rem;
-            width: min(1400px, 96vw);
-            max-height: none;
-            overflow: visible;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            animation: modalFadeIn 0.3s ease-out;
-            display: flex;
-            flex-direction: column;
-        }
-        .catchup-modal .catchup-cards {
-            display: flex;
-            gap: 34px;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 10px 0 55px 0;
-        }
-        .catchup-modal .equip-card {
-            width: 220px;
-            height: 320px;
-        }
-        .catchup-modal .amp-card {
-            width: 200px;
-            height: 270px;
-            padding: 16px;
-        }
-        .catchup-modal .amp-card img {
-            width: 110px;
-            height: 110px;
-        }
-        .catchup-modal .amp-card .amp-title {
-            font-size: 1rem;
-        }
-        .catchup-modal .tooltip-box {
-            width: 320px;
-            font-size: 0.85rem;
-            padding: 14px 16px;
-        }
-        .catchup-modal .tooltip-box .tt-name {
-            font-size: 1rem;
-        }
-        .catchup-modal .tooltip-box .tt-desc {
-            font-size: 0.8rem;
-            line-height: 1.5;
-        }
-        .catchup-modal .catchup-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1.2rem; padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
-        }
-        .catchup-modal .catchup-header h2 {
-            font-size: 1.5rem; color: #e16d48;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .catchup-modal .catchup-step {
-            text-align: center; color: #888; font-size: 0.9rem;
-            margin-bottom: 18px;
         }
         .amp-modal-header {
             display: flex; justify-content: space-between;
@@ -1184,9 +1132,7 @@
            ============================================================ */
         .info-modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Уменьшили затемнение с 0.85 до 0.4. Картинка станет ярче, но текст останется читаемым */
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('images/фон сбор-таблица.webp') center/cover no-repeat;
-            z-index: 1700; justify-content: center;
+            background: rgba(0, 0, 0, 0.9); z-index: 1700; justify-content: center;
             align-items: flex-start; backdrop-filter: blur(12px); overflow-y: auto; padding: 30px 15px;
         }
         .info-modal-overlay.active { display: flex; }
@@ -1325,7 +1271,7 @@
            ============================================================ */
         .summary-modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('images/эскалация баннер.webp') center/cover no-repeat;
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('images/е-эскалация баннер.webp') center/cover no-repeat;
             z-index: 2500; justify-content: center;
             align-items: flex-start; backdrop-filter: blur(14px);
             overflow-y: auto; padding: 40px 20px;
@@ -1415,16 +1361,15 @@
             height: 52px;
             object-fit: contain;
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.6);
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
             padding: 5px;
-            border: 1px solid rgba(220, 90, 50, 0.4);
+            border: none;
             flex-shrink: 0;
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
             cursor: help;
         }
         .summary-var-icon:hover {
             transform: scale(1.12);
-            border-color: #e16d48;
             box-shadow: 0 0 12px rgba(220, 90, 50, 0.5);
             z-index: 5;
             position: relative;
@@ -1561,6 +1506,79 @@
             color: white;
         }
 
+        /* [NEW] Окно догона — большое, без внутреннего скролла */
+        .catchup-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2500;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px; box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            overflow: visible;
+        }
+        .catchup-modal {
+            background: rgba(18, 12, 28, 0.97);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            border: 2px solid rgba(220, 90, 50, 0.4);
+            padding: 2.2rem 2.4rem;
+            width: min(1400px, 96vw);
+            max-height: none;
+            overflow: visible;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .catchup-modal .catchup-cards {
+            display: flex;
+            gap: 34px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px 0 55px 0;
+        }
+        .catchup-modal .equip-card {
+            width: 220px;
+            height: 320px;
+        }
+        .catchup-modal .amp-card {
+            width: 200px;
+            height: 270px;
+            padding: 16px;
+        }
+        .catchup-modal .amp-card img {
+            width: 110px;
+            height: 110px;
+        }
+        .catchup-modal .amp-card .amp-title {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box {
+            width: 320px;
+            font-size: 0.85rem;
+            padding: 14px 16px;
+        }
+        .catchup-modal .tooltip-box .tt-name {
+            font-size: 1rem;
+        }
+        .catchup-modal .tooltip-box .tt-desc {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .catchup-modal .catchup-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(220, 90, 50, 0.2);
+        }
+        .catchup-modal .catchup-header h2 {
+            font-size: 1.5rem; color: #e16d48;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .catchup-modal .catchup-step {
+            text-align: center; color: #888; font-size: 0.9rem;
+            margin-bottom: 18px;
+        }
+
         /* Стили для кастомного prompt */
         .custom-prompt-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1599,7 +1617,7 @@
         .custom-prompt .actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
 
         @media (max-width: 992px) {
-            .result-grid { grid-template-columns: 1fr; }
+            .result-grid { grid-template-columns: minmax(0, 1fr); }
             .info-form-grid { grid-template-columns: 1fr; }
             .equip-card { width: 150px; height: 216px; }
         }
@@ -1643,10 +1661,11 @@
             .result-map-row .map-image { width: 100px; height: 100px; }
             .variator-list { gap: 0.5rem; }
             .variator-list .var-item { width: 80px; }
-            .variator-list .var-item img { width: 60px; height: 60px; padding: 6px; }
+            .variator-list .var-item .var-icon-wrapper { width: 60px; height: 60px; }
+            .variator-list .var-item .var-icon-wrapper img { width: 40px; height: 40px; }
             .variator-list .var-item .var-name { font-size: 0.55rem; }
             .step-actions { flex-direction: column; align-items: center; }
-            .next-btn, .back-btn, .exit-btn, .save-btn { width: 100%; justify-content: center; }
+            .next-btn, .back-btn, .exit-btn { width: 100%; justify-content: center; }
             .back-to-roulette { font-size: 0.85rem; padding: 0.5rem 1rem; }
             .amp-modal { padding: 1rem; }
             .amp-modal-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
@@ -1775,21 +1794,24 @@
                 </span>
             </div>
             <div class="result-grid">
+                <!-- Верхний ряд: Испытание и Участники -->
                 <div>
                     <div class="result-card">
                         <h3>ИСПЫТАНИЕ</h3>
                         <div class="result-map-row" id="escResultMap"></div>
                     </div>
-                    <div class="result-card" style="margin-top: 1.5rem;">
-                        <h3>ВАРИАТОРЫ</h3>
-                        <div class="variator-list" id="escResultVariators"></div>
-                    </div>
                 </div>
                 <div>
                     <div class="result-card">
-                        <h3><i class="fas fa-users"></i> УЧАСТНИКИ</h3>
+                        <h3><i class="fas fa-users"></i>УЧАСТНИКИ</h3>
                         <div id="escResultPlayers"></div>
                     </div>
+                </div>
+                
+                <!-- Нижний ряд (на всю ширину): Вариаторы -->
+                <div class="result-card full-width-card">
+                    <h3>ВАРИАТОРЫ</h3>
+                    <div class="variator-list" id="escResultVariators"></div>
                 </div>
             </div>
             <div class="result-actions">
@@ -1955,7 +1977,7 @@ var ampCategories = ["Инструмент", "Навык", "Лекарство"]
 var ampsData = [
     // ===== ИНСТРУМЕНТЫ =====
     { name: "Тапочки", image: "../images/амфа-тапочки.webp", category: "Инструмент", desc: "Вы можете бесшумно ходить по битому стеклу.\nВТОРЖЕНИЕ: хождение по битому стеклу не привлекает внимания вторгшихся игроков." },
-    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и бутылки отвлекают вторгшихся игроков, создавая ложные сигналы." },
+    { name: "Какофония", image: "../images/амфа-какофония.webp", category: "Инструмент", desc: "Кирпичи и бутылки издают больше шума и эффективнее отвлекают врагов.\nВТОРЖЕНИЕ: кирпичи и булки отвлекают вторгшихся игроков, создавая ложные сигналы." },
     { name: "Уменьшение шума", image: "../images/амфа-уменьшение.webp", category: "Инструмент", desc: "Уменьшает звуки бега и открывания дверей.\nВТОРЖЕНИЕ: у вторгшихся игроков индикаторы звука угасают быстрее." },
     { name: "Зарядное устройство", image: "../images/амфа-зарядное.webp", category: "Инструмент", desc: "Батарея ночного видения постепенно заряжается, пока не используется." },
     { name: "Поломатор", image: "../images/амфа-поломатор.webp", category: "Инструмент", desc: "Чтобы открыть запертые контейнеры и двери, сбивайте замки кирпичом." },
@@ -2001,6 +2023,16 @@ function getPlatformById(id) {
     return platformsData.find(function(p) { return p.id === id; }) || platformsData[0];
 }
 
+// [NEW] Экранирование HTML (чтобы ник вроде <b> не ломал вёрстку)
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ============================================================
 // БЕЗОПАСНОЕ ДОБАВЛЕНИЕ ОПИСАНИЙ СНАРЯЖЕНИЯ
 // ============================================================
@@ -2031,8 +2063,16 @@ var SIDE_QUEST_VARIATORS = [
 ];
 
 var EXCLUDED_VARIATORS = [
-    'Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери',
+    'Ностофобия', 'Лиланд Койл', 'Матушка Гусбери',
     'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова'
+];
+
+// [NEW] Ловушки, которые не могут выпасть вместе (только 1 за генерацию)
+var TRAP_VARIATORS = [
+    'Больше Ловушек', 'Больше Ловушек II', 'Смертельные Ловушки', 'Больше Мин Психоза',
+    'Больше Звуковых Ловушек', 'Дополнительные Ловушки Главного Актива', 'Тошнотные Ловушки',
+    'Больше Дверных Ловушек', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины',
+    'Острое Стекло', 'Опасные Трубы', 'Огнеметы'
 ];
 
 // ============================================================
@@ -2067,6 +2107,7 @@ var infoFormState = {
 var collectedRecords = [];
 
 var STORAGE_KEY = 'escalation_save_v1';
+const HISTORY_KEY = 'weekly_variator_history';
 
 const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
 const MODE_NAME = 'Infinite';
@@ -2141,6 +2182,22 @@ function shuffleArray(arr) {
     return a;
 }
 
+// [NEW] Получение истории выпадений для антиповтора
+function getVariatorHistory() {
+    try {
+        var raw = localStorage.getItem(HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveVariatorHistory(history) {
+    try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {}
+}
+
 // ============================================================
 // ВАРИАТОР СЛОЖНОСТИ
 // ============================================================
@@ -2172,6 +2229,13 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
     var i;
 
     if (names.indexOf(name) !== -1) return false;
+
+    // [NEW] Проверка на ловушки (только одна ловушка за раз)
+    if (TRAP_VARIATORS.indexOf(name) !== -1) {
+        for (var t = 0; t < TRAP_VARIATORS.length; t++) {
+            if (names.indexOf(TRAP_VARIATORS[t]) !== -1) return false;
+        }
+    }
 
     var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
     if (name === 'Трофейное Снаряжение') {
@@ -2381,6 +2445,19 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     });
 
     var shuffled = shuffleArray(filtered);
+    
+    // [NEW] Сортировка по истории (антиповтор)
+    var history = getVariatorHistory();
+    shuffled.sort(function(a, b) {
+        var indexA = history.lastIndexOf(a.name);
+        var indexB = history.lastIndexOf(b.name);
+        
+        var weightA = indexA === -1 ? -1 : indexA;
+        var weightB = indexB === -1 ? -1 : indexB;
+
+        return weightA - weightB;
+    });
+
     for (var i = 0; i < shuffled.length && result.length < MAX_VARIATORS; i++) {
         if (isVariatorCompatible(shuffled[i], result, trialName, playerCount, level)) {
             result.push(shuffled[i]); used.push(shuffled[i].name);
@@ -2411,6 +2488,15 @@ function getVariatorsForLevel(level, mapName, playerCount) {
 
     result = result.filter(function(v) { return !isExcludedVariator(v.name); });
     if (result.length > MAX_VARIATORS) result = result.slice(0, MAX_VARIATORS);
+
+    // [NEW] Записываем историю
+    result.forEach(function(v) {
+        var idx = history.indexOf(v.name);
+        if (idx !== -1) history.splice(idx, 1);
+        history.push(v.name);
+    });
+    if (history.length > 30) history = history.slice(history.length - 30);
+    saveVariatorHistory(history);
 
     return result;
 }
@@ -2544,6 +2630,10 @@ function loadSavedEscalation() {
         if (!raw) return null;
         var data = JSON.parse(raw);
         if (!data || !data.escState) return null;
+
+        // Проверка на смену периода (для бесконечной не нужно, но оставим для чистоты, если пользователь хочет сброс)
+        // Здесь мы не сбрасываем по вторникам, так как это бесконечная эскалация.
+        
         return data;
     } catch (e) {
         console.error('Ошибка чтения сохранения:', e);
@@ -2623,7 +2713,7 @@ function renderEscPlayerNames() {
                 <i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>
                 Игрок ${i + 1}
             </label>
-            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" autocomplete="off" autocomplete="new-password" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escapeHtml(escState.players[i] || '')}" autocomplete="off" autocomplete="new-password" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
         `;
         grid.appendChild(row);
 
@@ -2677,7 +2767,7 @@ function renderEscPlatforms() {
 
             var label = document.createElement('label');
             label.style.cssText = 'font-size: 0.8rem; color: #888; font-weight: 500; letter-spacing: 0.5px;';
-            label.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>' + (escState.players[idx] || ('Игрок ' + (idx + 1)));
+            label.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>' + escapeHtml(escState.players[idx] || ('Игрок ' + (idx + 1)));
 
             var wrapper = document.createElement('div');
             wrapper.className = 'platform-select-wrapper';
@@ -2801,7 +2891,7 @@ function renderEscEquipment() {
     
     var sub = document.getElementById('escStep4Subtitle');
     if (sub) {
-        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${escapeHtml(currentPlayer)}</strong>`;
     }
 
     var section = document.createElement('div');
@@ -2810,7 +2900,7 @@ function renderEscEquipment() {
 
     var title = document.createElement('div');
     title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
-    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + escapeHtml(currentPlayer);
     section.appendChild(title);
 
     var grid = document.createElement('div');
@@ -2868,7 +2958,7 @@ function renderEscAmps() {
     
     var sub = document.getElementById('escStep5Subtitle');
     if (sub) {
-        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${escapeHtml(currentPlayer)}</strong>`;
     }
 
     var section = document.createElement('div');
@@ -2877,7 +2967,7 @@ function renderEscAmps() {
 
     var title = document.createElement('div');
     title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
-    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + escapeHtml(currentPlayer);
     section.appendChild(title);
 
     var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(escState.currentAmpPlayerIndex, c); });
@@ -2980,9 +3070,10 @@ function showPreviewModal(trialName, mapName, variators, level) {
         @keyframes variatorAppear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         .preview-variator-name {
             font-weight: 700; color: #ffbc9a; text-align: center;
-            width: 100%; line-height: 1.15; display: block;
-            text-transform: uppercase; letter-spacing: 0.2px;
+            width: 100%; line-height: 1.1; display: block;
+            text-transform: uppercase; letter-spacing: 0px;
             word-break: break-word;
+            font-size: 0.55rem !important; /* Принудительно уменьшаем шрифт */
         }
         .preview-variator-img {
             width: 55px; height: 55px; object-fit: contain;
@@ -3007,15 +3098,30 @@ function showPreviewModal(trialName, mapName, variators, level) {
     `;
     document.head.appendChild(style);
 
+    // [NEW] Адаптивный размер карточек в зависимости от количества вариаторов
+    var vCount = variators.length;
+    var imgSize = 55;
+    var textSize = '0.45rem'; // Уменьшили базовый размер
+    var maxWidth = 100;
+    
+    if (vCount <= 4) {
+        imgSize = 80;
+        textSize = '0.6rem'; // Уменьшили с 0.75
+        maxWidth = 140;
+    } else if (vCount <= 6) {
+        imgSize = 65;
+        textSize = '0.5rem'; // Уменьшили с 0.65
+        maxWidth = 110;
+    }
+
     var variatorsHtml = variators.map(function(v, index) {
         var nameUpper = v.name.toUpperCase();
         var delay = index * 0.05;
-        var fontSize = '0.5rem';
 
         return `
-            <div class="preview-variator-item" style="animation-delay: ${delay}s;">
-                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
-                <span class="preview-variator-name" style="font-size:${fontSize};">${nameUpper}</span>
+            <div class="preview-variator-item" style="animation-delay: ${delay}s; max-width: ${maxWidth}px;">
+                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" style="width:${imgSize}px; height:${imgSize}px;" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
+                <span class="preview-variator-name" style="font-size:${textSize};">${nameUpper}</span>
             </div>
         `;
     }).join('');
@@ -3110,10 +3216,17 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
     var rv = document.getElementById('escResultVariators');
     if (rv) {
         rv.innerHTML = escState.variators.map(function(v) {
+            var nameUpper = v.name.toUpperCase();
+            var fontSize;
+            if (v.name.length > 14) fontSize = '0.6rem'; // Немного увеличили для длинных
+            else fontSize = '0.75rem'; // Увеличили базовый шрифт
+
             return `
-                <div class="var-item">
-                    <img src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/70x70/1a1a2e/e16d48?text=?'">
-                    <span class="var-name">${v.name.toUpperCase()}</span>
+                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.6rem; max-width:140px; flex: 1 1 0;">
+                    <div class="var-icon-wrapper" style="background: url('images/вариаторы фон.webp') center/cover no-repeat; width: 90px; height: 90px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <img src="${v.image}" alt="${v.name}" style="width: 60px; height: 60px; object-fit: contain;" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                    </div>
+                    <span style="font-size:${fontSize}; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break: break-word;">${nameUpper}</span>
                 </div>
             `;
         }).join('');
@@ -3153,15 +3266,15 @@ function renderEscResultPlayers() {
         var allUsed = checkAllAmpsUsed(idx);
 
         var section = document.createElement('div');
-        section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px;';
+        section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px; min-width: 0;';
 
         var toggle = document.createElement('div');
-        toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px;';
+        toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px; min-width: 0;';
         toggle.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1;">
-                <i class="fas fa-user" style="color: #e16d48; font-size: 1rem;"></i>
-                <span style="font-weight: 700; color: #ffbc9a; font-size: ${player.length > 15 ? '0.8rem' : '1rem'}; letter-spacing: 0.5px; white-space: nowrap;">${player}</span>
-                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;">
+                <i class="fas fa-user" style="color: #e16d48; font-size: 1rem; flex-shrink: 0;"></i>
+                <span title="${escapeHtml(player)}" style="font-weight: 700; color: #ffbc9a; font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">${escapeHtml(player)}</span>
+                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
                 ${eData ? `<img src="${eData.image}" alt="${equip}" style="width:32px; height:32px; object-fit:contain; border-radius:8px; background:rgba(0,0,0,0.3); padding:3px;" onerror="this.style.display='none'">` : ''}
@@ -3316,9 +3429,6 @@ function addPlayerDuringEscalation() {
         escState.unlockedAmps[newIndex] = escState.unlockedAmps[newIndex] || [];
         escState.allAmpsUsed[newIndex] = false;
 
-        // После добавления игрок становится кооперативом автоматически (players.length > 1)
-        // → при следующей генерации будут доступны кооп-вариаторы
-
         // Очередь догона: платформа + снаряжение + (уровень-1) раундов по 3 амфы
         var catchUpAmpRounds = Math.max(0, escState.level - 1);
 
@@ -3377,8 +3487,6 @@ function removePlayerDuringEscalation(idx) {
         escState.pendingNewPlayer.index -= 1;
     }
 
-    // Если остался 1 игрок — isCoopMode() вернёт false
-    // (следующий уровень будет сгенерирован в одиночном режиме)
     renderEscResultPlayers();
 }
 
@@ -3442,7 +3550,7 @@ function openCatchUpPlatformModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-gamepad"></i> ' + name + ' — платформа</h2>' +
+            '<h2><i class="fas fa-gamepad"></i> ' + escapeHtml(name) + ' — платформа</h2>' +
         '</div>' +
         '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
         '<div class="catchup-cards" style="gap:16px; padding-bottom:10px;">' + cardsHtml + '</div>';
@@ -3483,7 +3591,7 @@ function openCatchUpEquipModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
+            '<h2><i class="fas fa-backpack"></i> ' + escapeHtml(name) + ' — снаряжение</h2>' +
         '</div>' +
         '<div class="catchup-step">Шаг 2 из ' + totalSteps + '</div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
@@ -3545,7 +3653,7 @@ function openCatchUpAmpModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы</h2>' +
+            '<h2><i class="fas fa-capsules"></i> ' + escapeHtml(name) + ' — амфы</h2>' +
         '</div>' +
         '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
@@ -3895,8 +4003,8 @@ function showBreakModal() {
                 <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
                 <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
             </div>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-weight: 700; color: #fff; font-size: 1.2rem;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${player}</div>
+            <div style="text-align: center; margin-bottom: 20px; max-width: 100%;">
+                <div style="font-weight: 700; color: #fff; font-size: 1.2rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${escapeHtml(player)}</div>
             </div>
         `;
 
@@ -4221,13 +4329,12 @@ function doInit() {
 
     if (summaryClose) summaryClose.addEventListener('click', closeSummaryModal);
 
-    // ==== ИСПРАВЛЕНО: ждём завершения отправки в БД перед перезагрузкой страницы ====
+    // ==== ИСПРАВЛЕНО: Сохранение в БД и выход ====
     if (summaryCloseBtn) {
         summaryCloseBtn.addEventListener('click', async function() {
             summaryCloseBtn.disabled = true;
             summaryCloseBtn.textContent = 'Сохранение...';
 
-            // СБОР ДАННЫХ ДЛЯ БД
             let totalSeconds = 0;
             collectedRecords.forEach(function(rec) { 
                 totalSeconds += timeToSeconds(rec.time); 
@@ -4235,8 +4342,7 @@ function doInit() {
             const totalTimeStr = secondsToTime(totalSeconds);
             const levelsCompleted = collectedRecords.length;
 
-            // Ждём, пока данные всех игроков реально отправятся
-            // (по очереди, чтобы не было гонки при расчёте ID)
+            // Отправляем данные для каждого игрока по очереди
             for (let pIdx = 0; pIdx < escState.players.length; pIdx++) {
                 const playerName = escState.players[pIdx];
                 const platformId = escState.playerPlatforms[pIdx] || 'steam';
