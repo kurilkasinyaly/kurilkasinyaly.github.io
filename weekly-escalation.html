@@ -613,13 +613,20 @@
         }
         .escalation-result.active { display: block; }
 
-        /* [FIX] Две равные колонки, не зависящие от содержимого (длинные ники больше не ломают вёрстку) */
+        /* [FIX] Переделанная сетка: Испытание + Участники сверху, Вариаторы на всю ширину снизу */
         .result-grid {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* Две равные колонки для верхней части */
             gap: 2rem;
         }
         .result-grid > div { min-width: 0; }
+        
+        /* Блок с вариаторами теперь занимает всю ширину */
+        .result-card.full-width-card {
+            grid-column: 1 / -1; 
+            width: 100%;
+        }
+
         .result-card {
             min-width: 0;
             background: rgba(0, 0, 0, 0.25);
@@ -643,12 +650,56 @@
             gap: 1.2rem;
             align-items: flex-start;
         }
-        .result-map-row .map-image {
-            width: 160px; height: 160px;
-            object-fit: cover;
-            border-radius: 16px;
-            border: 2px solid rgba(220, 90, 50, 0.3);
-            flex-shrink: 0;
+        
+        /* Обновленный список вариаторов: распределяем по всей ширине */
+        .variator-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-around; /* Равномерно распределяем */
+            align-items: flex-start;
+            padding: 10px 0;
+        }
+        .variator-list .var-item {
+            display: flex; flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1 1 0; /* Позволяет элементам растягиваться */
+            min-width: 100px;
+            max-width: 140px; /* Чуть больше максимальная ширина */
+            text-align: center;
+        }
+        .variator-list .var-item .var-icon-wrapper {
+            width: 90px; /* Увеличили иконку */
+            height: 90px;
+            border-radius: 12px;
+            background: url('images/вариаторы фон.webp') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .variator-list .var-item:hover .var-icon-wrapper {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.2);
+        }
+        .variator-list .var-item .var-icon-wrapper img {
+            width: 60px; /* Увеличили картинку внутри */
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+        }
+        .variator-list .var-item .var-name {
+            font-size: 0.7rem; /* Чуть больше шрифт */
+            color: #ffbc9a;
+            text-align: center;
+            line-height: 1.2;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            word-break: break-word; /* Чтобы длинные слова переносились */
         }
 
         /* ===== РАМКИ ИСПЫТАНИЙ (МК-стимуляция / Генезис) ===== */
@@ -727,54 +778,6 @@
         }
         .result-map-info .map-meta-item strong {
             color: #ffbc9a; font-weight: 600;
-        }
-
-        /* ============================================================
-           ВАРИАТОРЫ
-           ============================================================ */
-        .variator-list {
-            display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .variator-list .var-item {
-            display: flex; flex-direction: column;
-            align-items: center;
-            gap: 0.6rem;
-            width: 100px;
-            text-align: center;
-        }
-        .variator-list .var-item .var-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            background: url('images/вариаторы фон.webp') center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .variator-list .var-item:hover .var-icon-wrapper {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(220, 90, 50, 0.2);
-        }
-        .variator-list .var-item .var-icon-wrapper img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
-        }
-        .variator-list .var-item .var-name {
-            font-size: 0.65rem;
-            color: #ffbc9a;
-            text-align: center;
-            line-height: 1.2;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
 
         .player-result {
@@ -1802,14 +1805,11 @@
                 </span>
             </div>
             <div class="result-grid">
+                <!-- Верхний ряд: Испытание и Участники -->
                 <div>
                     <div class="result-card">
                         <h3>ИСПЫТАНИЕ</h3>
                         <div class="result-map-row" id="escResultMap"></div>
-                    </div>
-                    <div class="result-card" style="margin-top: 1.5rem;">
-                        <h3>ВАРИАТОРЫ</h3>
-                        <div class="variator-list" id="escResultVariators"></div>
                     </div>
                 </div>
                 <div>
@@ -1817,6 +1817,12 @@
                         <h3><i class="fas fa-users"></i>УЧАСТНИКИ</h3>
                         <div id="escResultPlayers"></div>
                     </div>
+                </div>
+                
+                <!-- Нижний ряд (на всю ширину): Вариаторы -->
+                <div class="result-card full-width-card">
+                    <h3>ВАРИАТОРЫ</h3>
+                    <div class="variator-list" id="escResultVariators"></div>
                 </div>
             </div>
             <div class="result-actions">
@@ -3178,9 +3184,10 @@ function showPreviewModal(trialName, mapName, variators, level) {
         @keyframes variatorAppear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         .preview-variator-name {
             font-weight: 700; color: #ffbc9a; text-align: center;
-            width: 100%; line-height: 1.15; display: block;
-            text-transform: uppercase; letter-spacing: 0.2px;
+            width: 100%; line-height: 1.1; display: block;
+            text-transform: uppercase; letter-spacing: 0px;
             word-break: break-word;
+            font-size: 0.55rem !important; /* Принудительно уменьшаем шрифт */
         }
         .preview-variator-img {
             width: 55px; height: 55px; object-fit: contain;
@@ -3208,16 +3215,16 @@ function showPreviewModal(trialName, mapName, variators, level) {
     // [NEW] Адаптивный размер карточек в зависимости от количества вариаторов
     var vCount = variators.length;
     var imgSize = 55;
-    var textSize = '0.5rem';
+    var textSize = '0.45rem'; // Уменьшили базовый размер
     var maxWidth = 100;
     
     if (vCount <= 4) {
         imgSize = 80;
-        textSize = '0.75rem';
+        textSize = '0.6rem'; // Уменьшили с 0.75
         maxWidth = 140;
     } else if (vCount <= 6) {
         imgSize = 65;
-        textSize = '0.65rem';
+        textSize = '0.5rem'; // Уменьшили с 0.65
         maxWidth = 110;
     }
 
@@ -3340,15 +3347,15 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
             var nameUpper = v.name.toUpperCase();
             var fontSize;
             if (variatorFontSizes[nameUpper]) fontSize = variatorFontSizes[nameUpper];
-            else if (v.name.length > 14) fontSize = '0.55rem';
-            else fontSize = '0.75rem';
+            else if (v.name.length > 14) fontSize = '0.6rem'; // Немного увеличили для длинных
+            else fontSize = '0.75rem'; // Увеличили базовый шрифт
 
             return `
-                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.4rem; max-width:100px;">
-                    <div class="var-icon-wrapper" style="background: url('images/вариаторы фон.webp') center/cover no-repeat; width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <img src="${v.image}" alt="${v.name}" style="width: 50px; height: 50px; object-fit: contain;" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
+                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.6rem; max-width:140px; flex: 1 1 0;">
+                    <div class="var-icon-wrapper" style="background: url('images/вариаторы фон.webp') center/cover no-repeat; width: 90px; height: 90px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <img src="${v.image}" alt="${v.name}" style="width: 60px; height: 60px; object-fit: contain;" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
                     </div>
-                    <span style="font-size:${fontSize}; color:#ffbc9a; text-align:center; max-width:90px; line-height:1.3; font-weight:600; text-transform:uppercase;">${nameUpper}</span>
+                    <span style="font-size:${fontSize}; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break: break-word;">${nameUpper}</span>
                 </div>
             `;
         }).join('');
