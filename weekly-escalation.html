@@ -1994,9 +1994,14 @@ var SIDE_QUEST_VARIATORS = [
     "Расшифруйте Вещание", "Потушите Огонь", "Экстракция Крови", "Остановите Утечку", "Случайное Побочное Задание"
 ];
 
+// [NEW] Полный запрет на выпадение этих вариаторов
 var EXCLUDED_VARIATORS = [
     'Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери', 'Франко Барби',
-    'Близнецы Кресс', 'Лилия Богомолова'
+    'Близнецы Кресс', 'Лилия Богомолова',
+    'Закрытые Откатные Ворота',
+    'Заблокированные Проходы', 'Запертые Двери', 'Заблокированные Двери',
+    'Ворота С Детектором Звука', 'Дистанционные Ворота',
+    'Бесконтактные Ворота', 'Времянные Ворота', 'Закрытые Ворота'
 ];
 
 var WEEKLY_POOL_NAMES = [
@@ -2023,6 +2028,7 @@ function getPlatformById(id) {
 const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
 const MODE_NAME = 'Weekly';
 const STORAGE_KEY = 'weekly_escalation_save_v1';
+const HISTORY_KEY = 'weekly_variator_history'; // Ключ для истории выпадений
 
 // ============================================================
 // СОСТОЯНИЕ
@@ -2240,6 +2246,22 @@ function shuffleArray(arr) {
         var t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
+}
+
+// [NEW] Получение истории выпадений для антиповтора
+function getVariatorHistory() {
+    try {
+        var raw = localStorage.getItem(HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveVariatorHistory(history) {
+    try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {}
 }
 
 // ============================================================
@@ -2492,6 +2514,9 @@ function isVariatorCompatible(variator, selectedVariators, trialName, playerCoun
     return true;
 }
 
+// ============================================================
+// НОВАЯ ГЕНЕРАЦИЯ ВАРИАТОРОВ (Строгая логика и антиповтор)
+// ============================================================
 function getVariatorsForLevel(level, mapName, playerCount) {
     if (typeof allVariatorsData === 'undefined') return [];
 
@@ -2508,13 +2533,10 @@ function getVariatorsForLevel(level, mapName, playerCount) {
 
     var trialName = escState.trial ? escState.trial.name : '';
 
+    // 1. Формируем базовый список доступных вариаторов
+    // Сразу удаляем запрещенные (ворота, двери и т.д.)
     var availableVariators = allVariatorsData.filter(function(v) {
         if (isExcludedVariator(v.name)) return false;
-        var excludedGates = [
-            'Ворота С Детектором Звука', 'Дистанционные Ворота',
-            'Бесконтактные Ворота', 'Времянные Ворота', 'Закрытые Ворота'
-        ];
-        if (excludedGates.indexOf(v.name) !== -1) return false;
         if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
         return true;
     });
@@ -2522,11 +2544,13 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     var result = [];
     var usedNames = [];
 
+    // 2. ЕЖЕНЕДЕЛЬНЫЙ ВАРИАТОР - ГЛАВНЫЙ. Он ставится первым.
     if (weeklyVar && weeklyVar.name && result.length < MAX_VARIATORS) {
         result.push(weeklyVar);
         usedNames.push(weeklyVar.name);
     }
 
+    // 3. Вариатор сложности (Враги сильнее)
     if (result.length < MAX_VARIATORS) {
         if (level > 20) {
             var psycho = availableVariators.find(function(v) { return v.name === "Психохирургия"; });
@@ -2534,8 +2558,10 @@ function getVariatorsForLevel(level, mapName, playerCount) {
 
             if (result.length < MAX_VARIATORS) {
                 if (psycho) {
-                    result.push(psycho);
-                    usedNames.push(psycho.name);
+                    if (isVariatorCompatible(psycho, result, trialName, playerCount, level)) {
+                        result.push(psycho);
+                        usedNames.push(psycho.name);
+                    }
                 } else {
                     result.push({ id: 'psycho_fallback', name: "Психохирургия", image: "images/психохирургия.webp", category: "psycho" });
                     usedNames.push("Психохирургия");
@@ -2543,8 +2569,10 @@ function getVariatorsForLevel(level, mapName, playerCount) {
             }
             if (result.length < MAX_VARIATORS) {
                 if (doubleTasks) {
-                    result.push(doubleTasks);
-                    usedNames.push(doubleTasks.name);
+                    if (isVariatorCompatible(doubleTasks, result, trialName, playerCount, level)) {
+                        result.push(doubleTasks);
+                        usedNames.push(doubleTasks.name);
+                    }
                 } else {
                     result.push({ id: 'double_fallback', name: "Двойные задания", image: "images/двойные задания.webp", category: "collection_special" });
                     usedNames.push("Двойные задания");
@@ -2553,12 +2581,15 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         } else {
             var difficultyVar = getDifficultyVariator(level, availableVariators);
             if (difficultyVar && usedNames.indexOf(difficultyVar.name) === -1) {
-                result.push(difficultyVar);
-                usedNames.push(difficultyVar.name);
+                if (isVariatorCompatible(difficultyVar, result, trialName, playerCount, level)) {
+                    result.push(difficultyVar);
+                    usedNames.push(difficultyVar.name);
+                }
             }
         }
     }
 
+    // 4. Один сайд-квест (если уровень позволяет)
     if (result.length < MAX_VARIATORS && level <= 20) {
         var sideQuestPool = availableVariators.filter(function(v) {
             if (SIDE_QUEST_VARIATORS.indexOf(v.name) === -1) return false;
@@ -2567,12 +2598,15 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         });
         if (sideQuestPool.length > 0) {
             var chosenSideQuest = sideQuestPool[Math.floor(Math.random() * sideQuestPool.length)];
-            result.push(chosenSideQuest);
-            usedNames.push(chosenSideQuest.name);
+            if (isVariatorCompatible(chosenSideQuest, result, trialName, playerCount, level)) {
+                result.push(chosenSideQuest);
+                usedNames.push(chosenSideQuest.name);
+            }
         }
     }
 
-    var filtered = availableVariators.filter(function(v) {
+    // 5. Формируем пул для основного добора
+    var pool = availableVariators.filter(function(v) {
         if (usedNames.indexOf(v.name) !== -1) return false;
         if (isWeeklyVariatorName(v.name)) return false;
         if (isSideQuestVariator(v.name)) return false;
@@ -2581,51 +2615,41 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         return true;
     });
 
-    var shuffled = shuffleArray(filtered);
-    for (var i = 0; i < shuffled.length && result.length < MAX_VARIATORS; i++) {
-        var candidate = shuffled[i];
+    // Перемешиваем пул
+    pool = shuffleArray(pool);
+
+    // 6. Подтягиваем историю (антиповтор)
+    var history = getVariatorHistory();
+
+    // Сортируем пул так, чтобы редко выпадавшие шли первыми
+    pool.sort(function(a, b) {
+        var indexA = history.lastIndexOf(a.name);
+        var indexB = history.lastIndexOf(b.name);
+        
+        var weightA = indexA === -1 ? -1 : indexA;
+        var weightB = indexB === -1 ? -1 : indexB;
+
+        return weightA - weightB;
+    });
+
+    // 7. Жесткий добор с проверкой совместимости с ЕЖЕНЕДЕЛЬНЫМ и другими
+    for (var i = 0; i < pool.length && result.length < MAX_VARIATORS; i++) {
+        var candidate = pool[i];
+        // Проверка, что кандидат совместим со всем, что уже есть в result (включая weekly)
         if (isVariatorCompatible(candidate, result, trialName, playerCount, level)) {
             result.push(candidate);
             usedNames.push(candidate.name);
         }
     }
 
-    if (result.length < MAX_VARIATORS) {
-        var remaining = availableVariators.filter(function(v) {
-            return usedNames.indexOf(v.name) === -1
-                && !isWeeklyVariatorName(v.name)
-                && !isSideQuestVariator(v.name)
-                && v.name !== "Психохирургия"
-                && v.name !== "Двойные задания"
-                && v.name !== "Враги сильнее"
-                && v.name !== "Враги Сильнее"
-                && v.name !== "Враги Сильнее II"
-                && v.name !== "Враги сильнее II";
-        });
-        var shuffledRemaining = shuffleArray(remaining);
-        for (var j = 0; j < shuffledRemaining.length && result.length < MAX_VARIATORS; j++) {
-            var candidate2 = shuffledRemaining[j];
-            if (usedNames.indexOf(candidate2.name) === -1 && isVariatorCompatible(candidate2, result, trialName, playerCount, level)) {
-                result.push(candidate2);
-                usedNames.push(candidate2.name);
-            }
-        }
-    }
-
-    if (result.length < MAX_VARIATORS) {
-        var anyRemaining = allVariatorsData.filter(function(v) {
-            return usedNames.indexOf(v.name) === -1
-                && !isExcludedVariator(v.name)
-                && !isWeeklyVariatorName(v.name);
-        });
-        for (var k = 0; k < anyRemaining.length && result.length < MAX_VARIATORS; k++) {
-            var candidate3 = anyRemaining[k];
-            if (usedNames.indexOf(candidate3.name) === -1) {
-                result.push(candidate3);
-                usedNames.push(candidate3.name);
-            }
-        }
-    }
+    // 8. Обновляем историю
+    result.forEach(function(v) {
+        var idx = history.indexOf(v.name);
+        if (idx !== -1) history.splice(idx, 1);
+        history.push(v.name);
+    });
+    if (history.length > 30) history = history.slice(history.length - 30);
+    saveVariatorHistory(history);
 
     result = result.filter(function(v) { return !isExcludedVariator(v.name); });
     if (result.length > MAX_VARIATORS) result = result.slice(0, MAX_VARIATORS);
