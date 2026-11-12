@@ -1132,7 +1132,8 @@
            ============================================================ */
         .info-modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); z-index: 1700; justify-content: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('images/фон сбор-таблица.webp') center/cover no-repeat;
+            z-index: 1700; justify-content: center;
             align-items: flex-start; backdrop-filter: blur(12px); overflow-y: auto; padding: 30px 15px;
         }
         .info-modal-overlay.active { display: flex; }
@@ -3007,7 +3008,7 @@ function renderEscAmps() {
         tooltip.innerHTML = `
             <div class="tt-type">[АМФА]</div>
             <div class="tt-name">${amp.name}</div>
-            <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+            <div class="tt-desc">${amp.desc || 'Описание амфы отсутствует.'}</div>
         `;
 
         item.innerHTML = `
@@ -4036,7 +4037,7 @@ function showBreakModal() {
             tooltip.innerHTML = `
                 <div class="tt-type">[АМФА]</div>
                 <div class="tt-name">${amp.name}</div>
-                <div class="tt-desc">${amp.desc || 'Описание ампулы отсутствует.'}</div>
+                <div class="tt-desc">${amp.desc || 'Описание амфы отсутствует.'}</div>
             `;
 
             item.innerHTML = `
