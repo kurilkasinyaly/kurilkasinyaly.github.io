@@ -613,12 +613,15 @@
         }
         .escalation-result.active { display: block; }
 
+        /* [FIX] Две равные колонки, не зависящие от содержимого (длинные ники больше не ломают вёрстку) */
         .result-grid {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 2rem;
         }
+        .result-grid > div { min-width: 0; }
         .result-card {
+            min-width: 0;
             background: rgba(0, 0, 0, 0.25);
             border-radius: 24px;
             padding: 1.5rem;
@@ -632,9 +635,13 @@
             padding-bottom: 0.8rem;
         }
 
+        /* [FIX] Картинка испытания сверху, текст под ней */
         .result-map-row {
-            display: flex; gap: 1.5rem;
-            align-items: flex-start; flex-wrap: wrap;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 1.2rem;
+            align-items: flex-start;
         }
         .result-map-row .map-image {
             width: 160px; height: 160px;
@@ -648,7 +655,7 @@
         .trial-frame {
             position: relative;
             width: 100%;
-            max-width: 240px;
+            max-width: 280px;
             flex-shrink: 0;
             --frame-inset-top: 7%;
             --frame-inset-right: 7%;
@@ -692,7 +699,7 @@
             --frame-inset-left: 10%;
         }
 
-        .result-map-info { flex: 1; min-width: 200px; }
+        .result-map-info { flex: 1; min-width: 0; width: 100%; }
         .result-map-info .map-label {
             font-size: 0.75rem; color: #888;
             text-transform: uppercase; letter-spacing: 1px;
@@ -1618,7 +1625,7 @@
         .custom-prompt .actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
 
         @media (max-width: 992px) {
-            .result-grid { grid-template-columns: 1fr; }
+            .result-grid { grid-template-columns: minmax(0, 1fr); }
             .info-form-grid { grid-template-columns: 1fr; }
             .equip-card { width: 150px; height: 216px; }
         }
@@ -1953,7 +1960,7 @@
 <div class="custom-prompt-overlay" id="customPromptModal">
     <div class="custom-prompt">
         <h3><i class="fas fa-user-plus"></i> Новый игрок</h3>
-        <input type="text" id="customPromptInput" placeholder="Введите ник..." autocomplete="off" autocomplete="new-password">
+        <input type="text" id="customPromptInput" placeholder="Введите ник..." maxlength="20" autocomplete="off">
         <div class="actions">
             <button class="btn-cancel" id="customPromptCancel">Отмена</button>
             <button class="btn-confirm" id="customPromptConfirm">Добавить</button>
@@ -1994,6 +2001,14 @@ var SIDE_QUEST_VARIATORS = [
     "Расшифруйте Вещание", "Потушите Огонь", "Экстракция Крови", "Остановите Утечку", "Случайное Побочное Задание"
 ];
 
+// [NEW] Ловушки, которые не могут выпасть вместе (только 1 за генерацию)
+var TRAP_VARIATORS = [
+    'Больше Ловушек', 'Больше Ловушек II', 'Смертельные Ловушки', 'Больше Мин Психоза',
+    'Больше Звуковых Ловушек', 'Дополнительные Ловушки Главного Актива', 'Тошнотные Ловушки',
+    'Больше Дверных Ловушек', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины',
+    'Острое Стекло', 'Опасные Трубы', 'Огнеметы'
+];
+
 // [NEW] Полный запрет на выпадение этих вариаторов
 var EXCLUDED_VARIATORS = [
     'Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери', 'Франко Барби',
@@ -2023,6 +2038,16 @@ var platformsData = [
 
 function getPlatformById(id) {
     return platformsData.find(function(p) { return p.id === id; }) || platformsData[0];
+}
+
+// [NEW] Экранирование HTML (чтобы ник вроде <b> не ломал вёрстку)
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
@@ -2301,6 +2326,13 @@ function isVariatorCompatible(variator, selectedVariators, trialName, playerCoun
 
     if (selectedNames.indexOf(variatorName) !== -1) return false;
 
+    // [NEW] Проверка на ловушки (только одна ловушка за раз)
+    if (TRAP_VARIATORS.indexOf(variatorName) !== -1) {
+        for (var t = 0; t < TRAP_VARIATORS.length; t++) {
+            if (selectedNames.indexOf(TRAP_VARIATORS[t]) !== -1) return false;
+        }
+    }
+
     var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
     if (variatorName === 'Трофейное Снаряжение') {
         for (i = 0; i < trophyBlocked.length; i++) {
@@ -2524,17 +2556,16 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     if (weeklyVar) escState.weeklyVariator = weeklyVar;
     updateWeeklyVariatorDisplay();
 
+    // [NEW] Для Психохирургии (уровень > 20) ставим 7 или 8 вариаторов. В остальных случаях по старинке.
     var MAX_VARIATORS;
     if (level >= 1 && level <= 3) MAX_VARIATORS = 3;
     else if (level >= 4 && level <= 5) MAX_VARIATORS = 4;
     else if (level >= 6 && level <= 15) MAX_VARIATORS = 5;
     else if (level >= 16 && level <= 20) MAX_VARIATORS = 6;
-    else MAX_VARIATORS = 8;
+    else MAX_VARIATORS = 8; // 21+ (Психохирургия) - 8 вариаторов
 
     var trialName = escState.trial ? escState.trial.name : '';
 
-    // 1. Формируем базовый список доступных вариаторов
-    // Сразу удаляем запрещенные (ворота, двери и т.д.)
     var availableVariators = allVariatorsData.filter(function(v) {
         if (isExcludedVariator(v.name)) return false;
         if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
@@ -2544,13 +2575,11 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     var result = [];
     var usedNames = [];
 
-    // 2. ЕЖЕНЕДЕЛЬНЫЙ ВАРИАТОР - ГЛАВНЫЙ. Он ставится первым.
     if (weeklyVar && weeklyVar.name && result.length < MAX_VARIATORS) {
         result.push(weeklyVar);
         usedNames.push(weeklyVar.name);
     }
 
-    // 3. Вариатор сложности (Враги сильнее)
     if (result.length < MAX_VARIATORS) {
         if (level > 20) {
             var psycho = availableVariators.find(function(v) { return v.name === "Психохирургия"; });
@@ -2589,7 +2618,6 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         }
     }
 
-    // 4. Один сайд-квест (если уровень позволяет)
     if (result.length < MAX_VARIATORS && level <= 20) {
         var sideQuestPool = availableVariators.filter(function(v) {
             if (SIDE_QUEST_VARIATORS.indexOf(v.name) === -1) return false;
@@ -2605,7 +2633,6 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         }
     }
 
-    // 5. Формируем пул для основного добора
     var pool = availableVariators.filter(function(v) {
         if (usedNames.indexOf(v.name) !== -1) return false;
         if (isWeeklyVariatorName(v.name)) return false;
@@ -2615,13 +2642,10 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         return true;
     });
 
-    // Перемешиваем пул
     pool = shuffleArray(pool);
 
-    // 6. Подтягиваем историю (антиповтор)
     var history = getVariatorHistory();
 
-    // Сортируем пул так, чтобы редко выпадавшие шли первыми
     pool.sort(function(a, b) {
         var indexA = history.lastIndexOf(a.name);
         var indexB = history.lastIndexOf(b.name);
@@ -2632,17 +2656,14 @@ function getVariatorsForLevel(level, mapName, playerCount) {
         return weightA - weightB;
     });
 
-    // 7. Жесткий добор с проверкой совместимости с ЕЖЕНЕДЕЛЬНЫМ и другими
     for (var i = 0; i < pool.length && result.length < MAX_VARIATORS; i++) {
         var candidate = pool[i];
-        // Проверка, что кандидат совместим со всем, что уже есть в result (включая weekly)
         if (isVariatorCompatible(candidate, result, trialName, playerCount, level)) {
             result.push(candidate);
             usedNames.push(candidate.name);
         }
     }
 
-    // 8. Обновляем историю
     result.forEach(function(v) {
         var idx = history.indexOf(v.name);
         if (idx !== -1) history.splice(idx, 1);
@@ -2782,7 +2803,7 @@ function renderEscPlayerNames() {
                 <i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>
                 Игрок ${i + 1}
             </label>
-            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escState.players[i] || ''}" autocomplete="off" autocomplete="new-password" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+            <input type="text" placeholder="Введите ник..." id="escPlayerName_${i}" value="${escapeHtml(escState.players[i] || '')}" maxlength="20" autocomplete="off" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(220,90,50,0.2); background: rgba(255,255,255,0.05); color: #ffbc9a; font-size: 0.95rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
         `;
         grid.appendChild(row);
 
@@ -2832,7 +2853,7 @@ function renderEscPlatforms() {
     for (var i = 0; i < pc; i++) {
         (function(idx) {
             var row = document.createElement('div');
-            row.style.cssText = 'display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(220,90,50,0.08);';
+            row.style.cssText = 'display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(220,90,50,0.08); min-width: 0;';
 
             if (pc === 3 && idx === 2) {
                 row.style.gridColumn = '1 / -1';
@@ -2842,8 +2863,8 @@ function renderEscPlatforms() {
             }
 
             var label = document.createElement('label');
-            label.style.cssText = 'font-size: 0.8rem; color: #888; font-weight: 500; letter-spacing: 0.5px;';
-            label.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>' + (escState.players[idx] || ('Игрок ' + (idx + 1)));
+            label.style.cssText = 'font-size: 0.8rem; color: #888; font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+            label.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i>' + escapeHtml(escState.players[idx] || ('Игрок ' + (idx + 1)));
 
             var wrapper = document.createElement('div');
             wrapper.className = 'platform-select-wrapper';
@@ -2978,7 +2999,7 @@ function renderEscEquipment() {
     var currentPlayer = escState.players[escState.currentEquipPlayerIndex];
     var sub = document.getElementById('escStep4Subtitle');
     if (sub) {
-        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+        sub.innerHTML = `Выбор снаряжения для <strong style="color: #e16d48;">${escapeHtml(currentPlayer)}</strong>`;
     }
 
     var section = document.createElement('div');
@@ -2986,8 +3007,8 @@ function renderEscEquipment() {
     section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
 
     var title = document.createElement('div');
-    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
-    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + escapeHtml(currentPlayer);
     section.appendChild(title);
 
     var grid = document.createElement('div');
@@ -3045,7 +3066,7 @@ function renderEscAmps() {
 
     var sub = document.getElementById('escStep5Subtitle');
     if (sub) {
-        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${currentPlayer}</strong>`;
+        sub.innerHTML = `Выбор амфы для <strong style="color: #e16d48;">${escapeHtml(currentPlayer)}</strong>`;
     }
 
     var section = document.createElement('div');
@@ -3053,8 +3074,8 @@ function renderEscAmps() {
     section.style.cssText = 'background: rgba(0,0,0,0.2); border-radius: 16px; padding: 24px; border: 1px solid rgba(220,90,50,0.08); width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;';
 
     var title = document.createElement('div');
-    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px;';
-    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + currentPlayer;
+    title.style.cssText = 'font-weight: 600; color: #ffbc9a; margin-bottom: 20px; text-align: center; font-size: 1.1rem; letter-spacing: 0.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+    title.innerHTML = '<i class="fas fa-user" style="color: #e16d48; margin-right: 6px;"></i> ' + escapeHtml(currentPlayer);
     section.appendChild(title);
 
     var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(escState.currentAmpPlayerIndex, c); });
@@ -3184,15 +3205,30 @@ function showPreviewModal(trialName, mapName, variators, level) {
     `;
     document.head.appendChild(style);
 
+    // [NEW] Адаптивный размер карточек в зависимости от количества вариаторов
+    var vCount = variators.length;
+    var imgSize = 55;
+    var textSize = '0.5rem';
+    var maxWidth = 100;
+    
+    if (vCount <= 4) {
+        imgSize = 80;
+        textSize = '0.75rem';
+        maxWidth = 140;
+    } else if (vCount <= 6) {
+        imgSize = 65;
+        textSize = '0.65rem';
+        maxWidth = 110;
+    }
+
     var variatorsHtml = variators.map(function(v, index) {
         var nameUpper = v.name.toUpperCase();
         var delay = index * 0.05;
-        var fontSize = '0.5rem';
 
         return `
-            <div class="preview-variator-item" style="animation-delay: ${delay}s;">
-                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
-                <span class="preview-variator-name" style="font-size:${fontSize};">${nameUpper}</span>
+            <div class="preview-variator-item" style="animation-delay: ${delay}s; max-width: ${maxWidth}px;">
+                <img class="preview-variator-img" src="${v.image}" alt="${v.name}" style="width:${imgSize}px; height:${imgSize}px;" onerror="this.src='https://placehold.co/55x55/1a1a2e/e16d48?text=?'">
+                <span class="preview-variator-name" style="font-size:${textSize};">${nameUpper}</span>
             </div>
         `;
     }).join('');
@@ -3273,7 +3309,7 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
                     </div>
                     <img class="trial-frame-border" src="${frameSrc}" alt="">
                 </div>
-                <div class="result-map-info" style="flex:1; min-width:200px;">
+                <div class="result-map-info">
                     <div class="map-label" style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;"><i class="fas fa-map"></i> Карта</div>
                     <div class="trial-name" style="font-size:1.6rem; color:#e16d48; font-weight:900; margin:0.2rem 0 0.1rem; letter-spacing:1px;">${trial.name.toUpperCase()}</div>
                     <div class="map-name" style="font-size:1.2rem; color:#ffbc9a; font-weight:300; margin-bottom:0.3rem; letter-spacing:2px; text-transform:uppercase;">${mapName.toUpperCase()}</div>
@@ -3351,15 +3387,17 @@ function renderEscResultPlayers() {
         var allUsed = checkAllAmpsUsed(idx);
 
         var section = document.createElement('div');
-        section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px;';
+        section.style.cssText = 'background: rgba(0,0,0,0.25); border-radius: 16px; border: 1px solid rgba(220,90,50,0.1); overflow: hidden; margin-bottom: 12px; min-width: 0;';
 
         var toggleBtn = document.createElement('div');
-        toggleBtn.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px;';
+        toggleBtn.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px; min-width: 0;';
+
+        // [FIX] Длинный ник обрезается многоточием и больше не растягивает блок
         toggleBtn.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1;">
-                <i class="fas fa-user" style="color: #e16d48; font-size: 1rem;"></i>
-                <span style="font-weight: 700; color: #ffbc9a; font-size: ${player.length > 15 ? '0.8rem' : '1rem'}; letter-spacing: 0.5px; white-space: nowrap;">${player}</span>
-                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;">
+                <i class="fas fa-user" style="color: #e16d48; font-size: 1rem; flex-shrink: 0;"></i>
+                <span title="${escapeHtml(player)}" style="font-weight: 700; color: #ffbc9a; font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">${escapeHtml(player)}</span>
+                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
                 ${equipData ? `<img src="${equipData.image}" alt="${equip}" style="width:32px; height:32px; object-fit:contain; border-radius:8px; background:rgba(0,0,0,0.3); padding:3px;" onerror="this.style.display='none'">` : ''}
@@ -3641,7 +3679,7 @@ function openCatchUpPlatformModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-gamepad"></i> ' + name + ' — платформа</h2>' +
+            '<h2><i class="fas fa-gamepad"></i> ' + escapeHtml(name) + ' — платформа</h2>' +
         '</div>' +
         '<div class="catchup-step">Шаг 1 из ' + totalSteps + '</div>' +
         '<div class="catchup-cards" style="gap:16px; padding-bottom:10px;">' + cardsHtml + '</div>';
@@ -3682,7 +3720,7 @@ function openCatchUpEquipModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-backpack"></i> ' + name + ' — снаряжение</h2>' +
+            '<h2><i class="fas fa-backpack"></i> ' + escapeHtml(name) + ' — снаряжение</h2>' +
         '</div>' +
         '<div class="catchup-step">Шаг 2 из ' + totalSteps + '</div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
@@ -3744,7 +3782,7 @@ function openCatchUpAmpModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-capsules"></i> ' + name + ' — амфы</h2>' +
+            '<h2><i class="fas fa-capsules"></i> ' + escapeHtml(name) + ' — амфы</h2>' +
         '</div>' +
         '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
@@ -4762,8 +4800,8 @@ function showBreakModal() {
                 <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
                 <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
             </div>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-weight: 700; color: #fff; font-size: 1.2rem;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${player}</div>
+            <div style="text-align: center; margin-bottom: 20px; max-width: 100%;">
+                <div style="font-weight: 700; color: #fff; font-size: 1.2rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${escapeHtml(player)}</div>
             </div>
         `;
 
