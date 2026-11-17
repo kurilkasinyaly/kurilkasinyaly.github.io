@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <!-- Подключаем расписание вариаторов для заголовка -->
     <script src="weekly-schedule.js"></script>
 
     <style>
@@ -206,7 +205,6 @@
             display: flex; flex-direction: column; margin-bottom: 2rem;
         }
         
-        /* Измененный хедер секции: дата теперь справа на всю ширину */
         .leaderboard-section .section-header {
             display: flex; justify-content: flex-end; align-items: center;
             padding: 0.8rem 1.5rem; border-bottom: 1px solid rgba(220, 90, 50, 0.1);
@@ -219,7 +217,6 @@
         }
         .leaderboard-section .section-header .sub-title i { color: #e25d32; margin-right: 5px; }
         
-        /* Динамический заголовок */
         .escalation-dynamic-title {
             text-align: center;
             margin: 1rem 0 0.5rem 0;
@@ -235,7 +232,6 @@
         }
         .escalation-dynamic-title span { color: #e25d32; }
 
-        /* ===== ВКЛАДКИ ПОДРАЗДЕЛОВ ===== */
         .sub-tabs {
             display: flex; gap: 0.8rem; padding: 0.6rem 1.5rem;
             border-bottom: 1px solid rgba(220, 90, 50, 0.08); flex-wrap: wrap; justify-content: center;
@@ -247,7 +243,6 @@
         }
         .sub-tab:hover { color: white; background: rgba(255, 255, 255, 0.06); }
         .sub-tab.active { color: #e25d32; border-color: rgba(220, 90, 50, 0.3); background: rgba(220, 90, 50, 0.08); }
-        /* Вкладки сообществ */
         .community-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; padding: 0 1.5rem; }
         .community-tab {
             padding: 0.6rem 2rem; border-radius: 40px; font-size: 0.95rem; font-weight: 700;
@@ -256,7 +251,6 @@
         }
         .community-tab:hover { border-color: rgba(220, 90, 50, 0.5); color: white; }
         .community-tab.active { background: linear-gradient(135deg, #bc4627, #e25d32); border-color: #e25d32; color: white; box-shadow: 0 5px 20px rgba(220, 90, 50, 0.3); }
-        /* ===== ТАБЛИЦА ===== */
         .table-wrapper {
             padding: 1rem 1rem 1.5rem 1rem; overflow-x: auto; flex: 1; position: relative;
             border-radius: 0 0 28px 28px; min-height: 400px; background: transparent;
@@ -283,11 +277,9 @@
         td:first-child { text-align: center; width: 60px; font-weight: 800; color: #7dd3fc; font-size: 1.1rem; }
         td:nth-child(2) { text-align: left; font-weight: 700; color: #ffffff; font-size: 1.15rem; }
         
-        /* Иконки платформ */
         .platform-icon { width: 28px; height: 28px; margin-right: 10px; vertical-align: middle; display: inline-block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
         .player-name { display: inline-flex; align-items: center; gap: 6px; }
         
-        /* ===== ПРЕСТИЖ И УРОВЕНЬ ===== */
         .player-prestige-level {
             display: inline-flex; align-items: center; justify-content: flex-start;
             position: relative; margin-right: 12px; flex-shrink: 0; padding-right: 4px;
@@ -313,7 +305,6 @@
             height: 26px; box-sizing: border-box; z-index: 1; position: relative;
         }
         .level-number { font-size: 0.9rem; font-weight: 800; color: #ffffff; text-shadow: 0 0 4px rgba(0, 0, 0, 0.9); line-height: 1; }
-        /* ===== МЕДАЛИ ===== */
         .rank-1 td:first-child { color: #ffd700; }
         .rank-2 td:first-child { color: #c0c0c0; }
         .rank-3 td:first-child { color: #cd7f32; }
@@ -489,7 +480,8 @@
             <div class="alert-block">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>
-                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span>
+                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span> (21:00 по времени Астаны).
+                </span>
             </div>
 
             <div class="mode-banners" id="modeBanners">
@@ -508,12 +500,10 @@
                 <button class="community-tab" data-community="global" onclick="switchCommunity('global')">Глобальная</button>
             </div>
 
-            <!-- Динамический заголовок -->
             <div class="escalation-dynamic-title" id="dynamicEscalationTitle"></div>
 
             <div class="leaderboard-section" id="leaderboardSection">
                 <div class="section-header">
-                    <!-- Оставили только блок с датой, выровненный по правому краю -->
                     <div class="sub-title" id="lastUpdatedDate">
                         <i class="fas fa-clock"></i> Обновлено: ...
                     </div>
@@ -743,10 +733,10 @@
             'humiliated': 'steam',
             'Barricade Guy': 'epic',
             'LARIK_LOL': 'steam',
-            'Garlik_Darlik': 'steam',
             'Takuya_Satori': 'ps',
             'InTim na Ade❤️': 'steam',
-            'TheDarkness': 'steam'
+            'TheDarkness': 'steam',
+            'Theris': 'steam'
         };
 
          // ============================================================
@@ -763,10 +753,10 @@
             'humiliated': { prestige: 48, level: 69 },
             'Barricade Guy': { prestige: 63, level: 21 },
             'LARIK_LOL': { prestige: 28, level: 79 },
-            'Garlik_Darlik': { prestige: 43, level: 79 },
             'Takuya_Satori': { prestige: 4, level: 60 },
             'InTim na Ade❤️': { prestige: 3, level: 75 },
-            'TheDarkness': { prestige: 10, level: 42 }
+            'TheDarkness': { prestige: 10, level: 42 },
+            'Theris': { prestige: 1, level: 33 }
         };
 
         function getPrestigeLevel(name) {
@@ -796,14 +786,12 @@
             if (!el) return;
 
             var now = new Date();
-            // Получаем текущее время в UTC+5 (Астана)
             var utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
             var astanaTime = new Date(utcTime + (3600000 * 5));
             
             var day = astanaTime.getDay();
             var hours = astanaTime.getHours();
 
-            // Вычисляем, сколько дней назад был последний вторник 21:00
             var daysToSubtract = (day >= 2) ? (day - 2) : (day + 7 - 2);
             if (day === 2 && hours < 21) {
                 daysToSubtract = 7;
@@ -813,7 +801,6 @@
             cutoff.setDate(cutoff.getDate() - daysToSubtract);
             cutoff.setHours(21, 0, 0, 0);
 
-            // Форматируем в ДД.ММ.ГГГГ
             var d = ('0' + cutoff.getDate()).slice(-2);
             var m = ('0' + (cutoff.getMonth() + 1)).slice(-2);
             var y = cutoff.getFullYear();
@@ -849,6 +836,8 @@
                     const time = row.TotalTime || 'unranked';
                     const platform = row.Platform || 'steam';
 
+                    if (playerName === 'Garlik_Darlik') return;
+
                     if (mode === 'Weekly') {
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
                     } else if (mode === 'Infinite') {
@@ -865,7 +854,6 @@
                     return a.name.localeCompare(b.name);
                 });
 
-                // Расстановка мест с учетом ничьих
                 let currentRankW = 1;
                 escalationDBData.weekly.forEach((p, i) => {
                     if (i > 0) {
@@ -930,10 +918,10 @@
                 { rank: 8, name: "humiliated", level: 12, time: "01:58:00" },
                 { rank: 9, name: "Barricade Guy", level: 30, time: "06:13:00" },
                 { rank: 10, name: "LARIK_LOL", level: 23, time: "05:27:00" },
-                { rank: 11, name: "Garlik_Darlik", level: 8, time: "01:20:00" },
-                { rank: 12, name: "Takuya_Satori", level: 2, time: "00:46:00" },
-                { rank: 13, name: "InTim na Ade❤️", level: 16, time: "03:08:00" },
-                { rank: 14, name: "TheDarkness", level: 20, time: "04:25:00" }
+                { rank: 11, name: "Takuya_Satori", level: 2, time: "00:46:00" },
+                { rank: 12, name: "InTim na Ade❤️", level: 16, time: "03:08:00" },
+                { rank: 13, name: "TheDarkness", level: 20, time: "04:25:00" },
+                { rank: 14, name: "Theris", level: -, time: "-" }
             ]
         };
 
@@ -949,10 +937,10 @@
             { rank: 8, name: "humiliated", points: 15560, rating: "#1071" },
             { rank: 9, name: "Barricade Guy", points: 46785, rating: "#310" },
             { rank: 10, name: "LARIK_LOL", points: 44075, rating: "#338" },
-            { rank: 11, name: "Garlik_Darlik", points: 13685, rating: "#1126" },
-            { rank: 12, name: "Takuya_Satori", points: 2155, rating: "#11566" },
-            { rank: 13, name: "InTim na Ade❤️", points: 3105, rating: "#9461" },
-            { rank: 14, name: "TheDarkness", points: 18330, rating: "#899" }
+            { rank: 11, name: "Takuya_Satori", points: 2155, rating: "#11566" },
+            { rank: 12, name: "InTim na Ade❤️", points: 3105, rating: "#9461" },
+            { rank: 13, name: "TheDarkness", points: 18330, rating: "#899" },
+            { rank: 14, name: "Theris", points: 240, rating: "#51580" }
         ];
 
         var invasionData = {
@@ -967,10 +955,10 @@
                 { rank: 8, name: "humiliated", matches: 1171, wins: 1113, losses: 58, rating: "#1071" },
                 { rank: 9, name: "Barricade Guy", matches: 1462, wins: 1321, losses: 141, rating: "#310" },
                 { rank: 10, name: "LARIK_LOL", matches: 610, wins: 583, losses: 27, rating: "#338" },
-                { rank: 11, name: "Garlik_Darlik", matches: 1429, wins: 1360, losses: 69, rating: "#1126" },
-                { rank: 12, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#11566" },
-                { rank: 13, name: "InTim na Ade❤️", matches: 54, wins: 51, losses: 3, rating: "#9461" },
-                { rank: 14, name: "TheDarkness", matches: 282, wins: 268, losses: 14, rating: "#899" }
+                { rank: 11, name: "Takuya_Satori", matches: 57, wins: 45, losses: 12, rating: "#11566" },
+                { rank: 12, name: "InTim na Ade❤️", matches: 54, wins: 51, losses: 3, rating: "#9461" },
+                { rank: 13, name: "TheDarkness", matches: 282, wins: 268, losses: 14, rating: "#899" },
+                { rank: 14, name: "Theris", matches: 5, wins: 5, losses: 0, rating: "#51580" }
             ],
             impostor: [
                 { rank: 1, name: "Майор Гом 2.0", matches: 800, wins: 282, losses: 518, rating: "#24" },
@@ -983,10 +971,10 @@
                 { rank: 8, name: "humiliated", matches: 747, wins: 298, losses: 449, rating: "#1071" },
                 { rank: 9, name: "Barricade Guy", matches: 585, wins: 258, losses: 327, rating: "#310" },
                 { rank: 10, name: "LARIK_LOL", matches: 252, wins: 72, losses: 180, rating: "#338" },
-                { rank: 11, name: "Garlik_Darlik", matches: 886, wins: 471, losses: 415, rating: "#1126" },
-                { rank: 12, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#11566" },
-                { rank: 13, name: "InTim na Ade❤️", matches: 27, wins: 3, losses: 24, rating: "#9461" },
-                { rank: 14, name: "TheDarkness", matches: 95, wins: 28, losses: 67, rating: "#899" }
+                { rank: 11, name: "Takuya_Satori", matches: 14, wins: 1, losses: 13, rating: "#11566" },
+                { rank: 12, name: "InTim na Ade❤️", matches: 27, wins: 3, losses: 24, rating: "#9461" },
+                { rank: 13, name: "TheDarkness", matches: 95, wins: 28, losses: 67, rating: "#899" },
+                { rank: 14, name: "Theris", matches: 4, wins: 0, losses: 4, rating: "#51580" }
             ]
         };
 
@@ -1025,11 +1013,11 @@
             return '#' + rank;
         }
 
-        function isUnranked(value) { return value === 'unranked'; }
+        function isUnranked(value) { return value === 'unranked' || value === '-'; }
 
         function formatCell(value) {
             if (isUnranked(value)) {
-                return '<span class="unranked-text">unranked</span>';
+                return '<span class="unranked-text">-</span>';
             }
             return value;
         }
@@ -1069,11 +1057,10 @@
                 tab.classList.toggle('active', tab.dataset.community === community);
             });
             
-            // Если выбрана Глобальная, принудительно ставим Бесконечную
             if (community === 'global') {
                 currentSubTab = 'infinite';
             } else {
-                currentSubTab = 'weekly'; // Для Курилки по умолчанию Еженедельная
+                currentSubTab = 'weekly';
             }
             
             updateTableContent();
@@ -1102,7 +1089,6 @@
             if (!container || !subTabs) return;
 
             if (currentMode === 'escalation') {
-                // Формируем динамический заголовок
                 if (currentCommunity === 'kurilka') {
                     if (currentSubTab === 'weekly') {
                         var weeklyVar = (typeof getActiveWeeklyVariator === 'function') ? getActiveWeeklyVariator() : null;
@@ -1115,7 +1101,6 @@
                     dynamicTitle.innerHTML = 'ГЛОБАЛЬНЫЙ ЛИДЕРБОРД';
                 }
 
-                // Если Глобальная - убираем вкладки, оставляем только Бесконечную
                 if (currentCommunity === 'global') {
                     subTabs.innerHTML = `
                         <span class="sub-tab active" data-sub="infinite">Бесконечная</span>
@@ -1198,21 +1183,19 @@
                         }
                     }
                 } else {
-                    // === ГЛОБАЛЬНАЯ ТАБЛИЦА (Только Бесконечная) ===
-                    var dataGI = escalationGlobalData.infinite.slice(); // Делаем копию, чтобы не менять оригинал
+                    // === ГЛОБАЛЬНАЯ ТАБЛИЦА ===
+                    var dataGI = escalationGlobalData.infinite.slice(); 
                     
-                    // 1. Сортируем по уровню (убывание)
-                    // 2. Если уровни равны, сортируем по времени (возрастание)
-                    // 3. Если время равно, сортируем по нику (алфавит)
                     dataGI.sort((a, b) => {
-                        if (b.level !== a.level) return b.level - a.level;
+                        let levelA = a.level === '-' ? -1 : a.level;
+                        let levelB = b.level === '-' ? -1 : b.level;
+                        if (levelB !== levelA) return levelB - levelA;
                         let secA = timeToSeconds(a.time);
                         let secB = timeToSeconds(b.time);
                         if (secA !== secB) return secA - secB;
                         return a.name.localeCompare(b.name);
                     });
 
-                    // Расстановка мест с учетом ничьих (как в БД)
                     let currentRankGI = 1;
                     dataGI.forEach((p, i) => {
                         if (i > 0) {
@@ -1234,11 +1217,15 @@
                     
                     dataGI.forEach(function(player) {
                         var platform = getPlatformForPlayer(player.name);
-                        // Берем player.rank, который мы только что вычислили, а не index + 1
                         var rank = player.rank; 
                         var rankDisplay = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
                         var color = rank === 1 ? '#ffd700' : rank === 2 ? '#c0c0c0' : rank === 3 ? '#cd7f32' : '#7dd3fc';
                         
+                        if (player.level === '-') {
+                            rankDisplay = '-';
+                            color = '#7a6a8a';
+                        }
+
                         htmlGI += `
                             <tr class="${getRankClass(rank)}">
                                 <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
@@ -1258,9 +1245,6 @@
                 }
 
             } else {
-                // === РЕЖИМ ВТОРЖЕНИЕ ===
-                
-                // ДОБАВЛЯЕМ ЗАГОЛОВОК (как на скриншоте)
                 dynamicTitle.innerHTML = 'ВТОРЖЕНИЕ'; 
 
                 if (currentSubTab === 'general' || !currentSubTab) {
