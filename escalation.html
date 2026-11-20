@@ -1617,6 +1617,37 @@
         }
         .custom-prompt .actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
 
+        /* ===== ЗАМЕНА ВАРИАТОРА ===== */
+        .variator-controls { display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:1.2rem; padding-top:1rem; border-top:1px solid rgba(220,90,50,0.15); }
+        .variator-controls .vc-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+        .variator-controls .vc-hint { font-size:0.8rem; color:#ffbc9a; text-align:center; animation: vrepPulseText 1.6s ease-in-out infinite; }
+        .vc-btn { padding:0.7rem 1.6rem; border-radius:40px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; border:1px solid rgba(220,90,50,0.3); background:rgba(220,90,50,0.15); color:#c2b9d4; transition:all .3s; }
+        .vc-btn:hover:not(:disabled) { background:rgba(220,90,50,0.3); color:#fff; transform:scale(1.04); }
+        .vc-btn.primary { background:linear-gradient(135deg,#bc4627,#e25d32); color:#fff; border:none; }
+        .vc-btn:disabled { opacity:.4; cursor:not-allowed; }
+        .variator-list .var-item.selectable { cursor:pointer; }
+        .variator-list .var-item.selectable .var-icon-wrapper { animation: vrepWiggle 1.4s ease-in-out infinite; }
+        .variator-list .var-item.selected .var-icon-wrapper { animation:none; box-shadow:0 0 0 3px #ffbc9a, 0 0 30px rgba(220,90,50,0.9) !important; transform:scale(1.1); }
+        .variator-list .var-item.locked { opacity:.35; cursor:not-allowed; }
+        .variator-list .var-item.replaced .var-icon-wrapper { box-shadow:0 0 0 2px #2ecc71, 0 0 14px rgba(46,204,113,.5); }
+        .variator-list .var-item .var-badge { font-size:0.5rem; color:#2ecc71; letter-spacing:1px; text-transform:uppercase; font-weight:700; }
+        .variator-list .var-item.swap-in .var-icon-wrapper { animation: vrepSwapIn .6s ease; }
+        @keyframes vrepWiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-2deg)} 75%{transform:rotate(2deg)} }
+        @keyframes vrepPulseText { 0%,100%{opacity:.6} 50%{opacity:1} }
+        @keyframes vrepSwapIn { 0%{transform:scale(.3) rotate(-20deg);opacity:0} 70%{transform:scale(1.15) rotate(4deg);opacity:1} 100%{transform:scale(1) rotate(0)} }
+        @keyframes vrepOverlayIn { from{opacity:0} to{opacity:1} }
+        @keyframes vrepModalIn { 0%{opacity:0;transform:translateY(40px) scale(.9)} 60%{transform:translateY(-6px) scale(1.02)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+        @keyframes vrepIconPulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,159,74,.5)} 50%{transform:scale(1.08);box-shadow:0 0 0 18px rgba(255,159,74,0)} }
+        @keyframes vrepBorderGlow { 0%,100%{box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 20px rgba(255,159,74,.2)} 50%{box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 45px rgba(255,159,74,.5)} }
+        .vrep-overlay { position:fixed; inset:0; background:rgba(0,0,0,.88); backdrop-filter:blur(10px); z-index:3200; display:flex; align-items:center; justify-content:center; padding:20px; animation:vrepOverlayIn .3s ease; }
+        .vrep-modal { background:linear-gradient(145deg,#1a1a2e,#2a1a3e); border:2px solid rgba(255,159,74,.55); border-radius:28px; padding:2.2rem 2.4rem; max-width:520px; width:100%; text-align:center; animation: vrepModalIn .55s ease, vrepBorderGlow 2.4s ease-in-out infinite .55s; }
+        .vrep-modal .vrep-icon { width:84px; height:84px; margin:0 auto 1rem; border-radius:50%; background:rgba(255,159,74,.15); border:2px solid rgba(255,159,74,.6); display:flex; align-items:center; justify-content:center; font-size:2.3rem; color:#ff9f4a; animation: vrepIconPulse 1.8s ease-out infinite; }
+        .vrep-modal h2 { color:#ff9f4a; font-size:1.5rem; letter-spacing:3px; margin-bottom:.8rem; text-transform:uppercase; }
+        .vrep-modal p { color:#c2b9d4; font-size:.95rem; line-height:1.6; margin-bottom:.8rem; }
+        .vrep-modal p strong { color:#ffbc9a; }
+        .vrep-modal ol { text-align:left; color:#c2b9d4; font-size:.85rem; line-height:1.7; margin:0 0 1.4rem 1.4rem; }
+        .vrep-modal .vrep-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
         @media (max-width: 992px) {
             .result-grid { grid-template-columns: minmax(0, 1fr); }
             .info-form-grid { grid-template-columns: 1fr; }
@@ -1813,6 +1844,7 @@
                 <div class="result-card full-width-card">
                     <h3>ВАРИАТОРЫ</h3>
                     <div class="variator-list" id="escResultVariators"></div>
+                    <div class="variator-controls" id="escVariatorControls"></div>
                 </div>
             </div>
             <div class="result-actions">
@@ -2086,7 +2118,7 @@ let escState = {
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-    nostophobiaCount: 0,
+    nostophobiaCount: 0, replacedVariators: [],
     currentEquipPlayerIndex: 0,
     currentAmpPlayerIndex: 0,
     currentBreakPlayerIndex: 0,
@@ -2238,6 +2270,13 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
         }
     }
 
+    var badTripGroup = ['Бэд Трип', 'Бэд Трип II', 'Галлюцинации'];
+    if (badTripGroup.indexOf(name) !== -1) {
+        for (i = 0; i < badTripGroup.length; i++) {
+            if (badTripGroup[i] !== name && names.indexOf(badTripGroup[i]) !== -1) return false;
+        }
+    }
+
     var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
     if (name === 'Трофейное Снаряжение') {
         for (i = 0; i < trophyBlocked.length; i++) {
@@ -2294,10 +2333,11 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
     if (noEquipBlocked.indexOf(name) !== -1) { if (names.indexOf('Без Снаряжения') !== -1) return false; }
 
     if (name === 'Все На Выход') {
-        if (trialName === 'Раздавите бригадира' || trialName === 'Устранение устаревшего оборудования') return false;
+        if (['Раздавите бригадира','Устранение устаревшего оборудования','Ударьте начальника'].indexOf(trialName) !== -1) return false;
     }
 
     if (name === 'Сильнее Вместе') {
+        if (['Освободите заключенных','Сожгите секс-игрушки','Заберите наркотики'].indexOf(trialName) !== -1) return false;
         if (playerCount === 1) return false;
         if (playerCount === 2 || playerCount === 3) {
             var forbidden = ['Сожгите секс-игрушки','Обработайте фабрику газом','Освободите заключенных','Заберите наркотики'];
@@ -2324,6 +2364,9 @@ function isVariatorCompatible(v, selected, trialName, playerCount, level) {
 
     if (name === 'Токсический Шок') { if (names.indexOf('Глубокий Ожог') !== -1) return false; }
     if (name === 'Глубокий Ожог') { if (names.indexOf('Токсический Шок') !== -1) return false; }
+
+    if (name === 'Экстракция Крови' && names.indexOf('Токсический Шок') !== -1) return false;
+    if (name === 'Токсический Шок' && names.indexOf('Экстракция Крови') !== -1) return false;
 
     var density = ['Низкая Плотность Врагов','Много Противников','Повышенная Угроза','Повышенная угроза II'];
     if (name === 'Враги сильнее' || name === 'Враги Сильнее' || name === 'Враги сильнее II' || name === 'Враги Сильнее II') {
@@ -2427,6 +2470,7 @@ function getVariatorsForLevel(level, mapName, playerCount) {
 
     if (result.length < MAX_VARIATORS && level <= 20) {
         var sidePool = available.filter(function(v) {
+            if (!isVariatorCompatible(v, result, trialName, playerCount, level)) return false;
             if (SIDE_QUEST_VARIATORS.indexOf(v.name) === -1) return false;
             if (used.indexOf(v.name) !== -1) return false;
             return true;
@@ -2483,7 +2527,7 @@ function getVariatorsForLevel(level, mapName, playerCount) {
     if (result.length < MAX_VARIATORS) {
         var anyRem = allVariatorsData.filter(function(v) { return used.indexOf(v.name) === -1 && !isExcludedVariator(v.name); });
         for (var k = 0; k < anyRem.length && result.length < MAX_VARIATORS; k++) {
-            if (used.indexOf(anyRem[k].name) === -1) { result.push(anyRem[k]); used.push(anyRem[k].name); }
+            if (used.indexOf(anyRem[k].name) === -1 && isVariatorCompatible(anyRem[k], result, trialName, playerCount, level)) { result.push(anyRem[k]); used.push(anyRem[k].name); }
         }
     }
 
@@ -3214,26 +3258,152 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
         `;
     }
 
-    var rv = document.getElementById('escResultVariators');
-    if (rv) {
-        rv.innerHTML = escState.variators.map(function(v) {
-            var nameUpper = v.name.toUpperCase();
-            var fontSize;
-            if (v.name.length > 14) fontSize = '0.6rem'; // Немного увеличили для длинных
-            else fontSize = '0.75rem'; // Увеличили базовый шрифт
-
-            return `
-                <div class="var-item" style="display:flex; flex-direction:column; align-items:center; gap:0.6rem; max-width:140px; flex: 1 1 0;">
-                    <div class="var-icon-wrapper" style="background: url('images/вариаторы фон.webp') center/cover no-repeat; width: 90px; height: 90px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <img src="${v.image}" alt="${v.name}" style="width: 60px; height: 60px; object-fit: contain;" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
-                    </div>
-                    <span style="font-size:${fontSize}; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break: break-word;">${nameUpper}</span>
-                </div>
-            `;
-        }).join('');
-    }
+    replaceState.active = false;
+    replaceState.selectedIndex = null;
+    renderResultVariators();
 
     renderEscResultPlayers();
+}
+
+var replaceState = { active: false, selectedIndex: null };
+var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II', 'Психохирургия', 'Двойные задания'];
+
+function renderResultVariators(swapIndex) {
+    var rv = document.getElementById('escResultVariators');
+    if (!rv) return;
+    rv.innerHTML = '';
+    escState.variators.forEach(function(v, idx) {
+        var locked = NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1;
+        var item = document.createElement('div');
+        item.className = 'var-item';
+        if (v.replaced) item.classList.add('replaced');
+        if (swapIndex === idx) item.classList.add('swap-in');
+        if (replaceState.active) {
+            item.classList.add(locked ? 'locked' : 'selectable');
+            if (replaceState.selectedIndex === idx) item.classList.add('selected');
+        }
+        var fontSize = v.name.length > 14 ? '0.6rem' : '0.75rem';
+        item.innerHTML =
+            '<div class="var-icon-wrapper" style="background: url(\'images/вариаторы фон.webp\') center/cover no-repeat;">' +
+                '<img src="' + v.image + '" alt="' + escapeHtml(v.name) + '" style="width:60px;height:60px;object-fit:contain;" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
+            '</div>' +
+            '<span style="font-size:' + fontSize + '; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break:break-word;">' + escapeHtml(v.name.toUpperCase()) + '</span>' +
+            (v.replaced ? '<span class="var-badge"><i class="fas fa-exchange-alt"></i> заменён</span>' : '') +
+            (replaceState.active && locked ? '<span class="var-badge" style="color:#888;"><i class="fas fa-lock"></i> обязательный</span>' : '');
+        if (replaceState.active && !locked) {
+            item.addEventListener('click', function() { replaceState.selectedIndex = idx; renderResultVariators(); });
+        }
+        rv.appendChild(item);
+    });
+    renderVariatorControls();
+}
+
+function renderVariatorControls() {
+    var c = document.getElementById('escVariatorControls');
+    if (!c) return;
+    c.innerHTML = '';
+    if (!replaceState.active) {
+        var open = document.createElement('button');
+        open.className = 'vc-btn';
+        open.innerHTML = '<i class="fas fa-exchange-alt"></i> Заменить вариатор';
+        open.addEventListener('click', function() {
+            showReplaceWarning(function() {
+                replaceState.active = true;
+                replaceState.selectedIndex = null;
+                renderResultVariators();
+            });
+        });
+        c.appendChild(open);
+        return;
+    }
+    var hint = document.createElement('div');
+    hint.className = 'vc-hint';
+    hint.textContent = replaceState.selectedIndex === null
+        ? 'Нажмите на несовместимый вариатор, чтобы выделить его'
+        : 'Выбран: ' + escState.variators[replaceState.selectedIndex].name;
+    c.appendChild(hint);
+    var row = document.createElement('div');
+    row.className = 'vc-row';
+    var cancel = document.createElement('button');
+    cancel.className = 'vc-btn';
+    cancel.textContent = 'Отмена';
+    cancel.addEventListener('click', function() { replaceState.active = false; replaceState.selectedIndex = null; renderResultVariators(); });
+    var go = document.createElement('button');
+    go.className = 'vc-btn primary';
+    go.innerHTML = '<i class="fas fa-sync-alt"></i> Поменять вариатор';
+    go.disabled = replaceState.selectedIndex === null;
+    go.addEventListener('click', performVariatorReplace);
+    row.appendChild(cancel);
+    row.appendChild(go);
+    c.appendChild(row);
+}
+
+function showReplaceWarning(onConfirm) {
+    var old = document.getElementById('vrepWarning');
+    if (old) old.remove();
+    var overlay = document.createElement('div');
+    overlay.className = 'vrep-overlay';
+    overlay.id = 'vrepWarning';
+    overlay.innerHTML =
+        '<div class="vrep-modal">' +
+            '<div class="vrep-icon"><i class="fas fa-exclamation-triangle"></i></div>' +
+            '<h2>Внимание</h2>' +
+            '<p>Замена вариатора осуществляется <strong>только в крайнем случае</strong> — при несовместимости вариатора.</p>' +
+            '<ol><li>Нажмите на несовместимый вариатор — он будет выделен.</li>' +
+            '<li>Нажмите «Поменять вариатор».</li>' +
+            '<li>Сайт заново проверит правила и сам подберёт замену только для выделенного вариатора.</li></ol>' +
+            '<div class="vrep-actions"><button class="vc-btn" id="vrepCancel">Отмена</button>' +
+            '<button class="vc-btn primary" id="vrepOk">Понимаю, продолжить</button></div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    function close() { overlay.remove(); }
+    document.getElementById('vrepCancel').addEventListener('click', close);
+    document.getElementById('vrepOk').addEventListener('click', function() { close(); onConfirm(); });
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+}
+
+function pickReplacementVariator(oldV, others) {
+    var names = others.map(function(x) { return x.name; });
+    var trialName = escState.trial ? escState.trial.name : '';
+    var level = escState.level, pc = escState.players.length;
+    var oldIsSide = isSideQuestVariator(oldV.name);
+    var gates = ['Ворота С Детектором Звука','Дистанционные Ворота','Бесконтактные Ворота','Времянные Ворота','Закрытые Ворота'];
+    var pool = allVariatorsData.filter(function(v) {
+        if (v.name === oldV.name || names.indexOf(v.name) !== -1) return false;
+        if (isExcludedVariator(v.name) || gates.indexOf(v.name) !== -1) return false;
+        if (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1) return false;
+        if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
+        if (isSideQuestVariator(v.name) !== oldIsSide) return false;
+        return true;
+    });
+    pool = shuffleArray(pool);
+    var history = getVariatorHistory();
+    pool.sort(function(a, b) { return history.lastIndexOf(a.name) - history.lastIndexOf(b.name); });
+    for (var i = 0; i < pool.length; i++) {
+        if (isVariatorCompatible(pool[i], others, trialName, pc, level)) return pool[i];
+    }
+    return null;
+}
+
+function performVariatorReplace() {
+    var idx = replaceState.selectedIndex;
+    if (idx === null || !escState.variators[idx]) return;
+    var oldV = escState.variators[idx];
+    var others = escState.variators.filter(function(_, i) { return i !== idx; });
+    var newV = pickReplacementVariator(oldV, others);
+    if (!newV) { showToast('Не удалось подобрать подходящую замену', '#e74c3c'); return; }
+    escState.variators[idx] = Object.assign({}, newV, { replaced: true, originalName: oldV.name });
+    escState.replacedVariators = escState.replacedVariators || [];
+    escState.replacedVariators.push({ level: escState.level, from: oldV.name, to: newV.name });
+    var h = getVariatorHistory();
+    var oi = h.indexOf(oldV.name); if (oi !== -1) h.splice(oi, 1);
+    var ni = h.indexOf(newV.name); if (ni !== -1) h.splice(ni, 1);
+    h.push(newV.name);
+    saveVariatorHistory(h);
+    replaceState.active = false;
+    replaceState.selectedIndex = null;
+    renderResultVariators(idx);
+    showToast('«' + oldV.name + '» заменён на «' + newV.name + '»', '#2ecc71');
 }
 
 function renderEscResultPlayers() {
@@ -4129,7 +4299,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0, currentEquipPlayerIndex: 0,
+                    nostophobiaCount: 0, replacedVariators: [], currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
                     // [NEW]
                     initialPlayerCount: 0,
