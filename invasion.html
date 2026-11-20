@@ -818,12 +818,10 @@
             infinite: []
         };
 
-        // [NEW] Парсинг даты из базы данных (формат: "17.11.2026, 19:00:00")
+        // [NEW] Парсинг даты из базы данных (устойчивый к апострофам и пробелам)
         function parseDBDate(dateStr) {
             if (!dateStr) return null;
-            // Убираем возможные апострофы и лишние пробелы
             var cleanStr = String(dateStr).replace(/'/g, '').trim();
-            // Разделяем на дату и время
             var parts = cleanStr.split(', ');
             if (parts.length !== 2) return null;
             
@@ -832,7 +830,7 @@
             
             if (dateParts.length === 3 && timeParts.length === 3) {
                 var day = parseInt(dateParts[0], 10);
-                var month = parseInt(dateParts[1], 10) - 1; // Месяцы в JS с 0
+                var month = parseInt(dateParts[1], 10) - 1;
                 var year = parseInt(dateParts[2], 10);
                 var hours = parseInt(timeParts[0], 10);
                 var minutes = parseInt(timeParts[1], 10);
@@ -855,25 +853,22 @@
                 // [NEW] ВЫЧИСЛЯЕМ ДАТУ ПОСЛЕДНЕГО ВТОРНИКА 19:00 МСК
                 // ============================================================
                 var now = new Date();
-                // Переводим текущее время в МСК (UTC+3)
                 var mskTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3 * 3600000));
                 
-                var dayOfWeek = mskTime.getDay(); // 0 = Вс, 1 = Пн, 2 = Вт...
+                var dayOfWeek = mskTime.getDay();
                 var hours = mskTime.getHours();
                 
-                // Вычисляем, сколько дней прошло с последнего вторника 19:00
                 var daysSinceTuesday = 0;
-                if (dayOfWeek === 2) { // Если сегодня вторник
-                    if (hours < 19) { // Если время ещё не наступило (до 19:00)
-                        daysSinceTuesday = 7; // Берём прошлый вторник
+                if (dayOfWeek === 2) {
+                    if (hours < 19) {
+                        daysSinceTuesday = 7;
                     } else {
-                        daysSinceTuesday = 0; // Сегодняшний вторник после 19:00
+                        daysSinceTuesday = 0;
                     }
                 } else {
                     daysSinceTuesday = (dayOfWeek + 7 - 2) % 7;
                 }
                 
-                // Получаем дату последнего вторника
                 var cutoffDate = new Date(mskTime);
                 cutoffDate.setDate(cutoffDate.getDate() - daysSinceTuesday);
                 cutoffDate.setHours(19, 0, 0, 0);
@@ -882,30 +877,27 @@
 
                 data.forEach(row => {
                     if (!row.PlayerName) return;
+                    if (row.PlayerName === 'Garlik_Darlik') return;
 
                     const mode = row.Mode; 
                     const playerName = row.PlayerName;
                     const levels = parseInt(row.LevelsCompleted, 10) || 0;
                     const time = row.TotalTime || 'unranked';
                     const platform = row.Platform || 'steam';
-                    const rowDateStr = row.Date; // Поле даты из базы
+                    const rowDateStr = row.Date;
 
-                    if (playerName === 'Garlik_Darlik') return;
-
-                    if (mode === 'Weekly') {
-                        // [NEW] Фильтрация по дате (сброс каждый вторник в 19:00)
+                    if (mode === 'Infinite') {
+                        // [FIX] Бесконечная — без фильтрации по дате
+                        escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
+                    } else if (mode === 'Weekly') {
+                        // [NEW] Фильтрация по дате (только для Weekly)
                         var rowDate = parseDBDate(rowDateStr);
                         if (rowDate) {
-                            // Если запись была сделана раньше последнего вторника 19:00 — пропускаем
                             if (rowDate.getTime() < cutoffDate.getTime()) {
-                                return; // Пропускаем старые записи
+                                return;
                             }
                         }
-                        
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
-                    } else if (mode === 'Infinite') {
-                        // [FIX] Для бесконечной НЕТ фильтрации по дате, данные показываются всегда
-                        escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
                     }
                 });
 
