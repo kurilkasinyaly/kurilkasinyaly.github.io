@@ -480,7 +480,7 @@
             <div class="alert-block">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>
-                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span>.
+                    <span class="highlight">ВНИМАНИЕ!</span> Все данные лидерборда обновляются один раз в неделю — каждый <span class="highlight">Вторник в 19:00 по МСК</span> (21:00 по времени Астаны).
                 </span>
             </div>
 
@@ -894,11 +894,10 @@
                     if (playerName === 'Garlik_Darlik') return;
 
                     if (mode === 'Weekly') {
-                        // [NEW] Фильтрация по дате
+                        // [NEW] Фильтрация по дате (сброс каждый вторник в 19:00)
                         var rowDate = parseDBDate(rowDateStr);
                         if (rowDate) {
                             // Если запись была сделана раньше последнего вторника 19:00 — пропускаем
-                            // (Сравниваем в UTC, так как cutoffDate у нас уже в МСК)
                             if (rowDate.getTime() < cutoffDate.getTime()) {
                                 return; // Пропускаем старые записи
                             }
@@ -906,6 +905,7 @@
                         
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
                     } else if (mode === 'Infinite') {
+                        // [FIX] Для бесконечной НЕТ фильтрации по дате, данные показываются всегда
                         escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
                     }
                 });
