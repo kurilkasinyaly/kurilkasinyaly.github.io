@@ -1617,6 +1617,42 @@
         }
         .custom-prompt .actions .btn-cancel:hover { background: rgba(220, 90, 50, 0.25); color: white; }
 
+        /* ===== КАРТЫ СУДЬБЫ ===== */
+        .fate-grid { display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin:6px 0 18px; }
+        .fate-card { width:210px; height:300px; perspective:1100px; cursor:pointer; position:relative; transition:transform .35s ease, opacity .5s ease, filter .5s ease; font-family:'Plus Jakarta Sans',sans-serif; }
+        .fate-card:not(.opened):not(.dimmed):hover { transform:translateY(-10px) scale(1.05); filter:drop-shadow(0 12px 22px rgba(220,90,50,.45)); }
+        .fate-card-inner { position:absolute; inset:0; transform-style:preserve-3d; transition:transform .95s cubic-bezier(.2,.8,.25,1); }
+        .fate-card.opened .fate-card-inner { transform:rotateY(180deg); }
+        .fate-card.opened { animation:fateLift .95s ease; cursor:default; }
+        .fate-card.swapping .fate-card-inner { animation:fateSwap .8s ease; }
+        .fate-card.dimmed { opacity:.3; filter:grayscale(.7); transform:scale(.92); pointer-events:none; }
+        .fate-card.gone { opacity:0; transform:scale(.8) translateY(20px); pointer-events:none; }
+        .fate-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.6); }
+        .fate-face.front { transform:rotateY(180deg); }
+        .fate-bg { width:100%; height:100%; object-fit:cover; display:block; }
+        .fate-card.t-bad.opened { filter:drop-shadow(0 0 22px rgba(255,60,60,.55)); }
+        .fate-card.t-good.opened { filter:drop-shadow(0 0 22px rgba(46,204,113,.55)); }
+        .fate-card.t-special.opened { filter:drop-shadow(0 0 22px rgba(241,196,15,.6)); }
+        .fate-text { position:absolute; inset:0; padding:21% 11% 13%; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; overflow:hidden; }
+        .fate-title { font-weight:800; font-size:1.02rem; letter-spacing:1.5px; line-height:1.15; text-transform:uppercase; opacity:0; transform:translateY(10px) scale(.9); text-shadow:0 1px 3px #000, 0 0 10px rgba(0,0,0,.7); }
+        .fate-card.opened .fate-title { animation:fateTitleIn .8s ease .85s forwards; }
+        .fate-desc { font-weight:600; line-height:1.35; text-shadow:0 1px 3px #000, 0 0 8px rgba(0,0,0,.7); }
+        .fate-desc.typing::after { content:'▌'; margin-left:1px; animation:fateCaret .7s steps(1) infinite; }
+        .t-bad .fate-title, .t-bad .fate-desc { color:#ff4d4d; }
+        .t-good .fate-title, .t-good .fate-desc { color:#2ecc71; }
+        .t-special .fate-title, .t-special .fate-desc { color:#f1c40f; }
+        .fate-note { text-align:center; min-height:1.3rem; color:#ffbc9a; font-size:.85rem; margin-bottom:10px; }
+        .fate-note b { color:#f1c40f; }
+        .fate-actions { display:flex; justify-content:center; }
+        .fate-actions .next-btn { transition:opacity .4s, transform .3s; }
+        .fate-actions .next-btn.hidden-btn { opacity:0; pointer-events:none; }
+        @keyframes fateLift { 0%{transform:translateY(0) scale(1)} 40%{transform:translateY(-26px) scale(1.14)} 100%{transform:translateY(0) scale(1.05)} }
+        @keyframes fateSwap { 0%{transform:rotateY(180deg)} 50%{transform:rotateY(90deg) scale(.9)} 100%{transform:rotateY(180deg)} }
+        @keyframes fateTitleIn { to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes fateCaret { 50% { opacity:0; } }
+        .vc-btn.gold { background:linear-gradient(135deg,#b8860b,#f1c40f); color:#1a1a2e; border:none; }
+        @media (max-width:700px) { .fate-card { width:140px; height:200px; } .fate-grid { gap:14px; } .fate-title { font-size:.7rem; } }
+
         /* ===== ЗАМЕНА ВАРИАТОРА ===== */
         .variator-controls { display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:1.2rem; padding-top:1rem; border-top:1px solid rgba(220,90,50,0.15); }
         .variator-controls .vc-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
@@ -2000,6 +2036,205 @@
 <script src="variators-all.js"></script>
 <script src="equipment.js"></script>
 <script src="trials.js"></script>
+<script>
+var fateCardTypes = {
+    good:    { label: 'Хорошая',  color: '#2ecc71' },
+    special: { label: 'Особая',   color: '#f1c40f' },
+    bad:     { label: 'Плохая',   color: '#ff3333' },
+    neutral: { label: 'Пустая',   color: '#888888' }
+};
+
+var fateCardsData = [
+
+    // ===================== ХОРОШИЕ =====================
+    { id: 'contraband_1', group: 'contraband', variant: 1, name: 'КОНТРАБАНДА', type: 'good',
+      desc: 'Реагент вытянувший эту карту может на 1 испытание поменять свое Снаряжение на любое другое.' },
+    { id: 'contraband_2', group: 'contraband', variant: 2, name: 'КОНТРАБАНДА', type: 'good',
+      desc: 'Реагент вытянувший эту карту может на 2 испытание поменять свое Снаряжение на любое другое.' },
+    { id: 'contraband_3', group: 'contraband', variant: 3, name: 'КОНТРАБАНДА', type: 'good',
+      desc: 'Реагент вытянувший эту карту может на 3 испытание поменять свое Снаряжение на любое другое.' },
+
+    { id: 'clean_slate', group: 'clean_slate', name: 'ЧИСТЫЙ ЛИСТ', type: 'good',
+      desc: 'Реагент вытянувший эту карту может избавить себя или товарища по команде от эффекта последней негативной карты.' },
+
+    { id: 'blessing', group: 'blessing', name: 'БЛАГОСЛОВЕНИЕ', type: 'good',
+      desc: 'Группа вправе пропустить выполнения 1 испытание (Время в прохождении указывается 05:00)' },
+
+    { id: 'emergency_exit_2', group: 'emergency_exit', variant: 1, name: 'ЗАПАСНОЙ ВЫХОД', type: 'good',
+      desc: 'Реагент вытянувший эту карту получает возможность вернутся в эскалацию (переиграть) испытание если вся команда потерпела не удачу. Эффект карты сохраняется только на ближайшие 2 испытания' },
+    { id: 'emergency_exit_3', group: 'emergency_exit', variant: 2, name: 'ЗАПАСНОЙ ВЫХОД', type: 'good',
+      desc: 'Реагент вытянувший эту карту получает возможность вернутся в эскалацию (переиграть) испытание если вся команда потерпела не удачу. Эффект карты сохраняется только на ближайшие 3 испытания' },
+    { id: 'emergency_exit_4', group: 'emergency_exit', variant: 3, name: 'ЗАПАСНОЙ ВЫХОД', type: 'good',
+      desc: 'Реагент вытянувший эту карту получает возможность вернутся в эскалацию (переиграть) испытание если вся команда потерпела не удачу. Эффект карты сохраняется только на ближайшие 4 испытания' },
+
+    { id: 'others_mistake', group: 'others_mistake', name: 'ЧУЖАЯ ОШИБКА', type: 'good',
+      desc: 'Реагент вытянувший эту карту, выбирает 1 игрока с команды и меняется 1 предметом из его экипировки на 1 испытание (снаряжение или амфу)' },
+
+    { id: 'immunity', group: 'immunity', name: 'НЕПРИКОСНОВЕННОСТЬ', type: 'good',
+      desc: 'Следующая плохая карта, выпавшая игроку, автоматический отменяется' },
+
+    { id: 'reprieve', group: 'reprieve', name: 'ОТСРОЧКА', type: 'good',
+      desc: 'Реагенту вытянувшему эту карту разрешено отменить 1 вариатор для ближайшего испытания' },
+
+    { id: 'mimic', group: 'mimic', name: 'МИМИК', type: 'good',
+      desc: 'Реагент вытянувший эту карту, выбирает 1 игрока с команды и меняется с ним всей экипировкой' },
+
+    { id: 'jester', group: 'jester', name: 'ШУТ ГОРОХОВЫЙ!', type: 'good',
+      desc: 'У реагента вытянувшего эту карту и его товарища по команде карты заменяются на карту «ПУСТО!» и их эффект пропадает' },
+
+    // ===================== ОСОБЫЕ =====================
+    { id: 'cut_the_thread', group: 'cut_the_thread', name: 'ПЕРЕРЕЗАТЬ НИТЬ', type: 'special',
+      desc: 'Реагент вытянувший эту карту может отменить товарищу по команде эффект 1 негативной карты (имеющейся или же будующей)' },
+
+    { id: 'substitution', group: 'substitution', name: 'ПОДМЕНА', type: 'special',
+      desc: 'Реагент вытянувший эту карту должен обменятся с картой другого игрока и принять ее эффект на себя' },
+
+    { id: 'empty', group: 'empty', name: 'ПУСТО!', type: 'neutral', drawable: false,
+      desc: 'Эта карта не даёт никакого эффекта.' },
+
+    // ===================== ПЛОХИЕ =====================
+    { id: 'equipment_defect', group: 'equipment_defect', name: 'ДЕФФЕКТ ОБОРУДОВАНИЯ', type: 'bad',
+      desc: 'Регенту вытянувшему эту карту запрещено пользование одним выбранным предметом экипировки (снаряжение или амфы)' },
+
+    { id: 'coward', group: 'coward', name: 'ТРУС', type: 'bad',
+      desc: 'Реагент вытянувший эту карту не в праве помочь союзнику по команде при стадии «Казнь» (добивании врагом)' },
+
+    { id: 'panic', group: 'panic', name: 'ПАНИКА', type: 'bad',
+      desc: 'Реагент вытянувший эту карту при встрече с врагом не в праве использовать метательные предметы (кирпич, бутылка, снаряжение) для нанесении урона врагу' },
+
+    { id: 'isolation', group: 'isolation', name: 'ИЗОЛЯЦИЯ', type: 'bad',
+      desc: 'Реагенту вытянувшему эту карту запрещено пользоваться голосовой связью с командой (игровым чатом и дискорд (отключить микрофон и звук)' },
+
+    { id: 'incomplete_set', group: 'incomplete_set', name: 'НЕ ПОЛНЫЙ КОМПЛЕКТ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту самостоятельно убирает один предмет своей экипировки (снаряжение или амфу)' },
+
+    { id: 'brand', group: 'brand', name: 'КЛЕЙМО', type: 'bad',
+      desc: 'Реагент вытянувший эту карту получает два дополнительных условие (усложнения) на два следующих испытание от своих товарищей по команде' },
+
+    { id: 'others_order', group: 'others_order', name: 'ЧУЖОЙ ПРИКАЗ', type: 'bad',
+      desc: 'Реагенту вытянувшему эту карту экипировку собирают его товарищи по команде. Запрещено использование снаряжение и амфов которые изначально были выбраны игроком до этого' },
+
+    { id: 'therapy_failure', group: 'therapy_failure', name: 'СБОЙ ТЕРАПИИ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту лишается возможность лечения (запрещено использовать медицинские предметы а так же самостоятельно лечится при помощи снаряжения «Исцеление», лечить снаряжением может только товарищ по команде)' },
+
+    { id: 'mirror', group: 'mirror', name: 'ЗЕРКАЛО', type: 'bad',
+      desc: 'Реагент вытянувший эту карту может скопировать эффект, включая негативный карты игрока по команде' },
+
+    { id: 'last_laugh', group: 'last_laugh', name: 'ПОСЛЕДНИЙ СМЕХ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту лишается возможности на второй шанс. Если у игрока снаряжение «Глушилка» а так же амфа «Самооживление» он их убирает, а товарищи по команде не в праве оживить его при помощи шприцов' },
+
+    { id: 'next_time', group: 'next_time', name: 'В СЛЕДУЮЩИЙ РАЗ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту лишается возможности на выбор улучшений' }
+];
+
+// ============================================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// ============================================================
+
+// Карта по id
+function getFateCardById(id) {
+    return fateCardsData.find(function(c) { return c.id === id; }) || null;
+}
+
+// Все карты определённого типа ('good' | 'special' | 'bad')
+function getFateCardsByType(type) {
+    return fateCardsData.filter(function(c) { return c.type === type; });
+}
+
+// Случайные карты (count штук) без повторов; type и excludeIds — необязательные
+//   getRandomFateCards(3)                       — 3 любые карты
+//   getRandomFateCards(3, 'good')               — 3 хорошие карты
+//   getRandomFateCards(3, null, ['mirror'])     — 3 карты, кроме «ЗЕРКАЛО»
+function getRandomFateCards(count, type, excludeIds) {
+    var exclude = excludeIds || [];
+    var pool = fateCardsData.filter(function(c) {
+        if (c.drawable === false) return false;
+        if (type && c.type !== type) return false;
+        return exclude.indexOf(c.id) === -1;
+    });
+    for (var i = pool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    return pool.slice(0, count);
+}
+
+// Одна случайная карта на группу (чтобы «КОНТРАБАНДА» и «ЗАПАСНОЙ ВЫХОД»
+// не занимали по 3 слота в выборе): вариант внутри группы выбирается случайно
+function getRandomFateCardsUniqueGroups(count, type, excludeIds) {
+    var exclude = excludeIds || [];
+    var groups = {};
+    fateCardsData.forEach(function(c) {
+        if (c.drawable === false) return;
+        if (type && c.type !== type) return;
+        if (exclude.indexOf(c.id) !== -1) return;
+        (groups[c.group] = groups[c.group] || []).push(c);
+    });
+    var keys = Object.keys(groups);
+    for (var i = keys.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = keys[i]; keys[i] = keys[j]; keys[j] = t;
+    }
+    return keys.slice(0, count).map(function(k) {
+        var variants = groups[k];
+        return variants[Math.floor(Math.random() * variants.length)];
+    });
+}
+
+var FATE_SPECIAL_CHANCE = 0.15; // шанс особой карты вместо пустой (0.15 = 15%)
+
+// Случайная карта нужного типа: сначала случайная группа, затем случайный вариант внутри группы
+//   excludeGroups — группы, которые не должны выпасть (необязательно)
+function pickRandomFateCard(type, excludeGroups) {
+    var exclude = excludeGroups || [];
+    var groups = {};
+    fateCardsData.forEach(function(c) {
+        if (c.type !== type) return;
+        if (exclude.indexOf(c.group) !== -1) return;
+        (groups[c.group] = groups[c.group] || []).push(c);
+    });
+    var keys = Object.keys(groups);
+    if (keys.length === 0) return null;
+    var variants = groups[keys[Math.floor(Math.random() * keys.length)]];
+    return variants[Math.floor(Math.random() * variants.length)];
+}
+
+// Возвращает массив из 3 карт в случайном порядке.
+//   options.excludeGroups — группы, которые нужно исключить (необязательно)
+//   options.specialChance — свой шанс особой карты (необязательно)
+// Каждая карта дополнительно содержит поле slot: 'good' | 'bad' | 'empty' | 'special'
+function getFateCardDraw(options) {
+    options = options || {};
+    var exclude = options.excludeGroups || [];
+    var chance = typeof options.specialChance === 'number' ? options.specialChance : FATE_SPECIAL_CHANCE;
+
+    var draw = [];
+
+    var good = pickRandomFateCard('good', exclude);
+    if (good) draw.push(Object.assign({}, good, { slot: 'good' }));
+
+    var bad = pickRandomFateCard('bad', exclude);
+    if (bad) draw.push(Object.assign({}, bad, { slot: 'bad' }));
+
+    var third = null;
+    if (Math.random() < chance) {
+        var special = pickRandomFateCard('special', exclude);
+        if (special) third = Object.assign({}, special, { slot: 'special' });
+    }
+    if (!third) {
+        var empty = getFateCardById('empty');
+        if (empty) third = Object.assign({}, empty, { slot: 'empty' });
+    }
+    if (third) draw.push(third);
+
+    for (var i = draw.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = draw[i]; draw[i] = draw[j]; draw[j] = t;
+    }
+    return draw;
+}
+
+</script>
 
 <script>
 // ============================================================
@@ -2118,7 +2353,7 @@ let escState = {
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-    nostophobiaCount: 0, replacedVariators: [],
+    nostophobiaCount: 0, replacedVariators: [], fateCards: {}, fateHistory: [], reprieve: null,
     currentEquipPlayerIndex: 0,
     currentAmpPlayerIndex: 0,
     currentBreakPlayerIndex: 0,
@@ -2657,7 +2892,10 @@ function saveEscalation() {
                 initialPlayerCount: escState.initialPlayerCount,
                 pendingNewPlayer: escState.pendingNewPlayer ? JSON.parse(JSON.stringify(escState.pendingNewPlayer)) : null,
                 catchUpQueue: JSON.parse(JSON.stringify(escState.catchUpQueue || [])),
-                catchUpMode: escState.catchUpMode
+                catchUpMode: escState.catchUpMode,
+                fateCards: JSON.parse(JSON.stringify(escState.fateCards || {})),
+                fateHistory: JSON.parse(JSON.stringify(escState.fateHistory || [])),
+                reprieve: escState.reprieve ? JSON.parse(JSON.stringify(escState.reprieve)) : null
             },
             collectedRecords: JSON.parse(JSON.stringify(collectedRecords))
         };
@@ -2728,6 +2966,9 @@ function applySavedEscalation(data) {
     escState.pendingNewPlayer = s.pendingNewPlayer || null;
     escState.catchUpQueue = s.catchUpQueue || [];
     escState.catchUpMode = s.catchUpMode || null;
+    escState.fateCards = s.fateCards || {};
+    escState.fateHistory = s.fateHistory || [];
+    escState.reprieve = s.reprieve || null;
 
     collectedRecords = (data.collectedRecords || []).slice();
 
@@ -3265,7 +3506,7 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
     renderEscResultPlayers();
 }
 
-var replaceState = { active: false, selectedIndex: null };
+var replaceState = { active: false, selectedIndex: null, mode: 'replace' };
 var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II', 'Психохирургия', 'Двойные задания'];
 
 function renderResultVariators(swapIndex) {
@@ -3273,7 +3514,7 @@ function renderResultVariators(swapIndex) {
     if (!rv) return;
     rv.innerHTML = '';
     escState.variators.forEach(function(v, idx) {
-        var locked = NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1;
+        var locked = replaceState.mode === 'cancel' ? false : NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1;
         var item = document.createElement('div');
         item.className = 'var-item';
         if (v.replaced) item.classList.add('replaced');
@@ -3298,28 +3539,44 @@ function renderResultVariators(swapIndex) {
     renderVariatorControls();
 }
 
+function fateReprieveAvailable() { return !!(escState.reprieve && !escState.reprieve.used); }
+
 function renderVariatorControls() {
     var c = document.getElementById('escVariatorControls');
     if (!c) return;
     c.innerHTML = '';
     if (!replaceState.active) {
+        var row0 = document.createElement('div');
+        row0.className = 'vc-row';
         var open = document.createElement('button');
         open.className = 'vc-btn';
         open.innerHTML = '<i class="fas fa-exchange-alt"></i> Заменить вариатор';
         open.addEventListener('click', function() {
             showReplaceWarning(function() {
-                replaceState.active = true;
-                replaceState.selectedIndex = null;
+                replaceState.mode = 'replace'; replaceState.active = true; replaceState.selectedIndex = null;
                 renderResultVariators();
             });
         });
-        c.appendChild(open);
+        row0.appendChild(open);
+        if (fateReprieveAvailable()) {
+            var cancelV = document.createElement('button');
+            cancelV.className = 'vc-btn gold';
+            cancelV.innerHTML = '<i class="fas fa-ban"></i> Отменить вариатор';
+            cancelV.title = 'Карта «ОТСРОЧКА»: ' + escState.reprieve.holder + ' — 1 вариатор на это испытание';
+            cancelV.addEventListener('click', function() {
+                replaceState.mode = 'cancel'; replaceState.active = true; replaceState.selectedIndex = null;
+                renderResultVariators();
+            });
+            row0.appendChild(cancelV);
+        }
+        c.appendChild(row0);
         return;
     }
+    var isCancel = replaceState.mode === 'cancel';
     var hint = document.createElement('div');
     hint.className = 'vc-hint';
     hint.textContent = replaceState.selectedIndex === null
-        ? 'Нажмите на несовместимый вариатор, чтобы выделить его'
+        ? (isCancel ? 'Карта «ОТСРОЧКА»: выберите вариатор, который нужно отменить' : 'Нажмите на несовместимый вариатор, чтобы выделить его')
         : 'Выбран: ' + escState.variators[replaceState.selectedIndex].name;
     c.appendChild(hint);
     var row = document.createElement('div');
@@ -3327,15 +3584,27 @@ function renderVariatorControls() {
     var cancel = document.createElement('button');
     cancel.className = 'vc-btn';
     cancel.textContent = 'Отмена';
-    cancel.addEventListener('click', function() { replaceState.active = false; replaceState.selectedIndex = null; renderResultVariators(); });
+    cancel.addEventListener('click', function() { replaceState.active = false; replaceState.selectedIndex = null; replaceState.mode = 'replace'; renderResultVariators(); });
     var go = document.createElement('button');
-    go.className = 'vc-btn primary';
-    go.innerHTML = '<i class="fas fa-sync-alt"></i> Поменять вариатор';
+    go.className = 'vc-btn ' + (isCancel ? 'gold' : 'primary');
+    go.innerHTML = isCancel ? '<i class="fas fa-ban"></i> Отменить вариатор' : '<i class="fas fa-sync-alt"></i> Поменять вариатор';
     go.disabled = replaceState.selectedIndex === null;
-    go.addEventListener('click', performVariatorReplace);
+    go.addEventListener('click', isCancel ? performVariatorCancel : performVariatorReplace);
     row.appendChild(cancel);
     row.appendChild(go);
     c.appendChild(row);
+}
+
+function performVariatorCancel() {
+    var idx = replaceState.selectedIndex;
+    if (idx === null || !escState.variators[idx] || !fateReprieveAvailable()) return;
+    var v = escState.variators[idx];
+    escState.variators.splice(idx, 1);
+    escState.reprieve.used = true;
+    escState.reprieve.cancelled = v.name;
+    replaceState.active = false; replaceState.selectedIndex = null; replaceState.mode = 'replace';
+    renderResultVariators();
+    showToast('«ОТСРОЧКА»: вариатор «' + v.name + '» отменён', '#f1c40f');
 }
 
 function showReplaceWarning(onConfirm) {
@@ -3483,6 +3752,17 @@ function renderEscResultPlayers() {
             </div>
         `;
         inner.appendChild(eqBlock);
+
+        var fc = escState.fateCards && escState.fateCards[idx];
+        if (fc) {
+            var fcol = (fateCardTypes[fc.type] || {}).color || '#ffbc9a';
+            var fb = document.createElement('div');
+            fb.style.cssText = 'padding:10px 14px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:12px; border:1px solid ' + fcol + '55;';
+            fb.innerHTML = '<div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Карта судьбы</div>' +
+                '<div style="font-size:0.95rem; font-weight:700; color:' + fcol + ';">' + escapeHtml(fc.name) + '</div>' +
+                (fc.type !== 'neutral' ? '<div style="font-size:0.72rem; color:#c2b9d4; margin-top:4px; line-height:1.4;">' + escapeHtml(fc.desc) + '</div>' : '');
+            inner.appendChild(fb);
+        }
 
         var ampsGrid = document.createElement('div');
         ampsGrid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;';
@@ -3647,6 +3927,7 @@ function removePlayerDuringEscalation(idx) {
     escState.usedAmps        = remap(escState.usedAmps);
     escState.unlockedAmps    = remap(escState.unlockedAmps);
     escState.allAmpsUsed     = remap(escState.allAmpsUsed);
+    escState.fateCards       = remap(escState.fateCards || {});
 
     if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
         escState.pendingNewPlayer = null;
@@ -4122,29 +4403,130 @@ function hideSaveLoadModal() {
 // ============================================================
 // ПЕРЕРЫВ (Между уровнями)
 // ============================================================
-function showBreakModal() {
-    var hasAvailable = false;
-    escState.players.forEach(function(_, idx) {
-        if (!areAllCategoriesComplete(idx)) hasAvailable = true;
-    });
+// ============================================================
+// ПЕРЕРЫВ — КАРТЫ СУДЬБЫ
+// ============================================================
+function fateImgFallback(img, name) {
+    var exts = ['webp', 'png', 'jpg', 'jpeg'];
+    var i = parseInt(img.getAttribute('data-ei') || '0', 10) + 1;
+    if (i >= exts.length) { img.onerror = null; img.style.visibility = 'hidden'; return; }
+    img.setAttribute('data-ei', i);
+    img.src = 'images/' + name + '.' + exts[i];
+}
+function fateImg(name, cls) {
+    return '<img class="' + cls + '" src="images/' + name + '.webp" alt="" data-ei="0" onerror="fateImgFallback(this,\'' + name + '\')">';
+}
+function fateTypeText(el, text) {
+    var i = 0, speed = Math.max(8, Math.min(24, 2200 / Math.max(1, text.length)));
+    el.textContent = '';
+    el.classList.add('typing');
+    var timer = setInterval(function() {
+        i++;
+        el.textContent = text.slice(0, i);
+        if (i >= text.length) { clearInterval(timer); el.classList.remove('typing'); }
+    }, speed);
+    return timer;
+}
 
-    if (!hasAvailable) {
-        generateEscResult();
-        return;
+// Сгорание карты: огонь цвета типа + пепел
+function burnCard(el, type, done) {
+    var pals = {
+        bad:     ['#ff1a00', '#ff6a00', '#ffd2a0'],
+        good:    ['#1faa55', '#2ecc71', '#caffa8'],
+        special: ['#e0a800', '#f1c40f', '#fff6b0'],
+        neutral: ['#ff6a00', '#ffa640', '#ffe2b0']
+    };
+    var pal = pals[type] || pals.neutral;
+    var r = el.getBoundingClientRect();
+    var padX = 70, padTop = 200, padBot = 40;
+    var W = r.width + padX * 2, H = r.height + padTop + padBot;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    cv.style.cssText = 'position:fixed; left:' + (r.left - padX) + 'px; top:' + (r.top - padTop) + 'px; pointer-events:none; z-index:4000;';
+    document.body.appendChild(cv);
+    var ctx = cv.getContext('2d');
+    var parts = [], t0 = performance.now(), D = 2300, TAIL = 1400, doneCalled = false;
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    el.style.transition = 'none';
+
+    function frame(now) {
+        var t = now - t0, p = Math.min(1, t / D);
+        var frontY = padTop + r.height * (1 - p);
+        var X = (1 - p) * 100 + 8;
+        var m = 'linear-gradient(to bottom, #000 ' + (X - 12) + '%, transparent ' + X + '%)';
+        el.style.webkitMaskImage = m; el.style.maskImage = m;
+        el.style.filter = 'brightness(' + (1 - 0.45 * p) + ') sepia(' + (p * 0.7) + ')';
+        if (p >= 1) el.style.visibility = 'hidden';
+
+        if (p < 1) {
+            for (var i = 0; i < 11; i++) parts.push({ k: 'f', x: padX + rnd(0, r.width), y: frontY + rnd(-6, 10), vx: rnd(-0.5, 0.5), vy: -rnd(1, 3.2), s: rnd(8, 22), life: 0, max: rnd(24, 48) });
+            for (var j = 0; j < 2; j++) parts.push({ k: 'e', x: padX + rnd(0, r.width), y: frontY, vx: rnd(-1, 1), vy: -rnd(2, 4.5), s: rnd(1.5, 3), life: 0, max: rnd(40, 75) });
+        }
+        if (t < D + TAIL * 0.6) {
+            var yTop = Math.min(frontY, padTop + r.height), yBot = padTop + r.height;
+            for (var k = 0; k < 4; k++) parts.push({ k: 'a', x: padX + rnd(0, r.width), y: rnd(yTop, yBot), vx: rnd(-0.6, 1.2), vy: -rnd(0.3, 1.5), s: rnd(1.5, 4.5), life: 0, max: rnd(90, 160), g: Math.floor(rnd(70, 190)) });
+        }
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = 'lighter';
+        if (p < 1) {
+            ctx.shadowBlur = 22; ctx.shadowColor = pal[1];
+            ctx.fillStyle = pal[2]; ctx.globalAlpha = 0.85;
+            ctx.fillRect(padX, frontY - 2, r.width, 4);
+            ctx.shadowBlur = 0;
+        }
+        for (var n = parts.length - 1; n >= 0; n--) {
+            var q = parts[n];
+            q.life++;
+            if (q.life > q.max) { parts.splice(n, 1); continue; }
+            q.x += q.vx + (q.k === 'a' ? Math.sin(q.life / 9 + q.x) * 0.4 : 0);
+            q.y += q.vy;
+            if (q.k === 'f') { q.vy *= 0.985; q.s *= 0.965; }
+            var f = 1 - q.life / q.max;
+            if (q.k === 'f') {
+                var g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.s);
+                g.addColorStop(0, pal[2]); g.addColorStop(0.4, pal[1]); g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.globalAlpha = f * 0.9; ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(q.x, q.y, q.s, 0, 6.2832); ctx.fill();
+            } else if (q.k === 'e') {
+                ctx.globalAlpha = f; ctx.fillStyle = pal[2];
+                ctx.fillRect(q.x, q.y, q.s, q.s);
+            }
+        }
+        ctx.globalCompositeOperation = 'source-over';
+        for (var z = 0; z < parts.length; z++) {
+            var a = parts[z];
+            if (a.k !== 'a') continue;
+            ctx.globalAlpha = (1 - a.life / a.max) * 0.85;
+            ctx.fillStyle = 'rgb(' + a.g + ',' + a.g + ',' + a.g + ')';
+            ctx.fillRect(a.x, a.y, a.s, a.s);
+        }
+        ctx.globalAlpha = 1;
+
+        if (!doneCalled && t > D + 500) { doneCalled = true; if (done) done(); }
+        if (t < D + TAIL || parts.length > 0) requestAnimationFrame(frame);
+        else { cv.remove(); el.remove(); }
     }
+    requestAnimationFrame(frame);
+}
 
+function showBreakModal() {
     var oldModal = document.getElementById('breakModal');
     if (oldModal) oldModal.remove();
+
+    // новая «серия» карт: Отсрочка и карты прошлого перерыва сбрасываются
+    escState.reprieve = null;
+    escState.fateCards = {};
+    escState.currentBreakPlayerIndex = 0;
 
     var overlay = document.createElement('div');
     overlay.className = 'amp-modal-overlay active';
     overlay.id = 'breakModal';
-    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; padding: 20px; box-sizing: border-box;';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1500; padding: 20px; box-sizing: border-box; overflow-y: auto;';
 
     var modal = document.createElement('div');
     modal.className = 'amp-modal';
-    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 40px 50px; max-width: 1100px; width: 100%; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative;';
-
+    modal.style.cssText = 'background: linear-gradient(145deg, #1a1a2e, #2a1a3e); border-radius: 24px; padding: 36px 40px; max-width: 1100px; width: 100%; max-height: none; border: 1px solid rgba(220,90,50,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; position: relative; margin: auto;';
     modal.style.backgroundImage = "url('images/фон эскалация.webp')";
     modal.style.backgroundSize = "cover";
     modal.style.backgroundPosition = "center";
@@ -4159,90 +4541,116 @@ function showBreakModal() {
             generateEscResult();
             return;
         }
-
         var idx = escState.currentBreakPlayerIndex;
         var player = escState.players[idx];
+        var draw = getFateCardDraw({ excludeGroups: escState.reprieve ? ['reprieve'] : [] });
 
-        if (areAllCategoriesComplete(idx)) {
-            escState.currentBreakPlayerIndex++;
-            renderStep();
-            return;
+        content.innerHTML =
+            '<div style="text-align:center; margin-bottom:18px; width:100%;">' +
+                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
+                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Карты судьбы</div>' +
+            '</div>' +
+            '<div style="text-align:center; margin-bottom:14px; max-width:100%;">' +
+                '<div style="font-weight:700; color:#fff; font-size:1.2rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
+                '<div style="color:#888; font-size:0.8rem; margin-top:4px;">Выберите одну из трёх карт</div>' +
+            '</div>';
+
+        var grid = document.createElement('div'); grid.className = 'fate-grid';
+        var note = document.createElement('div'); note.className = 'fate-note';
+        var actions = document.createElement('div'); actions.className = 'fate-actions';
+        var nextBtn = document.createElement('button');
+        nextBtn.className = 'next-btn hidden-btn';
+        nextBtn.innerHTML = 'Далее →';
+        nextBtn.disabled = true;
+        actions.appendChild(nextBtn);
+
+        var picked = false, chosen = null, chosenEl = null, typeTimer = null, cdTimer = null;
+
+        function fillFront(el, c) {
+            var front = el.querySelector('.fate-face.front');
+            if (c.type === 'neutral') { front.innerHTML = fateImg('карта-пусто', 'fate-bg'); return; }
+            var len = c.desc.length;
+            var fs = len > 220 ? '0.6rem' : len > 150 ? '0.66rem' : '0.74rem';
+            front.innerHTML = fateImg('карта-пустая', 'fate-bg') +
+                '<div class="fate-text"><div class="fate-title">' + escapeHtml(c.name) + '</div><div class="fate-desc" style="font-size:' + fs + ';"></div></div>';
         }
 
-        var headerHtml = `
-            <div style="text-align: center; margin-bottom: 24px; width: 100%;">
-                <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-coffee"></i> Перерыв</div>
-                <div style="font-size: 1.5rem; font-weight: 700; color: #ffbc9a; margin-top: 2px;">Выбор АМФ</div>
-            </div>
-            <div style="text-align: center; margin-bottom: 20px; max-width: 100%;">
-                <div style="font-weight: 700; color: #fff; font-size: 1.2rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="fas fa-user" style="color: #e16d48; margin-right: 8px;"></i>${escapeHtml(player)}</div>
-            </div>
-        `;
+        function enableNext() {
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('hidden-btn');
+        }
 
-        content.innerHTML = headerHtml;
+        function jesterSwap(el) {
+            clearInterval(cdTimer); clearInterval(typeTimer);
+            el.classList.add('swapping');
+            setTimeout(function() {
+                var empty = getFateCardById('empty');
+                chosen = Object.assign({}, empty, { slot: 'empty' });
+                el.classList.remove('t-special', 't-good', 't-bad');
+                el.classList.add('t-neutral');
+                fillFront(el, chosen);
+                note.innerHTML = 'Карта заменена на «ПУСТО!»';
+            }, 400);
+            setTimeout(function() { el.classList.remove('swapping'); enableNext(); }, 800);
+        }
 
-        var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
-        var randCat = availCats[Math.floor(Math.random() * availCats.length)];
-        var availAmps = getAvailableAmpsByCategory(idx, randCat);
-        var shuf = availAmps.slice().sort(function() { return Math.random() - 0.5; });
-        var display = shuf.slice(0, 3);
+        draw.forEach(function(card) {
+            var el = document.createElement('div');
+            el.className = 'fate-card t-' + card.type;
+            el.innerHTML = '<div class="fate-card-inner"><div class="fate-face back">' + fateImg('карта-рубашка', 'fate-bg') + '</div><div class="fate-face front"></div></div>';
+            fillFront(el, card);
 
-        var catLabel = document.createElement('div');
-        catLabel.style.cssText = 'text-align: center; color: #e16d48; font-size: 0.85rem; margin-bottom: 24px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;';
-        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
-        content.appendChild(catLabel);
+            el.addEventListener('click', function() {
+                if (picked) return;
+                picked = true; chosen = card; chosenEl = el;
+                grid.querySelectorAll('.fate-card').forEach(function(o) { if (o !== el) o.classList.add('dimmed'); });
+                el.classList.add('opened');
 
-        var grid = document.createElement('div');
-        grid.className = 'player-break-grid';
-        grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 50px;';
+                var descEl = el.querySelector('.fate-desc');
+                if (descEl) setTimeout(function() { typeTimer = fateTypeText(descEl, card.desc); }, 1500);
 
-        display.forEach(function(amp) {
-            var item = document.createElement('div');
-            item.className = 'amp-card';
-            item.style.flex = '1 1 0';
-            item.style.maxWidth = '180px';
-
-            var tooltip = document.createElement('div');
-            tooltip.className = 'tooltip-box';
-            tooltip.innerHTML = `
-                <div class="tt-type">[АМФА]</div>
-                <div class="tt-name">${amp.name}</div>
-                <div class="tt-desc">${amp.desc || 'Описание амфы отсутствует.'}</div>
-            `;
-
-            item.innerHTML = `
-                <img src="${amp.image}" alt="${amp.name}" onerror="this.src='https://placehold.co/80x80/1a1a2e/e16d48?text=?'">
-                <div class="amp-title">${amp.name}</div>
-                <div class="amp-category">${amp.category}</div>
-            `;
-            item.appendChild(tooltip);
-
-            item.addEventListener('click', function() {
-                var cat = ampCategories.find(function(c) {
-                    var a = ampsData.find(function(x) { return x.name === amp.name; });
-                    return a && a.category === c;
-                });
-                if (cat) {
-                    if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
-                    escState.ampSelections[idx][cat] = amp.name;
-                    if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
-                    if (escState.usedAmps[idx].indexOf(amp.name) === -1) escState.usedAmps[idx].push(amp.name);
-                    unlockAmpForPlayer(idx, amp.name);
+                if (card.group === 'reprieve') {
+                    escState.reprieve = { holder: player, used: false };
+                    showToast('«ОТСРОЧКА»: на ближайшем испытании можно отменить 1 вариатор', '#f1c40f');
                 }
+                if (card.group === 'jester') {
+                    var left = 6;
+                    note.innerHTML = 'Карта сменится на «ПУСТО!» через <b>' + left + '</b> с';
+                    cdTimer = setInterval(function() {
+                        left--;
+                        if (left > 0) note.innerHTML = 'Карта сменится на «ПУСТО!» через <b>' + left + '</b> с';
+                        else jesterSwap(el);
+                    }, 1000);
+                } else {
+                    setTimeout(enableNext, 1400);
+                }
+            });
+            grid.appendChild(el);
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (!chosen) return;
+            nextBtn.disabled = true;
+            nextBtn.classList.add('hidden-btn');
+            note.innerHTML = '';
+            var final = Object.assign({}, chosen);
+            escState.fateCards[idx] = final;
+            escState.fateHistory.push({ level: escState.level, player: player, card: final.name, type: final.type });
+            grid.querySelectorAll('.fate-card').forEach(function(o) { if (o !== chosenEl) o.classList.add('gone'); });
+            burnCard(chosenEl, final.type, function() {
                 escState.currentBreakPlayerIndex++;
                 renderStep();
             });
-            grid.appendChild(item);
         });
 
         content.appendChild(grid);
+        content.appendChild(note);
+        content.appendChild(actions);
     }
 
     modal.appendChild(content);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
-
-    escState.currentBreakPlayerIndex = 0;
     renderStep();
 }
 
@@ -4299,7 +4707,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0, replacedVariators: [], currentEquipPlayerIndex: 0,
+                    nostophobiaCount: 0, replacedVariators: [], fateCards: {}, fateHistory: [], reprieve: null, currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
                     // [NEW]
                     initialPlayerCount: 0,
@@ -4481,16 +4889,7 @@ function doInit() {
 
             escState.currentEquipPlayerIndex = 0;
 
-            var hasAvailable = false;
-            escState.players.forEach(function(_, idx) {
-                if (!areAllCategoriesComplete(idx)) hasAvailable = true;
-            });
-
-            if (hasAvailable) {
-                showBreakModal();
-            } else {
-                generateEscResult();
-            }
+            showBreakModal();
         });
     }
 
