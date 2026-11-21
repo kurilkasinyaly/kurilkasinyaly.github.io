@@ -1619,7 +1619,7 @@
 
         /* ===== КАРТЫ СУДЬБЫ ===== */
         .fate-grid { display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin:6px 0 18px; }
-        .fate-card { width:210px; height:300px; perspective:1100px; cursor:pointer; position:relative; transition:transform .35s ease, opacity .5s ease, filter .5s ease; font-family:'Plus Jakarta Sans',sans-serif; }
+        .fate-card { width:210px; aspect-ratio:5/7; perspective:1100px; cursor:pointer; position:relative; transition:transform .35s ease, opacity .5s ease, filter .5s ease; font-family:'Plus Jakarta Sans',sans-serif; }
         .fate-card:not(.opened):not(.dimmed):hover { transform:translateY(-10px) scale(1.05); filter:drop-shadow(0 12px 22px rgba(220,90,50,.45)); }
         .fate-card-inner { position:absolute; inset:0; transform-style:preserve-3d; transition:transform .95s cubic-bezier(.2,.8,.25,1); }
         .fate-card.opened .fate-card-inner { transform:rotateY(180deg); }
@@ -1629,7 +1629,7 @@
         .fate-card.gone { opacity:0; transform:scale(.8) translateY(20px); pointer-events:none; }
         .fate-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.6); }
         .fate-face.front { transform:rotateY(180deg); }
-        .fate-bg { width:100%; height:100%; object-fit:cover; display:block; }
+        .fate-bg { width:100%; height:100%; object-fit:contain; display:block; }
         .fate-card.t-bad.opened { filter:drop-shadow(0 0 22px rgba(255,60,60,.55)); }
         .fate-card.t-good.opened { filter:drop-shadow(0 0 22px rgba(46,204,113,.55)); }
         .fate-card.t-special.opened { filter:drop-shadow(0 0 22px rgba(241,196,15,.6)); }
@@ -1650,8 +1650,16 @@
         @keyframes fateSwap { 0%{transform:rotateY(180deg)} 50%{transform:rotateY(90deg) scale(.9)} 100%{transform:rotateY(180deg)} }
         @keyframes fateTitleIn { to { opacity:1; transform:translateY(0) scale(1); } }
         @keyframes fateCaret { 50% { opacity:0; } }
+        .vc-attempts { font-size:0.8rem; color:#c2b9d4; display:flex; align-items:center; gap:4px; }
+        .vc-attempts strong { color:#2ecc71; margin-left:3px; }
+        .vc-attempts.empty, .vc-attempts.empty strong { color:#ff6666; }
+        .vc-pips { display:inline-flex; gap:5px; margin-left:8px; vertical-align:middle; }
+        .vc-pip { width:10px; height:10px; border-radius:50%; background:#2ecc71; box-shadow:0 0 7px rgba(46,204,113,.8); transition:all .4s; }
+        .vc-pip.used { background:transparent; border:1px solid #666; box-shadow:none; }
+        .vrep-left { color:#c2b9d4; font-size:.85rem; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:center; gap:4px; }
+        .vrep-left strong { color:#2ecc71; margin-left:3px; }
         .vc-btn.gold { background:linear-gradient(135deg,#b8860b,#f1c40f); color:#1a1a2e; border:none; }
-        @media (max-width:700px) { .fate-card { width:140px; height:200px; } .fate-grid { gap:14px; } .fate-title { font-size:.7rem; } }
+        @media (max-width:700px) { .fate-card { width:140px; } .fate-grid { gap:14px; } .fate-title { font-size:.7rem; } }
 
         /* ===== ЗАМЕНА ВАРИАТОРА ===== */
         .variator-controls { display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:1.2rem; padding-top:1rem; border-top:1px solid rgba(220,90,50,0.15); }
@@ -2037,6 +2045,20 @@
 <script src="equipment.js"></script>
 <script src="trials.js"></script>
 <script>
+// ============================================================
+// КАРТЫ СУДЬБЫ — данные для эскалации
+// Подключение: <script src="fate-cards.js"><\/script> (до основного скрипта)
+//
+// Поля карты:
+//   id       — уникальный идентификатор (латиницей)
+//   group    — общий идентификатор для карт с несколькими вариантами
+//   name     — название карты
+//   variant  — номер варианта (только у карт с несколькими вариантами)
+//   type     — 'good' | 'special' | 'bad' | 'neutral'
+//   drawable — false = карта не выпадает в выборе (появляется только через эффект других карт)
+//   desc     — описание эффекта
+// ============================================================
+
 var fateCardTypes = {
     good:    { label: 'Хорошая',  color: '#2ecc71' },
     special: { label: 'Особая',   color: '#f1c40f' },
@@ -2089,6 +2111,9 @@ var fateCardsData = [
     { id: 'substitution', group: 'substitution', name: 'ПОДМЕНА', type: 'special',
       desc: 'Реагент вытянувший эту карту должен обменятся с картой другого игрока и принять ее эффект на себя' },
 
+    // ===================== ПУСТАЯ (без эффекта) =====================
+    // Карта с готовой картинкой, эффекта не даёт. Заменяет карты при «ШУТ ГОРОХОВЫЙ!».
+    // Чтобы она могла выпадать в выборе, поменяйте drawable на true.
     { id: 'empty', group: 'empty', name: 'ПУСТО!', type: 'neutral', drawable: false,
       desc: 'Эта карта не даёт никакого эффекта.' },
 
@@ -2180,6 +2205,15 @@ function getRandomFateCardsUniqueGroups(count, type, excludeIds) {
         return variants[Math.floor(Math.random() * variants.length)];
     });
 }
+
+// ============================================================
+// РОЗЫГРЫШ КАРТ СУДЬБЫ ДЛЯ ПЕРЕРЫВА
+// ============================================================
+// Игроку каждый раз предлагается 3 карты:
+//   1 хорошая + 1 плохая + 1 пустая («ПУСТО!»)
+// С небольшим шансом (FATE_SPECIAL_CHANCE) вместо пустой выпадает особая карта.
+// Если у карты есть варианты (КОНТРАБАНДА, ЗАПАСНОЙ ВЫХОД) — вариант выбирается случайно.
+// ============================================================
 
 var FATE_SPECIAL_CHANCE = 0.15; // шанс особой карты вместо пустой (0.15 = 15%)
 
@@ -2353,7 +2387,7 @@ let escState = {
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-    nostophobiaCount: 0, replacedVariators: [], fateCards: {}, fateHistory: [], reprieve: null,
+    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fateCards: {}, fateHistory: [], reprieve: null,
     currentEquipPlayerIndex: 0,
     currentAmpPlayerIndex: 0,
     currentBreakPlayerIndex: 0,
@@ -2893,6 +2927,8 @@ function saveEscalation() {
                 pendingNewPlayer: escState.pendingNewPlayer ? JSON.parse(JSON.stringify(escState.pendingNewPlayer)) : null,
                 catchUpQueue: JSON.parse(JSON.stringify(escState.catchUpQueue || [])),
                 catchUpMode: escState.catchUpMode,
+                replaceLeft: escState.replaceLeft,
+                skipAmp: JSON.parse(JSON.stringify(escState.skipAmp || {})),
                 fateCards: JSON.parse(JSON.stringify(escState.fateCards || {})),
                 fateHistory: JSON.parse(JSON.stringify(escState.fateHistory || [])),
                 reprieve: escState.reprieve ? JSON.parse(JSON.stringify(escState.reprieve)) : null
@@ -2967,6 +3003,8 @@ function applySavedEscalation(data) {
     escState.catchUpQueue = s.catchUpQueue || [];
     escState.catchUpMode = s.catchUpMode || null;
     escState.fateCards = s.fateCards || {};
+    escState.replaceLeft = (s.replaceLeft == null) ? 2 : s.replaceLeft;
+    escState.skipAmp = s.skipAmp || {};
     escState.fateHistory = s.fateHistory || [];
     escState.reprieve = s.reprieve || null;
 
@@ -3455,6 +3493,7 @@ function generateEscResult() {
     // [MOD] при кооперативе используем актуальный состав
     var effectiveCount = isCoopMode() ? escState.players.length : 1;
     escState.variators = getVariatorsForLevel(escState.level, sel.mapName, effectiveCount);
+    escState.replaceLeft = 2;   // 2 попытки замены на каждое испытание
 
     document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
 
@@ -3507,20 +3546,30 @@ function prepareFullResult(mapName, mapImage, trial, difficulty) {
 }
 
 var replaceState = { active: false, selectedIndex: null, mode: 'replace' };
-var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II', 'Психохирургия', 'Двойные задания'];
+var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II'];
+var REPLACE_ATTEMPTS = 2;
+function getReplaceLeft() { return escState.replaceLeft == null ? REPLACE_ATTEMPTS : escState.replaceLeft; }
+// после 20 эскалации Психохирургию и Двойные задания менять нельзя (без пометок)
+function isLateLockedVariator(v) { return escState.level > 20 && (v.name === 'Психохирургия' || v.name === 'Двойные задания'); }
+function replacePipsHtml() {
+    var left = getReplaceLeft(), h = '<span class="vc-pips">';
+    for (var i = 0; i < REPLACE_ATTEMPTS; i++) h += '<span class="vc-pip' + (i < left ? '' : ' used') + '"></span>';
+    return h + '</span>';
+}
 
 function renderResultVariators(swapIndex) {
     var rv = document.getElementById('escResultVariators');
     if (!rv) return;
     rv.innerHTML = '';
     escState.variators.forEach(function(v, idx) {
-        var locked = replaceState.mode === 'cancel' ? false : NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1;
+        var locked = false;
+        var silent = replaceState.mode !== 'cancel' && (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1 || isLateLockedVariator(v));
         var item = document.createElement('div');
         item.className = 'var-item';
         if (v.replaced) item.classList.add('replaced');
         if (swapIndex === idx) item.classList.add('swap-in');
         if (replaceState.active) {
-            item.classList.add(locked ? 'locked' : 'selectable');
+            if (!silent) item.classList.add(locked ? 'locked' : 'selectable');
             if (replaceState.selectedIndex === idx) item.classList.add('selected');
         }
         var fontSize = v.name.length > 14 ? '0.6rem' : '0.75rem';
@@ -3530,8 +3579,8 @@ function renderResultVariators(swapIndex) {
             '</div>' +
             '<span style="font-size:' + fontSize + '; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break:break-word;">' + escapeHtml(v.name.toUpperCase()) + '</span>' +
             (v.replaced ? '<span class="var-badge"><i class="fas fa-exchange-alt"></i> заменён</span>' : '') +
-            (replaceState.active && locked ? '<span class="var-badge" style="color:#888;"><i class="fas fa-lock"></i> обязательный</span>' : '');
-        if (replaceState.active && !locked) {
+            '';
+        if (replaceState.active && !locked && !silent) {
             item.addEventListener('click', function() { replaceState.selectedIndex = idx; renderResultVariators(); });
         }
         rv.appendChild(item);
@@ -3545,12 +3594,19 @@ function renderVariatorControls() {
     var c = document.getElementById('escVariatorControls');
     if (!c) return;
     c.innerHTML = '';
+    var att = document.createElement('div');
+    att.className = 'vc-attempts' + (getReplaceLeft() <= 0 ? ' empty' : '');
+    att.innerHTML = getReplaceLeft() > 0
+        ? 'Попыток замены осталось: <strong>' + getReplaceLeft() + ' из ' + REPLACE_ATTEMPTS + '</strong>' + replacePipsHtml()
+        : 'Попытки замены закончились ' + replacePipsHtml();
+    c.appendChild(att);
     if (!replaceState.active) {
         var row0 = document.createElement('div');
         row0.className = 'vc-row';
         var open = document.createElement('button');
         open.className = 'vc-btn';
         open.innerHTML = '<i class="fas fa-exchange-alt"></i> Заменить вариатор';
+        open.disabled = getReplaceLeft() <= 0;
         open.addEventListener('click', function() {
             showReplaceWarning(function() {
                 replaceState.mode = 'replace'; replaceState.active = true; replaceState.selectedIndex = null;
@@ -3621,6 +3677,7 @@ function showReplaceWarning(onConfirm) {
             '<ol><li>Нажмите на несовместимый вариатор — он будет выделен.</li>' +
             '<li>Нажмите «Поменять вариатор».</li>' +
             '<li>Сайт заново проверит правила и сам подберёт замену только для выделенного вариатора.</li></ol>' +
+            '<div class="vrep-left">Осталось попыток замены: <strong>' + getReplaceLeft() + ' из ' + REPLACE_ATTEMPTS + '</strong>' + replacePipsHtml() + '</div>' +
             '<div class="vrep-actions"><button class="vc-btn" id="vrepCancel">Отмена</button>' +
             '<button class="vc-btn primary" id="vrepOk">Понимаю, продолжить</button></div>' +
         '</div>';
@@ -3640,7 +3697,7 @@ function pickReplacementVariator(oldV, others) {
     var pool = allVariatorsData.filter(function(v) {
         if (v.name === oldV.name || names.indexOf(v.name) !== -1) return false;
         if (isExcludedVariator(v.name) || gates.indexOf(v.name) !== -1) return false;
-        if (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1) return false;
+        if (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1 || v.name === 'Психохирургия' || v.name === 'Двойные задания') return false;
         if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
         if (isSideQuestVariator(v.name) !== oldIsSide) return false;
         return true;
@@ -3659,9 +3716,12 @@ function performVariatorReplace() {
     if (idx === null || !escState.variators[idx]) return;
     var oldV = escState.variators[idx];
     var others = escState.variators.filter(function(_, i) { return i !== idx; });
+    if (isLateLockedVariator(oldV) || NON_REPLACEABLE_VARIATORS.indexOf(oldV.name) !== -1) return;
+    if (getReplaceLeft() <= 0) { showToast('Попытки замены на это испытание закончились', '#e74c3c'); return; }
     var newV = pickReplacementVariator(oldV, others);
-    if (!newV) { showToast('Не удалось подобрать подходящую замену', '#e74c3c'); return; }
+    if (!newV) { showToast('Не удалось подобрать подходящую замену (попытка не потрачена)', '#e74c3c'); return; }
     escState.variators[idx] = Object.assign({}, newV, { replaced: true, originalName: oldV.name });
+    escState.replaceLeft = getReplaceLeft() - 1;
     escState.replacedVariators = escState.replacedVariators || [];
     escState.replacedVariators.push({ level: escState.level, from: oldV.name, to: newV.name });
     var h = getVariatorHistory();
@@ -3672,7 +3732,7 @@ function performVariatorReplace() {
     replaceState.active = false;
     replaceState.selectedIndex = null;
     renderResultVariators(idx);
-    showToast('«' + oldV.name + '» заменён на «' + newV.name + '»', '#2ecc71');
+    showToast('«' + oldV.name + '» заменён на «' + newV.name + '» · осталось попыток: ' + getReplaceLeft(), '#2ecc71');
 }
 
 function renderEscResultPlayers() {
@@ -3928,6 +3988,7 @@ function removePlayerDuringEscalation(idx) {
     escState.unlockedAmps    = remap(escState.unlockedAmps);
     escState.allAmpsUsed     = remap(escState.allAmpsUsed);
     escState.fateCards       = remap(escState.fateCards || {});
+    escState.skipAmp         = remap(escState.skipAmp || {});
 
     if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
         escState.pendingNewPlayer = null;
@@ -4413,8 +4474,12 @@ function fateImgFallback(img, name) {
     img.setAttribute('data-ei', i);
     img.src = 'images/' + name + '.' + exts[i];
 }
+function fateImgLoaded(img) {
+    var card = img.closest('.fate-card');
+    if (card && img.naturalWidth && img.closest('.fate-face.back')) card.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+}
 function fateImg(name, cls) {
-    return '<img class="' + cls + '" src="images/' + name + '.webp" alt="" data-ei="0" onerror="fateImgFallback(this,\'' + name + '\')">';
+    return '<img class="' + cls + '" src="images/' + name + '.webp" alt="" data-ei="0" onload="fateImgLoaded(this)" onerror="fateImgFallback(this,\'' + name + '\')">';
 }
 function fateTypeText(el, text) {
     var i = 0, speed = Math.max(8, Math.min(24, 2200 / Math.max(1, text.length)));
@@ -4445,7 +4510,7 @@ function burnCard(el, type, done) {
     cv.style.cssText = 'position:fixed; left:' + (r.left - padX) + 'px; top:' + (r.top - padTop) + 'px; pointer-events:none; z-index:4000;';
     document.body.appendChild(cv);
     var ctx = cv.getContext('2d');
-    var parts = [], t0 = performance.now(), D = 2300, TAIL = 1400, doneCalled = false;
+    var parts = [], t0 = performance.now(), D = 1700, TAIL = 1100, doneCalled = false;
     function rnd(a, b) { return a + Math.random() * (b - a); }
     el.style.transition = 'none';
 
@@ -4503,7 +4568,7 @@ function burnCard(el, type, done) {
         }
         ctx.globalAlpha = 1;
 
-        if (!doneCalled && t > D + 500) { doneCalled = true; if (done) done(); }
+        if (!doneCalled && t > D + 400) { doneCalled = true; if (done) done(); }
         if (t < D + TAIL || parts.length > 0) requestAnimationFrame(frame);
         else { cv.remove(); el.remove(); }
     }
@@ -4516,8 +4581,9 @@ function showBreakModal() {
 
     // новая «серия» карт: Отсрочка и карты прошлого перерыва сбрасываются
     escState.reprieve = null;
-    escState.fateCards = {};
     escState.currentBreakPlayerIndex = 0;
+    // чётный уровень (перед 2, 4, 6... испытанием) — выбор улучшений, нечётный — карты судьбы
+    var ampBreak = (escState.level % 2 === 0);
 
     var overlay = document.createElement('div');
     overlay.className = 'amp-modal-overlay active';
@@ -4541,6 +4607,103 @@ function showBreakModal() {
             generateEscResult();
             return;
         }
+        var i0 = escState.currentBreakPlayerIndex;
+        if (ampBreak && !areAllCategoriesComplete(i0)) {
+            if (escState.skipAmp && escState.skipAmp[i0]) { renderSkipStep(i0); return; }
+            renderAmpStep(i0);
+        } else {
+            renderCardStep();
+        }
+    }
+
+    // игрок пропускает выбор улучшения из-за карты «В СЛЕДУЮЩИЙ РАЗ»
+    function renderSkipStep(idx) {
+        var player = escState.players[idx];
+        content.innerHTML =
+            '<div style="text-align:center; margin-bottom:18px; width:100%;">' +
+                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
+                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Выбор АМФ</div>' +
+            '</div>' +
+            '<div style="text-align:center; max-width:520px; margin:20px 0 26px;">' +
+                '<div style="font-weight:700; color:#fff; font-size:1.2rem; margin-bottom:12px;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
+                '<div style="color:#ff6666; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;"><i class="fas fa-ban"></i> Улучшение пропущено</div>' +
+                '<div style="color:#c2b9d4; font-size:0.9rem; line-height:1.5;">Карта «В СЛЕДУЮЩИЙ РАЗ»: на этот раз игрок остаётся без выбора улучшения.</div>' +
+            '</div>';
+        var btnWrap = document.createElement('div');
+        btnWrap.className = 'fate-actions';
+        var b = document.createElement('button');
+        b.className = 'next-btn';
+        b.innerHTML = 'Далее →';
+        b.addEventListener('click', function() {
+            escState.skipAmp[idx] = false;
+            escState.currentBreakPlayerIndex++;
+            renderStep();
+        });
+        btnWrap.appendChild(b);
+        content.appendChild(btnWrap);
+    }
+
+    // выбор АМФ — как и раньше
+    function renderAmpStep(idx) {
+        var player = escState.players[idx];
+        content.innerHTML =
+            '<div style="text-align:center; margin-bottom:24px; width:100%;">' +
+                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
+                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Выбор АМФ</div>' +
+            '</div>' +
+            '<div style="text-align:center; margin-bottom:20px; max-width:100%;">' +
+                '<div style="font-weight:700; color:#fff; font-size:1.2rem; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
+            '</div>';
+
+        var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
+        var randCat = availCats[Math.floor(Math.random() * availCats.length)];
+        var availAmps = getAvailableAmpsByCategory(idx, randCat);
+        var display = availAmps.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 3);
+
+        var catLabel = document.createElement('div');
+        catLabel.style.cssText = 'text-align:center; color:#e16d48; font-size:0.85rem; margin-bottom:24px; font-weight:600; letter-spacing:1px; text-transform:uppercase;';
+        catLabel.innerHTML = '<i class="fas fa-tag"></i> ' + randCat;
+        content.appendChild(catLabel);
+
+        var agrid = document.createElement('div');
+        agrid.className = 'player-break-grid';
+        agrid.style.cssText = 'display:flex; gap:30px; justify-content:center; flex-wrap:nowrap; width:100%; max-width:700px; margin:0 auto; padding-bottom:50px;';
+
+        display.forEach(function(amp) {
+            var item = document.createElement('div');
+            item.className = 'amp-card';
+            item.style.flex = '1 1 0';
+            item.style.maxWidth = '180px';
+            var tooltip = document.createElement('div');
+            tooltip.className = 'tooltip-box';
+            tooltip.innerHTML = '<div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || 'Описание амфы отсутствует.') + '</div>';
+            item.innerHTML =
+                '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
+                '<div class="amp-title">' + amp.name + '</div>' +
+                '<div class="amp-category">' + amp.category + '</div>';
+            item.appendChild(tooltip);
+            item.addEventListener('click', function() {
+                var cat = ampCategories.find(function(c) {
+                    var a = ampsData.find(function(x) { return x.name === amp.name; });
+                    return a && a.category === c;
+                });
+                if (cat) {
+                    if (!escState.ampSelections[idx]) escState.ampSelections[idx] = {};
+                    escState.ampSelections[idx][cat] = amp.name;
+                    if (!escState.usedAmps[idx]) escState.usedAmps[idx] = [];
+                    if (escState.usedAmps[idx].indexOf(amp.name) === -1) escState.usedAmps[idx].push(amp.name);
+                    unlockAmpForPlayer(idx, amp.name);
+                }
+                escState.currentBreakPlayerIndex++;
+                renderStep();
+            });
+            agrid.appendChild(item);
+        });
+        content.appendChild(agrid);
+    }
+
+    // карта судьбы
+    function renderCardStep() {
         var idx = escState.currentBreakPlayerIndex;
         var player = escState.players[idx];
         var draw = getFateCardDraw({ excludeGroups: escState.reprieve ? ['reprieve'] : [] });
@@ -4635,6 +4798,7 @@ function showBreakModal() {
             note.innerHTML = '';
             var final = Object.assign({}, chosen);
             escState.fateCards[idx] = final;
+            if (final.group === 'next_time') { escState.skipAmp = escState.skipAmp || {}; escState.skipAmp[idx] = true; }
             escState.fateHistory.push({ level: escState.level, player: player, card: final.name, type: final.type });
             grid.querySelectorAll('.fate-card').forEach(function(o) { if (o !== chosenEl) o.classList.add('gone'); });
             burnCard(chosenEl, final.type, function() {
@@ -4707,7 +4871,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0, replacedVariators: [], fateCards: {}, fateHistory: [], reprieve: null, currentEquipPlayerIndex: 0,
+                    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fateCards: {}, fateHistory: [], reprieve: null, currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
                     // [NEW]
                     initialPlayerCount: 0,
