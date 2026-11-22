@@ -1673,7 +1673,24 @@
         .fate-card.picked { transform:translateY(-12px) scale(1.06); filter:drop-shadow(0 0 26px rgba(255,255,255,.55)); }
         @keyframes fateStamp { 0% { opacity:0; transform:translateX(-50%) rotate(-6deg) scale(2.4); } 100% { opacity:1; transform:translateX(-50%) rotate(-6deg) scale(1); } }
 
-        /* ===== плашка с инструкцией ===== */
+        /* ===== ТЕКСТ НА КАРТЕ: название сверху, описание снизу (поверх картинки) ===== */
+.fate-text { position:absolute; inset:0; padding:0; display:block; overflow:hidden; pointer-events:none; }
+.fate-body { position:relative; display:block; height:100%; width:100%; gap:0; }
+.fate-card .fate-title { position:absolute; top:4.5%; left:9%; right:9%; width:auto; height:14%; flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:15px; font-weight:900; line-height:1.1; text-transform:uppercase; text-align:center; }
+.fate-card .fate-title-in { display:block; width:100%; min-width:0; text-align:center; overflow-wrap:normal; word-break:normal; }
+.fate-card .fate-desc { position:absolute; left:9%; right:9%; bottom:5%; top:auto; width:auto; height:34%; min-height:0; flex:none; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; font-size:12.5px; font-weight:800; line-height:1.28; text-align:center; }
+.fate-card .fate-desc-in { display:block; width:100%; min-width:0; text-align:center; }
+.fate-card .fate-title, .fate-card .fate-desc {
+    -webkit-text-stroke: 0.22em #000; paint-order: stroke fill;
+    text-shadow: 0 0 3px #000, 0 0 6px #000, 0 0 10px rgba(0,0,0,.9), 0 2px 3px #000, 0 -2px 3px #000, 2px 0 3px #000, -2px 0 3px #000;
+}
+.fate-card .fate-desc .rest { -webkit-text-stroke:0 !important; color:transparent !important; text-shadow:none !important; }
+.fate-card.t-bad .fate-title, .fate-card.t-bad .fate-desc { color:#ff7a7a; }
+.fate-card.t-good .fate-title, .fate-card.t-good .fate-desc { color:#5dffa0; }
+.fate-card.t-special .fate-title, .fate-card.t-special .fate-desc { color:#ffe44d; }
+.fate-stamp { display:none !important; }
+
+/* ===== плашка с инструкцией ===== */
         .fate-intro-overlay { position:fixed; inset:0; z-index:3300; background:rgba(0,0,0,.88); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto; animation:vrepOverlayIn .3s ease; }
         .fate-intro { max-width:600px; width:100%; margin:auto; text-align:center; background:linear-gradient(145deg,#1a1a2e,#2a1a3e); border:2px solid rgba(220,90,50,.5); border-radius:26px; padding:1.8rem 2rem; box-shadow:0 20px 60px #000, 0 0 40px rgba(220,90,50,.25); animation:fateIntroIn .7s cubic-bezier(.2,.9,.3,1.2); font-family:'Plus Jakarta Sans',sans-serif; }
         .fate-intro-icon { width:64px; height:64px; margin:0 auto .6rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:#e16d48; background:rgba(220,90,50,.15); border:2px solid rgba(220,90,50,.5); animation:vrepIconPulse 1.8s ease-out infinite; }
@@ -2218,7 +2235,7 @@ var fateCardsData = [
     { id: 'death_jester', group: 'death_jester', name: 'СМЕРТЬ ШУТА', type: 'special',
       desc: 'Все игроки, кроме тебя в следующем выборе вытягивают по негативной карте. Ты же получаешь пустую карту' },
     { id: 'coup', group: 'coup', name: 'ПЕРЕВОРОТ', type: 'special',
-      desc: 'В следующем выборе положительный эффект карты превращается в отрицательный, а отрицательный – в положительный' },
+      desc: 'В следующем выборе (только для владельца этой карты) положительный эффект карты превращается в отрицательный, а отрицательный – в положительный' },
     { id: 'madness', group: 'madness', name: 'БЕЗУМИЕ', type: 'special',
       desc: 'Все твои активные карты сбрасываются. Взамен вытягиваешь три новые и выполняешь две на выбор' },
     { id: 'bear_favor', group: 'bear_favor', name: 'МЕДВЕЖЬЯ УСЛУГА', type: 'special',
@@ -3921,7 +3938,7 @@ function renderEscResultPlayers() {
             inner.appendChild(fb);
         });
         var pendTxt = { reverse: 'следующая карта изменится', bear: 'следующий выбор: эффект меняется на противоположный', curse: 'в следующем выборе — две карты',
-                        death: 'остальные получат негативные карты', coup: 'эффекты карт в следующем выборе меняются местами',
+                        death: 'остальные получат негативные карты', coup: 'в вашем следующем выборе эффекты карт меняются местами (только для вас)',
                         trump: 'сохранён: следующий выбор пропускается, карта применится сразу', immunity: 'отменит одну негативную карту' };
         (escState.fatePending || []).filter(function(e) { return e.idx === idx; }).forEach(function(e) {
             var pb = document.createElement('div');
@@ -4576,28 +4593,41 @@ function hideSaveLoadModal() {
 // ============================================================
 
 // ---- картинки карт: через background (браузеры не видят в них <img>) ----
-function fateLoadBg(div, name, cb) {
-    var exts = ['webp', 'png', 'jpg', 'jpeg'], i = 0;
+function fateLoadBg(div, name, cb, fallback) {
+    var folders = ['cards', 'images'], exts = ['webp', 'png', 'jpg', 'jpeg'], list = [];
+    folders.forEach(function(f) { exts.forEach(function(e) { list.push(f + '/' + name + '.' + e); }); });
+    var i = 0;
     (function tryNext() {
+        if (i >= list.length) {
+            if (fallback) fateLoadBg(div, fallback, cb);
+            return;
+        }
+        var path = encodeURI(list[i]);
         var im = new Image();
         im.onload = function() {
-            div.style.backgroundImage = "url('images/" + name + "." + exts[i] + "')";
+            div.style.backgroundImage = "url('" + path + "')";
             if (cb) cb(im);
         };
-        im.onerror = function() { i++; if (i < exts.length) tryNext(); };
-        im.src = 'images/' + name + '.' + exts[i];
+        im.onerror = function() { i++; tryNext(); };
+        im.src = path;
     })();
 }
-function fateBgHtml(name) { return '<div class="fate-bg" data-bg="' + name + '"></div>'; }
+// имя файла картинки карты: «карта-<название карты>» (в нижнем регистре, без знаков препинания)
+function fateImageName(c) {
+    return 'карта-' + String(c.name).toLowerCase().replace(/[!?.,:;«»"']/g, '').replace(/\s+/g, ' ').trim();
+}
+function fateBgHtml(name, fb) { return '<div class="fate-bg" data-bg="' + name + '"' + (fb ? ' data-fb="' + fb + '"' : '') + '></div>'; }
 function fateHydrate(root) {
     root.querySelectorAll('[data-bg]').forEach(function(d) {
         var name = d.getAttribute('data-bg');
+        var fb = d.getAttribute('data-fb');
         d.removeAttribute('data-bg');
         var card = d.closest('.fate-card');
         var isBack = !!d.closest('.fate-face.back');
         fateLoadBg(d, name, function(im) {
-            if (isBack && card) { card.style.aspectRatio = im.naturalWidth + ' / ' + im.naturalHeight; fateFitCard(card); }
-        });
+            if (isBack && card) { card.style.aspectRatio = im.naturalWidth + ' / ' + im.naturalHeight; }
+            if (card) fateFitCard(card);
+        }, fb);
     });
 }
 
@@ -4605,18 +4635,20 @@ function fateHydrate(root) {
 function fateFitCard(card) {
     var title = card.querySelector('.fate-title'), desc = card.querySelector('.fate-desc');
     if (!title || !desc) return;
+    var tIn = title.querySelector('.fate-title-in'), dIn = desc.querySelector('.fate-desc-in');
+    if (!tIn || !dIn) return;
     var W = card.clientWidth;
     if (!W) return;
     var s = W / 210, tf = 15 * s, df = 12.5 * s;
     title.style.fontSize = tf + 'px';
-    title.style.letterSpacing = (1.1 * s) + 'px';
-    while ((title.scrollWidth > title.clientWidth + 1 || title.offsetHeight > tf * 1.3 * 3) && tf > 7) {
+    title.style.letterSpacing = (0.6 * s) + 'px';
+    while ((tIn.offsetHeight > title.clientHeight + 1 || title.scrollWidth > title.clientWidth + 1 || tIn.scrollWidth > title.clientWidth + 1) && tf > 5) {
         tf -= 0.5;
         title.style.fontSize = tf + 'px';
-        title.style.letterSpacing = Math.max(0, (tf / 15) * 1.1 * s) + 'px';
+        title.style.letterSpacing = Math.max(0, (tf / 15) * 0.6 * s) + 'px';
     }
     desc.style.fontSize = df + 'px';
-    while (desc.scrollHeight > desc.clientHeight + 1 && df > 5) {
+    while ((dIn.offsetHeight > desc.clientHeight + 1 || dIn.scrollWidth > desc.clientWidth + 1) && df > 3.5) {
         df -= 0.25;
         desc.style.fontSize = df + 'px';
     }
@@ -4627,12 +4659,14 @@ function fateFillFront(el, c) {
     el.classList.remove('t-good', 't-bad', 't-special', 't-neutral');
     el.classList.add('t-' + c.type);
     if (c.type === 'neutral') {
-        front.innerHTML = fateBgHtml('карта-пусто');
+        front.innerHTML = fateBgHtml(fateImageName(c), 'карта-пусто');
     } else {
-        front.innerHTML = fateBgHtml('карта-пустая') +
-            '<div class="fate-text"><div class="fate-body"><div class="fate-title">' + escapeHtml(c.name) + '</div>' +
-            '<div class="fate-desc"><span class="ty"></span><span class="rest">' + escapeHtml(c.desc) + '</span></div></div></div>' +
-            (c.doubled ? '<div class="fate-stamp">эффект ×2</div>' : '');
+        // картинка карты — фон; название «…» сверху, описание снизу, больше ничего поверх
+        front.innerHTML = fateBgHtml(fateImageName(c), 'карта-пустая') +
+            '<div class="fate-text"><div class="fate-body">' +
+            '<div class="fate-title"><span class="fate-title-in">«' + escapeHtml(c.name) + '»</span></div>' +
+            '<div class="fate-desc"><div class="fate-desc-in"><span class="ty"></span><span class="rest">' + escapeHtml(c.desc) + '</span></div></div>' +
+            '</div></div>';
     }
     fateHydrate(front);
     fateFitCard(el);
@@ -4795,7 +4829,8 @@ function fateBuildCtx(idx) {
     }
     var cu = fateTake('curse', idx);
     if (cu) { ctx.picks = 2; fateConsume(cu); ctx.banner.push('ПРОКЛЯТАЯ РУКА: нужно вытянуть две карты'); }
-    if (fateTake('coup', null)) { ctx.coup = true; ctx.banner.push('ПЕРЕВОРОТ: положительные и отрицательные эффекты карт меняются местами'); }
+    var cp = fateTake('coup', idx);
+    if (cp) { ctx.coup = true; fateConsume(cp); ctx.banner.push('ПЕРЕВОРОТ (только для вас): положительные и отрицательные эффекты карт меняются местами'); }
     var br = fateTake('bear', idx);
     if (br) { ctx.bear = true; fateConsume(br); ctx.banner.push('МЕДВЕЖЬЯ УСЛУГА: карту выбирает товарищ по команде, её эффект меняется на противоположный'); }
     ctx.reverse = fateTake('reverse', idx);
@@ -4975,7 +5010,7 @@ function showBreakModal() {
     function finishBreak() {
         if (anyCardStep) {
             escState.fatePending = fatePend().filter(function(e) {
-                return !((e.type === 'coup' || e.type === 'death') && e.round < escState.fateRound);
+                return !(e.type === 'death' && e.round < escState.fateRound);
             });
         }
         overlay.remove();
@@ -5172,13 +5207,7 @@ function showBreakModal() {
                     countdownSwap(res.reasons, final, function() { afterFinal(); });
                 } else {
                     if (res.doubled) {
-                        setTimeout(function() {
-                            var st = document.createElement('div');
-                            st.className = 'fate-stamp';
-                            st.textContent = 'эффект ×2';
-                            el.querySelector('.fate-face.front').appendChild(st);
-                            note.innerHTML = 'ОБРАТНАЯ СТОРОНА: эффект карты удвоен';
-                        }, 1200);
+                        setTimeout(function() { note.innerHTML = 'ОБРАТНАЯ СТОРОНА: эффект карты удвоен'; }, 1200);
                     }
                     setTimeout(afterFinal, 1400);
                 }
@@ -5219,7 +5248,7 @@ function showBreakModal() {
         var player = escState.players[idx];
         escState.fateCards[idx] = [];
         escState.fatePending = fatePend().filter(function(e) {
-            return e.idx !== idx || e.type === 'coup' || e.type === 'death';
+            return e.idx !== idx || e.type === 'death';
         });
         escState.skipAmp[idx] = false;
 
