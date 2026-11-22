@@ -1658,6 +1658,45 @@
         .vc-pip.used { background:transparent; border:1px solid #666; box-shadow:none; }
         .vrep-left { color:#c2b9d4; font-size:.85rem; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:center; gap:4px; }
         .vrep-left strong { color:#2ecc71; margin-left:3px; }
+        /* ===== КАРТЫ: картинки как background, текст внутри карты ===== */
+        .fate-card, .fate-card * { -webkit-user-select:none; user-select:none; -webkit-user-drag:none; -webkit-touch-callout:none; }
+        .fate-bg { background-size:contain; background-repeat:no-repeat; background-position:center; width:100%; height:100%; }
+        .fate-text { position:absolute; inset:0; padding:19% 13% 14%; overflow:hidden; display:block; }
+        .fate-body { height:100%; display:flex; flex-direction:column; align-items:center; gap:5%; overflow:hidden; }
+        .fate-title { flex:none; width:100%; text-align:center; font-size:15px; overflow:hidden; }
+        .fate-desc { flex:1; min-height:0; width:100%; overflow:hidden; text-align:center; font-size:12.5px; }
+        .fate-desc .rest { color:transparent !important; text-shadow:none !important; }
+        .fate-stamp { position:absolute; left:50%; bottom:8%; transform:translateX(-50%) rotate(-6deg); padding:3px 12px; border:2px solid #ff4d4d; color:#ff4d4d; font-weight:800; font-size:.7rem; letter-spacing:2px; text-transform:uppercase; border-radius:6px; background:rgba(0,0,0,.55); animation:fateStamp .5s cubic-bezier(.2,1.6,.4,1); }
+        .fate-banner { text-align:center; color:#f1c40f; font-size:.78rem; line-height:1.5; max-width:640px; margin:0 0 12px; padding:8px 16px; border:1px dashed rgba(241,196,15,.4); border-radius:12px; background:rgba(241,196,15,.06); }
+        .fate-actions { gap:12px; flex-wrap:wrap; }
+        .fate-card.selectable { cursor:pointer; }
+        .fate-card.picked { transform:translateY(-12px) scale(1.06); filter:drop-shadow(0 0 26px rgba(255,255,255,.55)); }
+        @keyframes fateStamp { 0% { opacity:0; transform:translateX(-50%) rotate(-6deg) scale(2.4); } 100% { opacity:1; transform:translateX(-50%) rotate(-6deg) scale(1); } }
+
+        /* ===== плашка с инструкцией ===== */
+        .fate-intro-overlay { position:fixed; inset:0; z-index:3300; background:rgba(0,0,0,.88); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto; animation:vrepOverlayIn .3s ease; }
+        .fate-intro { max-width:600px; width:100%; margin:auto; text-align:center; background:linear-gradient(145deg,#1a1a2e,#2a1a3e); border:2px solid rgba(220,90,50,.5); border-radius:26px; padding:1.8rem 2rem; box-shadow:0 20px 60px #000, 0 0 40px rgba(220,90,50,.25); animation:fateIntroIn .7s cubic-bezier(.2,.9,.3,1.2); font-family:'Plus Jakarta Sans',sans-serif; }
+        .fate-intro-icon { width:64px; height:64px; margin:0 auto .6rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:#e16d48; background:rgba(220,90,50,.15); border:2px solid rgba(220,90,50,.5); animation:vrepIconPulse 1.8s ease-out infinite; }
+        .fate-intro h2 { font-size:1.6rem; letter-spacing:3px; text-transform:uppercase; background:linear-gradient(135deg,#fff,#e25d32,#ffbc9a); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .fate-intro-sub { color:#888; font-size:.75rem; letter-spacing:2px; text-transform:uppercase; margin:.2rem 0 1rem; }
+        .fate-intro-item { display:flex; gap:14px; align-items:flex-start; text-align:left; margin:10px 0; color:#c2b9d4; font-size:.88rem; line-height:1.5; opacity:0; transform:translateX(-26px); animation:fateIntroItem .6s ease forwards; animation-delay:calc(.45s + var(--i) * .25s); }
+        .fate-intro-item > span { flex:none; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(220,90,50,.18); color:#e16d48; }
+        .fate-intro-legend { display:flex; gap:10px; justify-content:center; margin:1.1rem 0 1.3rem; opacity:0; animation:fateIntroItem .6s ease 1.6s forwards; }
+        .fate-intro-legend span { padding:4px 14px; border-radius:20px; font-size:.75rem; font-weight:700; border:1px solid; }
+        .lg-good { color:#2ecc71; border-color:#2ecc71; background:rgba(46,204,113,.1); }
+        .lg-bad { color:#ff4d4d; border-color:#ff4d4d; background:rgba(255,77,77,.1); }
+        .lg-special { color:#f1c40f; border-color:#f1c40f; background:rgba(241,196,15,.1); }
+        .tp-box { max-width:760px; }
+        .tp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; max-height:55vh; overflow-y:auto; margin:0 0 1.2rem; padding:4px; }
+        .tp-item { background:rgba(0,0,0,.35); border:2px solid rgba(220,90,50,.2); border-radius:12px; padding:8px; cursor:pointer; transition:all .25s; }
+        .tp-item:hover { border-color:#e16d48; transform:translateY(-2px); }
+        .tp-item.sel { border-color:#f1c40f; box-shadow:0 0 18px rgba(241,196,15,.4); }
+        .tp-item img { width:100%; height:70px; object-fit:cover; border-radius:8px; display:block; }
+        .tp-name { font-size:.72rem; font-weight:700; color:#ffbc9a; margin-top:6px; text-transform:uppercase; }
+        .tp-map { font-size:.6rem; color:#888; }
+        @keyframes fateIntroIn { 0% { opacity:0; transform:translateY(50px) scale(.85); } 100% { opacity:1; transform:none; } }
+        @keyframes fateIntroItem { to { opacity:1; transform:none; } }
+
         .vc-btn.gold { background:linear-gradient(135deg,#b8860b,#f1c40f); color:#1a1a2e; border:none; }
         @media (max-width:700px) { .fate-card { width:140px; } .fate-grid { gap:14px; } .fate-title { font-size:.7rem; } }
 
@@ -2149,7 +2188,41 @@ var fateCardsData = [
       desc: 'Реагент вытянувший эту карту лишается возможности на второй шанс. Если у игрока снаряжение «Глушилка» а так же амфа «Самооживление» он их убирает, а товарищи по команде не в праве оживить его при помощи шприцов' },
 
     { id: 'next_time', group: 'next_time', name: 'В СЛЕДУЮЩИЙ РАЗ', type: 'bad',
-      desc: 'Реагент вытянувший эту карту лишается возможности на выбор улучшений' }
+      desc: 'Реагент вытянувший эту карту лишается возможности на выбор улучшений' },
+
+    // ===================== ДОПОЛНЕНИЕ: ХОРОШИЕ =====================
+    { id: 'out_of_script', group: 'out_of_script', name: 'ВНЕ СЦЕНАРИЯ', type: 'good',
+      desc: 'Реагент вытянувший эту карту в праве самостоятельно выбрать карту с испытанием (даже ту которая уже была в списке, Примечание: если эта карта выпала перед Генезисным заданием то испытание можно выбрать только из списка генезисных карт)' },
+    { id: 'immunity_new', group: 'immunity_new', name: 'ИММУНИТЕТ', type: 'good',
+      desc: 'Реагент вытянувший эту карту приобретает иммунитет к действию одной негативной карты. Так же другие игроки не в праве передавать свой карты этому игроку, или делать его жертвой своего выбора до окончания действия этой карты' },
+    { id: 'trump', group: 'trump', name: 'КОЗЫРЬ В РУКАВЕ', type: 'good',
+      desc: 'Реагент вытянувший эту карту может использовать ее сразу (карта превращается с положительным эффектом) или сохранить на следующий выбор (если игрок сохраняет карту то он не участвует в следующем выборе карты а его карта сразу же применяется с положительным эффектом)' },
+
+    // ===================== ДОПОЛНЕНИЕ: ПЛОХИЕ =====================
+    { id: 'shackles', group: 'shackles', name: 'ОКОВЫ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту лишается возможности подбирать предметы разбросанные в испытании (отмычки, батарейки, аптечки, перезарядки снаряжения, кирпичи, бутылки). Предметы от которых зависит выполнения главного задания испытания подбирать можно (головы, кислоты, канистры с топливом)' },
+    { id: 'curse_hand', group: 'curse_hand', name: 'ПРОКЛЯТАЯ РУКА', type: 'bad',
+      desc: 'Реагент вытянувший эту карту в следующем выборе обязан вытянуть не одну а две карты судьбы. Эффект обоих карт вступает в силу' },
+    { id: 'plague', group: 'plague', name: 'ЧУМА', type: 'bad',
+      desc: 'Реагент вытянувший эту карту заражен смертельной болезнью и игрокам по команде запрещено подходить и совершать совместные действия с этим игроком (вышибать двойные двери, приходить ему на помощь или же ждать помощи от этого игрока) при нарушении этого правила игрок так же получит статус «ЗАРАЖЕННЫЙ» и правила будут работать так же против него' },
+    { id: 'others_luck', group: 'others_luck', name: 'ЧУЖАЯ УДАЧА', type: 'bad',
+      desc: 'Реагент вытянувший эту карту выбирает одного игрока из команды. Игрок которого выбрали в следующем выборе обязан вытянуть две карты (за себя и за игрока который его выбрал) после чего у игрока который его выбрал будет выбор забрать одну карту себе или же оставить обе тому игроку которого он выбрал' },
+    { id: 'reverse_side', group: 'reverse_side', name: 'ОБРАТНАЯ СТОРОНА', type: 'bad',
+      desc: 'Твоя следующая положительная карта превращается в отрицательную. Если карта отрицательная - её эффект удваивается' },
+    { id: 'weak_link', group: 'weak_link', name: 'СЛАБОЕ ЗВЕНО', type: 'bad',
+      desc: 'Реагент вытянувший эту карту лишается всей своей экипировки (снаряжения и амф)' },
+    { id: 'blood_ties', group: 'blood_ties', name: 'КРОВНЫЕ УЗЫ', type: 'bad',
+      desc: 'Реагент вытянувший эту карту не может отходить от своих товарищей по команде не дальше чем на 10 м и всегда должен держаться рядом' },
+
+    // ===================== ДОПОЛНЕНИЕ: ОСОБЫЕ =====================
+    { id: 'death_jester', group: 'death_jester', name: 'СМЕРТЬ ШУТА', type: 'special',
+      desc: 'Все игроки, кроме тебя в следующем выборе вытягивают по негативной карте. Ты же получаешь пустую карту' },
+    { id: 'coup', group: 'coup', name: 'ПЕРЕВОРОТ', type: 'special',
+      desc: 'В следующем выборе положительный эффект карты превращается в отрицательный, а отрицательный – в положительный' },
+    { id: 'madness', group: 'madness', name: 'БЕЗУМИЕ', type: 'special',
+      desc: 'Все твои активные карты сбрасываются. Взамен вытягиваешь три новые и выполняешь две на выбор' },
+    { id: 'bear_favor', group: 'bear_favor', name: 'МЕДВЕЖЬЯ УСЛУГА', type: 'special',
+      desc: 'Игроку вытянувшему эту карту в следующем выборе делает выбор товарищ по команде если он вытягивает карту с негативным эффектом она меняется на положительную, а если вытягивает положительную то она меняется на негативную (если вытягивается карта «ПУСТО!» никого эффекта не будет)' }
 ];
 
 // ============================================================
@@ -2387,7 +2460,7 @@ let escState = {
     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
     map: null, trial: null, difficulty: null, variators: [],
     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fateCards: {}, fateHistory: [], reprieve: null,
+    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fatePending: [], fateRound: 0, fateIntroShown: false, forcedTrial: null, fateCards: {}, fateHistory: [], reprieve: null,
     currentEquipPlayerIndex: 0,
     currentAmpPlayerIndex: 0,
     currentBreakPlayerIndex: 0,
@@ -2820,6 +2893,20 @@ function getVariatorsForLevel(level, mapName, playerCount) {
 // ============================================================
 function getMapAndTrial(level) {
     if (typeof trialsData === 'undefined') return null;
+    if (escState.forcedTrial) {
+        var ft = escState.forcedTrial;
+        escState.forcedTrial = null;
+        var fmd = trialsData[ft.mapName];
+        var ftr = fmd && fmd.trials.find(function(t) { return t.name === ft.trialName; });
+        if (ftr) {
+            escState.map = { name: ft.mapName, image: fmd.image };
+            escState.trial = ftr;
+            var fbig = ftr.name === ftr.name.toUpperCase();
+            var fl = fbig ? escState.usedBigTrials : escState.usedSmallTrials;
+            if (fl.indexOf(ftr.name) === -1) fl.push(ftr.name);
+            return { mapName: ft.mapName, mapImage: fmd.image, trial: ftr };
+        }
+    }
     var mapNames = Object.keys(trialsData);
     var isBig = (level % 10 === 0);
     var availableTrials = [];
@@ -2929,6 +3016,10 @@ function saveEscalation() {
                 catchUpMode: escState.catchUpMode,
                 replaceLeft: escState.replaceLeft,
                 skipAmp: JSON.parse(JSON.stringify(escState.skipAmp || {})),
+                fatePending: JSON.parse(JSON.stringify(escState.fatePending || [])),
+                fateRound: escState.fateRound || 0,
+                fateIntroShown: !!escState.fateIntroShown,
+                forcedTrial: escState.forcedTrial || null,
                 fateCards: JSON.parse(JSON.stringify(escState.fateCards || {})),
                 fateHistory: JSON.parse(JSON.stringify(escState.fateHistory || [])),
                 reprieve: escState.reprieve ? JSON.parse(JSON.stringify(escState.reprieve)) : null
@@ -3005,6 +3096,10 @@ function applySavedEscalation(data) {
     escState.fateCards = s.fateCards || {};
     escState.replaceLeft = (s.replaceLeft == null) ? 2 : s.replaceLeft;
     escState.skipAmp = s.skipAmp || {};
+    escState.fatePending = s.fatePending || [];
+    escState.fateRound = s.fateRound || 0;
+    escState.fateIntroShown = !!s.fateIntroShown;
+    escState.forcedTrial = s.forcedTrial || null;
     escState.fateHistory = s.fateHistory || [];
     escState.reprieve = s.reprieve || null;
 
@@ -3563,7 +3658,7 @@ function renderResultVariators(swapIndex) {
     rv.innerHTML = '';
     escState.variators.forEach(function(v, idx) {
         var locked = false;
-        var silent = replaceState.mode !== 'cancel' && (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1 || isLateLockedVariator(v));
+        var silent = (replaceState.mode !== 'cancel' && (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1 || isLateLockedVariator(v))) || v.name === 'Психохирургия' || v.name === 'Двойные задания';
         var item = document.createElement('div');
         item.className = 'var-item';
         if (v.replaced) item.classList.add('replaced');
@@ -3655,6 +3750,7 @@ function performVariatorCancel() {
     var idx = replaceState.selectedIndex;
     if (idx === null || !escState.variators[idx] || !fateReprieveAvailable()) return;
     var v = escState.variators[idx];
+    if (v.name === 'Психохирургия' || v.name === 'Двойные задания') return;
     escState.variators.splice(idx, 1);
     escState.reprieve.used = true;
     escState.reprieve.cancelled = v.name;
@@ -3813,16 +3909,26 @@ function renderEscResultPlayers() {
         `;
         inner.appendChild(eqBlock);
 
-        var fc = escState.fateCards && escState.fateCards[idx];
-        if (fc) {
+        var fcs = escState.fateCards && escState.fateCards[idx];
+        if (fcs && !Array.isArray(fcs)) fcs = [fcs];
+        (fcs || []).forEach(function(fc) {
             var fcol = (fateCardTypes[fc.type] || {}).color || '#ffbc9a';
             var fb = document.createElement('div');
             fb.style.cssText = 'padding:10px 14px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:12px; border:1px solid ' + fcol + '55;';
-            fb.innerHTML = '<div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Карта судьбы</div>' +
+            fb.innerHTML = '<div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Карта судьбы' + (fc.doubled ? ' · эффект ×2' : '') + (fc.saved ? ' · сохранена' : '') + '</div>' +
                 '<div style="font-size:0.95rem; font-weight:700; color:' + fcol + ';">' + escapeHtml(fc.name) + '</div>' +
                 (fc.type !== 'neutral' ? '<div style="font-size:0.72rem; color:#c2b9d4; margin-top:4px; line-height:1.4;">' + escapeHtml(fc.desc) + '</div>' : '');
             inner.appendChild(fb);
-        }
+        });
+        var pendTxt = { reverse: 'следующая карта изменится', bear: 'следующий выбор: эффект меняется на противоположный', curse: 'в следующем выборе — две карты',
+                        death: 'остальные получат негативные карты', coup: 'эффекты карт в следующем выборе меняются местами',
+                        trump: 'сохранён: следующий выбор пропускается, карта применится сразу', immunity: 'отменит одну негативную карту' };
+        (escState.fatePending || []).filter(function(e) { return e.idx === idx; }).forEach(function(e) {
+            var pb = document.createElement('div');
+            pb.style.cssText = 'font-size:0.7rem; color:#f1c40f; padding:6px 12px; margin-bottom:8px; border-radius:10px; background:rgba(241,196,15,0.08); border:1px dashed rgba(241,196,15,0.35);';
+            pb.innerHTML = '<i class="fas fa-hourglass-half"></i> ' + escapeHtml(e.name) + ' — ' + (pendTxt[e.type] || 'ожидает');
+            inner.appendChild(pb);
+        });
 
         var ampsGrid = document.createElement('div');
         ampsGrid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;';
@@ -3989,6 +4095,7 @@ function removePlayerDuringEscalation(idx) {
     escState.allAmpsUsed     = remap(escState.allAmpsUsed);
     escState.fateCards       = remap(escState.fateCards || {});
     escState.skipAmp         = remap(escState.skipAmp || {});
+    escState.fatePending = (escState.fatePending || []).filter(function(e) { return e.idx !== idx; }).map(function(e) { if (e.idx > idx) e.idx -= 1; return e; });
 
     if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
         escState.pendingNewPlayer = null;
@@ -4467,28 +4574,92 @@ function hideSaveLoadModal() {
 // ============================================================
 // ПЕРЕРЫВ — КАРТЫ СУДЬБЫ
 // ============================================================
-function fateImgFallback(img, name) {
-    var exts = ['webp', 'png', 'jpg', 'jpeg'];
-    var i = parseInt(img.getAttribute('data-ei') || '0', 10) + 1;
-    if (i >= exts.length) { img.onerror = null; img.style.visibility = 'hidden'; return; }
-    img.setAttribute('data-ei', i);
-    img.src = 'images/' + name + '.' + exts[i];
+
+// ---- картинки карт: через background (браузеры не видят в них <img>) ----
+function fateLoadBg(div, name, cb) {
+    var exts = ['webp', 'png', 'jpg', 'jpeg'], i = 0;
+    (function tryNext() {
+        var im = new Image();
+        im.onload = function() {
+            div.style.backgroundImage = "url('images/" + name + "." + exts[i] + "')";
+            if (cb) cb(im);
+        };
+        im.onerror = function() { i++; if (i < exts.length) tryNext(); };
+        im.src = 'images/' + name + '.' + exts[i];
+    })();
 }
-function fateImgLoaded(img) {
-    var card = img.closest('.fate-card');
-    if (card && img.naturalWidth && img.closest('.fate-face.back')) card.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+function fateBgHtml(name) { return '<div class="fate-bg" data-bg="' + name + '"></div>'; }
+function fateHydrate(root) {
+    root.querySelectorAll('[data-bg]').forEach(function(d) {
+        var name = d.getAttribute('data-bg');
+        d.removeAttribute('data-bg');
+        var card = d.closest('.fate-card');
+        var isBack = !!d.closest('.fate-face.back');
+        fateLoadBg(d, name, function(im) {
+            if (isBack && card) { card.style.aspectRatio = im.naturalWidth + ' / ' + im.naturalHeight; fateFitCard(card); }
+        });
+    });
 }
-function fateImg(name, cls) {
-    return '<img class="' + cls + '" src="images/' + name + '.webp" alt="" data-ei="0" onload="fateImgLoaded(this)" onerror="fateImgFallback(this,\'' + name + '\')">';
+
+// ---- подгонка названия и описания под размер карты ----
+function fateFitCard(card) {
+    var title = card.querySelector('.fate-title'), desc = card.querySelector('.fate-desc');
+    if (!title || !desc) return;
+    var W = card.clientWidth;
+    if (!W) return;
+    var s = W / 210, tf = 15 * s, df = 12.5 * s;
+    title.style.fontSize = tf + 'px';
+    title.style.letterSpacing = (1.1 * s) + 'px';
+    while ((title.scrollWidth > title.clientWidth + 1 || title.offsetHeight > tf * 1.3 * 3) && tf > 7) {
+        tf -= 0.5;
+        title.style.fontSize = tf + 'px';
+        title.style.letterSpacing = Math.max(0, (tf / 15) * 1.1 * s) + 'px';
+    }
+    desc.style.fontSize = df + 'px';
+    while (desc.scrollHeight > desc.clientHeight + 1 && df > 5) {
+        df -= 0.25;
+        desc.style.fontSize = df + 'px';
+    }
 }
-function fateTypeText(el, text) {
+
+function fateFillFront(el, c) {
+    var front = el.querySelector('.fate-face.front');
+    el.classList.remove('t-good', 't-bad', 't-special', 't-neutral');
+    el.classList.add('t-' + c.type);
+    if (c.type === 'neutral') {
+        front.innerHTML = fateBgHtml('карта-пусто');
+    } else {
+        front.innerHTML = fateBgHtml('карта-пустая') +
+            '<div class="fate-text"><div class="fate-body"><div class="fate-title">' + escapeHtml(c.name) + '</div>' +
+            '<div class="fate-desc"><span class="ty"></span><span class="rest">' + escapeHtml(c.desc) + '</span></div></div></div>' +
+            (c.doubled ? '<div class="fate-stamp">эффект ×2</div>' : '');
+    }
+    fateHydrate(front);
+    fateFitCard(el);
+}
+
+function makeFateCard(card) {
+    var el = document.createElement('div');
+    el.className = 'fate-card t-' + card.type;
+    el.setAttribute('draggable', 'false');
+    el.innerHTML = '<div class="fate-card-inner"><div class="fate-face back">' + fateBgHtml('карта-рубашка') + '</div><div class="fate-face front"></div></div>';
+    el.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+    el.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    fateFillFront(el, card);
+    fateHydrate(el);
+    return el;
+}
+
+function fateTypeText(descEl, text) {
+    if (!descEl) return null;
+    var ty = descEl.querySelector('.ty'), rest = descEl.querySelector('.rest');
+    if (!ty || !rest) return null;
     var i = 0, speed = Math.max(8, Math.min(24, 2200 / Math.max(1, text.length)));
-    el.textContent = '';
-    el.classList.add('typing');
     var timer = setInterval(function() {
         i++;
-        el.textContent = text.slice(0, i);
-        if (i >= text.length) { clearInterval(timer); el.classList.remove('typing'); }
+        ty.textContent = text.slice(0, i);
+        rest.textContent = text.slice(i);
+        if (i >= text.length) clearInterval(timer);
     }, speed);
     return timer;
 }
@@ -4575,15 +4746,204 @@ function burnCard(el, type, done) {
     requestAnimationFrame(frame);
 }
 
+
+// ============================================================
+// ЛОГИКА КАРТ СУДЬБЫ
+// ============================================================
+function fatePend() { return escState.fatePending || (escState.fatePending = []); }
+
+// эффект, который уже действует в этом розыгрыше (зарегистрирован в прошлых розыгрышах)
+function fateTake(type, idx) {
+    var arr = fatePend();
+    for (var i = 0; i < arr.length; i++) {
+        var e = arr[i];
+        if (e.type === type && (idx == null || e.idx === idx) && e.round < escState.fateRound) return e;
+    }
+    return null;
+}
+function fateConsume(e) {
+    if (!e) return;
+    var a = fatePend(), i = a.indexOf(e);
+    if (i !== -1) a.splice(i, 1);
+}
+function fateRegister(idx, card, player) {
+    var r = escState.fateRound, g = card.group;
+    var map = { reverse_side: 'reverse', coup: 'coup', bear_favor: 'bear', curse_hand: 'curse',
+                death_jester: 'death', immunity: 'immunity', immunity_new: 'immunity' };
+    if (map[g]) fatePend().push({ type: map[g], idx: idx, round: r, name: card.name });
+    if (g === 'trump' && card.saved) fatePend().push({ type: 'trump', idx: idx, round: r, name: card.name });
+    if (g === 'reprieve') escState.reprieve = { holder: player, used: false };
+    if (g === 'next_time') { escState.skipAmp = escState.skipAmp || {}; escState.skipAmp[idx] = true; }
+}
+function fateEmpty() { return Object.assign({}, getFateCardById('empty'), { slot: 'empty' }); }
+function fateRandom(type, ex) {
+    var exclude = (escState.reprieve ? ['reprieve'] : []).concat(ex || []);
+    var c = pickRandomFateCard(type, exclude);
+    return c ? Object.assign({}, c, { slot: type }) : null;
+}
+
+function fateBuildCtx(idx) {
+    var ctx = { forced: null, picks: 1, coup: false, bear: false, reverse: null, immune: null, banner: [] };
+    var tr = fateTake('trump', idx);
+    var dt = fateTake('death', null);
+    if (tr) {
+        ctx.forced = 'good'; fateConsume(tr);
+        ctx.banner.push('КОЗЫРЬ В РУКАВЕ: вы не участвуете в выборе — карта с положительным эффектом применяется сразу');
+    } else if (dt) {
+        ctx.forced = dt.idx === idx ? 'empty' : 'bad';
+        ctx.banner.push(dt.idx === idx ? 'СМЕРТЬ ШУТА: вы получаете пустую карту' : 'СМЕРТЬ ШУТА: вам выпадает негативная карта');
+    }
+    var cu = fateTake('curse', idx);
+    if (cu) { ctx.picks = 2; fateConsume(cu); ctx.banner.push('ПРОКЛЯТАЯ РУКА: нужно вытянуть две карты'); }
+    if (fateTake('coup', null)) { ctx.coup = true; ctx.banner.push('ПЕРЕВОРОТ: положительные и отрицательные эффекты карт меняются местами'); }
+    var br = fateTake('bear', idx);
+    if (br) { ctx.bear = true; fateConsume(br); ctx.banner.push('МЕДВЕЖЬЯ УСЛУГА: карту выбирает товарищ по команде, её эффект меняется на противоположный'); }
+    ctx.reverse = fateTake('reverse', idx);
+    ctx.immune = fateTake('immunity', idx);
+    return ctx;
+}
+
+function fateDrawFor(ctx) {
+    var c;
+    if (ctx.forced === 'good') { c = fateRandom('good', ['trump']); if (c) return [c]; }
+    if (ctx.forced === 'bad') { c = fateRandom('bad'); if (c) return [c]; }
+    if (ctx.forced === 'empty') return [fateEmpty()];
+    return getFateCardDraw({ excludeGroups: escState.reprieve ? ['reprieve'] : [] });
+}
+
+// применяет к выбранной карте все действующие эффекты и возвращает итоговую карту
+function fateResolve(ctx, card) {
+    var cur = card, reasons = [], doubled = false;
+    function flippable(c) { return c.type === 'good' || c.type === 'bad'; }
+    function flip(c) { return (c.type === 'good' ? fateRandom('bad') : fateRandom('good')) || c; }
+    if (ctx.coup && flippable(cur)) { cur = flip(cur); reasons.push('ПЕРЕВОРОТ'); }
+    if (ctx.bear && flippable(cur)) { cur = flip(cur); reasons.push('МЕДВЕЖЬЯ УСЛУГА'); }
+    if (ctx.reverse) {
+        if (cur.type === 'good') {
+            cur = fateRandom('bad') || cur; reasons.push('ОБРАТНАЯ СТОРОНА');
+            fateConsume(ctx.reverse); ctx.reverse = null;
+        } else if (cur.type === 'bad') {
+            doubled = true; fateConsume(ctx.reverse); ctx.reverse = null;
+        }
+    }
+    if (cur.group === 'jester') { cur = fateEmpty(); reasons.push('ШУТ ГОРОХОВЫЙ'); }
+    if (cur.type === 'bad' && ctx.immune) {
+        cur = fateEmpty(); doubled = false; reasons.push('ИММУНИТЕТ');
+        fateConsume(ctx.immune); ctx.immune = null;
+    }
+    var fin = Object.assign({}, cur);
+    if (doubled) fin.doubled = true;
+    return { final: fin, reasons: reasons, changed: fin.id !== card.id, doubled: doubled };
+}
+
+// ============================================================
+// ПЛАШКА С ИНСТРУКЦИЕЙ (при первом выборе карт)
+// ============================================================
+function showFateIntro(onClose) {
+    var old = document.getElementById('fateIntro');
+    if (old) old.remove();
+    var items = [
+        ['fa-layer-group', 'Каждый второй перерыв вместо улучшения вы тянете карту судьбы: 1 из 3 — хорошая, плохая или пустая (иногда особая).'],
+        ['fa-fire', 'Эффект действует как написано на карте. После «Далее» карта сгорает, но остаётся в списке участников.'],
+        ['fa-hourglass-half', 'Карты с пометкой «в следующем выборе» сайт запоминает и применяет сам.'],
+        ['fa-sync-alt', 'Если эффект карты меняется, у вас 6 секунд, чтобы запомнить исходную: потом она сменится.']
+    ];
+    var ov = document.createElement('div');
+    ov.className = 'fate-intro-overlay';
+    ov.id = 'fateIntro';
+    ov.innerHTML =
+        '<div class="fate-intro">' +
+            '<div class="fate-intro-icon"><i class="fas fa-skull"></i></div>' +
+            '<h2>Карты судьбы</h2>' +
+            '<div class="fate-intro-sub">Как это работает</div>' +
+            items.map(function(it, i) {
+                return '<div class="fate-intro-item" style="--i:' + i + '"><span><i class="fas ' + it[0] + '"></i></span><div>' + it[1] + '</div></div>';
+            }).join('') +
+            '<div class="fate-intro-legend">' +
+                '<span class="lg-good">хорошая</span><span class="lg-bad">плохая</span><span class="lg-special">особая</span>' +
+            '</div>' +
+            '<button class="next-btn" id="fateIntroOk">Понятно</button>' +
+        '</div>';
+    document.body.appendChild(ov);
+    document.getElementById('fateIntroOk').addEventListener('click', function() {
+        ov.style.transition = 'opacity .3s';
+        ov.style.opacity = '0';
+        setTimeout(function() { ov.remove(); if (onClose) onClose(); }, 300);
+    });
+}
+
+// ============================================================
+// «ВНЕ СЦЕНАРИЯ» — выбор испытания
+// ============================================================
+function openTrialPicker(onPick) {
+    var old = document.getElementById('trialPicker');
+    if (old) old.remove();
+    var isBig = (escState.level % 10 === 0);
+    var list = [];
+    Object.keys(trialsData).forEach(function(mn) {
+        trialsData[mn].trials.forEach(function(tr) {
+            var big = tr.name === tr.name.toUpperCase();
+            if (big === isBig) list.push({ mapName: mn, trial: tr, img: tr.image || trialsData[mn].image });
+        });
+    });
+    var selected = null;
+    var ov = document.createElement('div');
+    ov.className = 'fate-intro-overlay';
+    ov.id = 'trialPicker';
+    ov.innerHTML =
+        '<div class="fate-intro tp-box">' +
+            '<h2 style="font-size:1.3rem;">ВНЕ СЦЕНАРИЯ</h2>' +
+            '<div class="fate-intro-sub">' + (isBig ? 'Выберите генезисное испытание' : 'Выберите испытание') + '</div>' +
+            '<div class="tp-grid"></div>' +
+            '<button class="next-btn" id="tpOk" disabled>Выбрать</button>' +
+        '</div>';
+    document.body.appendChild(ov);
+    var grid = ov.querySelector('.tp-grid');
+    list.forEach(function(it) {
+        var b = document.createElement('div');
+        b.className = 'tp-item';
+        b.innerHTML = '<img src="' + it.img + '" alt="" onerror="this.style.display=\'none\'"><div class="tp-name">' + escapeHtml(it.trial.name) + '</div><div class="tp-map">' + escapeHtml(it.mapName) + '</div>';
+        b.addEventListener('click', function() {
+            grid.querySelectorAll('.tp-item').forEach(function(x) { x.classList.remove('sel'); });
+            b.classList.add('sel');
+            selected = it;
+            document.getElementById('tpOk').disabled = false;
+        });
+        grid.appendChild(b);
+    });
+    document.getElementById('tpOk').addEventListener('click', function() {
+        if (!selected) return;
+        escState.forcedTrial = { mapName: selected.mapName, trialName: selected.trial.name };
+        ov.remove();
+        onPick(selected);
+    });
+}
+
+// ============================================================
+// ПЕРЕРЫВ
+// ============================================================
 function showBreakModal() {
     var oldModal = document.getElementById('breakModal');
     if (oldModal) oldModal.remove();
 
-    // новая «серия» карт: Отсрочка и карты прошлого перерыва сбрасываются
     escState.reprieve = null;
     escState.currentBreakPlayerIndex = 0;
-    // чётный уровень (перед 2, 4, 6... испытанием) — выбор улучшений, нечётный — карты судьбы
-    var ampBreak = (escState.level % 2 === 0);
+    escState.fatePending = escState.fatePending || [];
+    escState.fateCards = escState.fateCards || {};
+    escState.skipAmp = escState.skipAmp || {};
+
+    // карты судьбы — только при 3 или 4 игроках; при 1–2 игроках обычный выбор амф
+    var cardMode = escState.players.length >= 3;
+    var ampBreak = cardMode ? (escState.level % 2 === 0) : true;
+    var anyCardStep = false;
+
+    if (!cardMode) {
+        var anyAmps = false;
+        escState.players.forEach(function(_, i) { if (!areAllCategoriesComplete(i)) anyAmps = true; });
+        if (!anyAmps) { generateEscResult(); return; }
+    } else {
+        escState.fateRound = (escState.fateRound || 0) + 1;
+    }
 
     var overlay = document.createElement('div');
     overlay.className = 'amp-modal-overlay active';
@@ -4601,60 +4961,67 @@ function showBreakModal() {
     var content = document.createElement('div');
     content.style.cssText = 'width: 100%; display: flex; flex-direction: column; align-items: center;';
 
-    function renderStep() {
-        if (escState.currentBreakPlayerIndex >= escState.players.length) {
-            overlay.remove();
-            generateEscResult();
-            return;
+    function headerHtml(idx, title, sub) {
+        return '<div style="text-align:center; margin-bottom:16px; width:100%;">' +
+                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
+                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">' + title + '</div>' +
+            '</div>' +
+            '<div style="text-align:center; margin-bottom:12px; max-width:100%;">' +
+                '<div style="font-weight:700; color:#fff; font-size:1.2rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(escState.players[idx]) + '</div>' +
+                (sub ? '<div style="color:#888; font-size:0.8rem; margin-top:4px;">' + sub + '</div>' : '') +
+            '</div>';
+    }
+
+    function finishBreak() {
+        if (anyCardStep) {
+            escState.fatePending = fatePend().filter(function(e) {
+                return !((e.type === 'coup' || e.type === 'death') && e.round < escState.fateRound);
+            });
         }
+        overlay.remove();
+        generateEscResult();
+    }
+
+    function nextPlayer() { escState.currentBreakPlayerIndex++; renderStep(); }
+
+    function renderStep() {
+        if (escState.currentBreakPlayerIndex >= escState.players.length) { finishBreak(); return; }
         var i0 = escState.currentBreakPlayerIndex;
         if (ampBreak && !areAllCategoriesComplete(i0)) {
             if (escState.skipAmp && escState.skipAmp[i0]) { renderSkipStep(i0); return; }
             renderAmpStep(i0);
-        } else {
-            renderCardStep();
+            return;
         }
+        if (!cardMode) { nextPlayer(); return; }
+        if (!escState.fateIntroShown) {
+            escState.fateIntroShown = true;
+            showFateIntro(function() { renderStep(); });
+            return;
+        }
+        anyCardStep = true;
+        renderCardStep(i0, 1, null);
     }
 
     // игрок пропускает выбор улучшения из-за карты «В СЛЕДУЮЩИЙ РАЗ»
     function renderSkipStep(idx) {
-        var player = escState.players[idx];
-        content.innerHTML =
-            '<div style="text-align:center; margin-bottom:18px; width:100%;">' +
-                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
-                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Выбор АМФ</div>' +
-            '</div>' +
-            '<div style="text-align:center; max-width:520px; margin:20px 0 26px;">' +
-                '<div style="font-weight:700; color:#fff; font-size:1.2rem; margin-bottom:12px;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
+        content.innerHTML = headerHtml(idx, 'Выбор АМФ', '') +
+            '<div style="text-align:center; max-width:520px; margin:14px 0 26px;">' +
                 '<div style="color:#ff6666; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;"><i class="fas fa-ban"></i> Улучшение пропущено</div>' +
                 '<div style="color:#c2b9d4; font-size:0.9rem; line-height:1.5;">Карта «В СЛЕДУЮЩИЙ РАЗ»: на этот раз игрок остаётся без выбора улучшения.</div>' +
             '</div>';
-        var btnWrap = document.createElement('div');
-        btnWrap.className = 'fate-actions';
+        var w = document.createElement('div');
+        w.className = 'fate-actions';
         var b = document.createElement('button');
         b.className = 'next-btn';
         b.innerHTML = 'Далее →';
-        b.addEventListener('click', function() {
-            escState.skipAmp[idx] = false;
-            escState.currentBreakPlayerIndex++;
-            renderStep();
-        });
-        btnWrap.appendChild(b);
-        content.appendChild(btnWrap);
+        b.addEventListener('click', function() { escState.skipAmp[idx] = false; nextPlayer(); });
+        w.appendChild(b);
+        content.appendChild(w);
     }
 
-    // выбор АМФ — как и раньше
+    // выбор АМФ
     function renderAmpStep(idx) {
-        var player = escState.players[idx];
-        content.innerHTML =
-            '<div style="text-align:center; margin-bottom:24px; width:100%;">' +
-                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
-                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Выбор АМФ</div>' +
-            '</div>' +
-            '<div style="text-align:center; margin-bottom:20px; max-width:100%;">' +
-                '<div style="font-weight:700; color:#fff; font-size:1.2rem; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
-            '</div>';
-
+        content.innerHTML = headerHtml(idx, 'Выбор АМФ', '');
         var availCats = ampCategories.filter(function(c) { return !isCategoryComplete(idx, c); });
         var randCat = availCats[Math.floor(Math.random() * availCats.length)];
         var availAmps = getAvailableAmpsByCategory(idx, randCat);
@@ -4668,7 +5035,6 @@ function showBreakModal() {
         var agrid = document.createElement('div');
         agrid.className = 'player-break-grid';
         agrid.style.cssText = 'display:flex; gap:30px; justify-content:center; flex-wrap:nowrap; width:100%; max-width:700px; margin:0 auto; padding-bottom:50px;';
-
         display.forEach(function(amp) {
             var item = document.createElement('div');
             item.className = 'amp-card';
@@ -4694,8 +5060,7 @@ function showBreakModal() {
                     if (escState.usedAmps[idx].indexOf(amp.name) === -1) escState.usedAmps[idx].push(amp.name);
                     unlockAmpForPlayer(idx, amp.name);
                 }
-                escState.currentBreakPlayerIndex++;
-                renderStep();
+                nextPlayer();
             });
             agrid.appendChild(item);
         });
@@ -4703,20 +5068,21 @@ function showBreakModal() {
     }
 
     // карта судьбы
-    function renderCardStep() {
-        var idx = escState.currentBreakPlayerIndex;
+    function renderCardStep(idx, pickNo, ctx) {
         var player = escState.players[idx];
-        var draw = getFateCardDraw({ excludeGroups: escState.reprieve ? ['reprieve'] : [] });
+        if (pickNo === 1) ctx = fateBuildCtx(idx);
+        var draw = fateDrawFor(ctx);
+        var single = draw.length === 1;
 
-        content.innerHTML =
-            '<div style="text-align:center; margin-bottom:18px; width:100%;">' +
-                '<div style="font-size:0.8rem; color:#888; letter-spacing:2px; text-transform:uppercase;"><i class="fas fa-coffee"></i> Перерыв · игрок ' + (idx + 1) + ' из ' + escState.players.length + '</div>' +
-                '<div style="font-size:1.5rem; font-weight:700; color:#ffbc9a; margin-top:2px;">Карты судьбы</div>' +
-            '</div>' +
-            '<div style="text-align:center; margin-bottom:14px; max-width:100%;">' +
-                '<div style="font-weight:700; color:#fff; font-size:1.2rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><i class="fas fa-user" style="color:#e16d48; margin-right:8px;"></i>' + escapeHtml(player) + '</div>' +
-                '<div style="color:#888; font-size:0.8rem; margin-top:4px;">Выберите одну из трёх карт</div>' +
-            '</div>';
+        var sub = single ? 'Нажмите на карту, чтобы открыть её' : 'Выберите одну из трёх карт';
+        if (ctx.picks > 1) sub += ' · карта ' + pickNo + ' из ' + ctx.picks;
+        content.innerHTML = headerHtml(idx, 'Карты судьбы', sub);
+        if (ctx.banner.length) {
+            var bn = document.createElement('div');
+            bn.className = 'fate-banner';
+            bn.innerHTML = ctx.banner.map(escapeHtml).join('<br>');
+            content.appendChild(bn);
+        }
 
         var grid = document.createElement('div'); grid.className = 'fate-grid';
         var note = document.createElement('div'); note.className = 'fate-note';
@@ -4727,89 +5093,203 @@ function showBreakModal() {
         nextBtn.disabled = true;
         actions.appendChild(nextBtn);
 
-        var picked = false, chosen = null, chosenEl = null, typeTimer = null, cdTimer = null;
+        var picked = false, chosenEl = null, final = null, typeTimer = null, cdTimer = null;
 
-        function fillFront(el, c) {
-            var front = el.querySelector('.fate-face.front');
-            if (c.type === 'neutral') { front.innerHTML = fateImg('карта-пусто', 'fate-bg'); return; }
-            var len = c.desc.length;
-            var fs = len > 220 ? '0.6rem' : len > 150 ? '0.66rem' : '0.74rem';
-            front.innerHTML = fateImg('карта-пустая', 'fate-bg') +
-                '<div class="fate-text"><div class="fate-title">' + escapeHtml(c.name) + '</div><div class="fate-desc" style="font-size:' + fs + ';"></div></div>';
+        function enableNext() { nextBtn.disabled = false; nextBtn.classList.remove('hidden-btn'); }
+
+        function countdownSwap(reasons, newCard, done) {
+            var left = 6;
+            function txt() { note.innerHTML = 'Эффект карты меняется (' + escapeHtml(reasons.join(', ')) + ') — через <b>' + left + '</b> с'; }
+            txt();
+            cdTimer = setInterval(function() {
+                left--;
+                if (left > 0) { txt(); return; }
+                clearInterval(cdTimer); clearInterval(typeTimer);
+                chosenEl.classList.add('swapping');
+                setTimeout(function() {
+                    fateFillFront(chosenEl, newCard);
+                    note.innerHTML = 'Карта изменена: <b>' + escapeHtml(newCard.name) + '</b>';
+                    if (newCard.type !== 'neutral') typeTimer = fateTypeText(chosenEl.querySelector('.fate-desc'), newCard.desc);
+                }, 400);
+                setTimeout(function() { chosenEl.classList.remove('swapping'); done(); }, 850);
+            }, 1000);
         }
 
-        function enableNext() {
-            nextBtn.disabled = false;
-            nextBtn.classList.remove('hidden-btn');
+        function afterFinal() {
+            if (final.group === 'trump') { showTrumpChoice(); return; }
+            if (final.group === 'out_of_script') { showTrialButton(); return; }
+            enableNext();
         }
 
-        function jesterSwap(el) {
-            clearInterval(cdTimer); clearInterval(typeTimer);
-            el.classList.add('swapping');
-            setTimeout(function() {
-                var empty = getFateCardById('empty');
-                chosen = Object.assign({}, empty, { slot: 'empty' });
-                el.classList.remove('t-special', 't-good', 't-bad');
-                el.classList.add('t-neutral');
-                fillFront(el, chosen);
-                note.innerHTML = 'Карта заменена на «ПУСТО!»';
-            }, 400);
-            setTimeout(function() { el.classList.remove('swapping'); enableNext(); }, 800);
+        function showTrumpChoice() {
+            var useB = document.createElement('button'); useB.className = 'next-btn'; useB.textContent = 'Использовать сразу';
+            var saveB = document.createElement('button'); saveB.className = 'vc-btn gold'; saveB.style.padding = '0.9rem 1.6rem'; saveB.textContent = 'Сохранить на следующий выбор';
+            actions.appendChild(useB); actions.appendChild(saveB);
+            note.innerHTML = 'КОЗЫРЬ В РУКАВЕ: использовать сразу или сохранить?';
+            useB.addEventListener('click', function() {
+                useB.remove(); saveB.remove();
+                var g = fateRandom('good', ['trump']);
+                if (!g) { enableNext(); return; }
+                final = g;
+                countdownSwap(['КОЗЫРЬ В РУКАВЕ'], g, function() { afterFinal(); });
+            });
+            saveB.addEventListener('click', function() {
+                useB.remove(); saveB.remove();
+                final = Object.assign({}, final, { saved: true });
+                note.innerHTML = 'Карта сохранена: в следующем выборе вы не участвуете, а карта с положительным эффектом применится сразу';
+                enableNext();
+            });
+        }
+
+        function showTrialButton() {
+            var tb = document.createElement('button');
+            tb.className = 'vc-btn gold'; tb.style.padding = '0.9rem 1.8rem';
+            tb.innerHTML = '<i class="fas fa-map"></i> Выбрать испытание';
+            actions.appendChild(tb);
+            note.innerHTML = 'ВНЕ СЦЕНАРИЯ: выберите испытание' + ((escState.level % 10 === 0) ? ' (только генезисные)' : '');
+            tb.addEventListener('click', function() {
+                openTrialPicker(function(sel) {
+                    tb.remove();
+                    note.innerHTML = 'Выбрано испытание: <b>' + escapeHtml(sel.trial.name) + '</b>';
+                    enableNext();
+                });
+            });
         }
 
         draw.forEach(function(card) {
-            var el = document.createElement('div');
-            el.className = 'fate-card t-' + card.type;
-            el.innerHTML = '<div class="fate-card-inner"><div class="fate-face back">' + fateImg('карта-рубашка', 'fate-bg') + '</div><div class="fate-face front"></div></div>';
-            fillFront(el, card);
-
+            var el = makeFateCard(card);
             el.addEventListener('click', function() {
                 if (picked) return;
-                picked = true; chosen = card; chosenEl = el;
+                picked = true; chosenEl = el;
                 grid.querySelectorAll('.fate-card').forEach(function(o) { if (o !== el) o.classList.add('dimmed'); });
                 el.classList.add('opened');
+                fateFitCard(el);
+                setTimeout(function() { typeTimer = fateTypeText(el.querySelector('.fate-desc'), card.desc); }, 1500);
 
-                var descEl = el.querySelector('.fate-desc');
-                if (descEl) setTimeout(function() { typeTimer = fateTypeText(descEl, card.desc); }, 1500);
-
-                if (card.group === 'reprieve') {
-                    escState.reprieve = { holder: player, used: false };
-                    showToast('«ОТСРОЧКА»: на ближайшем испытании можно отменить 1 вариатор', '#f1c40f');
-                }
-                if (card.group === 'jester') {
-                    var left = 6;
-                    note.innerHTML = 'Карта сменится на «ПУСТО!» через <b>' + left + '</b> с';
-                    cdTimer = setInterval(function() {
-                        left--;
-                        if (left > 0) note.innerHTML = 'Карта сменится на «ПУСТО!» через <b>' + left + '</b> с';
-                        else jesterSwap(el);
-                    }, 1000);
+                var res = fateResolve(ctx, card);
+                final = res.final;
+                if (res.changed) {
+                    countdownSwap(res.reasons, final, function() { afterFinal(); });
                 } else {
-                    setTimeout(enableNext, 1400);
+                    if (res.doubled) {
+                        setTimeout(function() {
+                            var st = document.createElement('div');
+                            st.className = 'fate-stamp';
+                            st.textContent = 'эффект ×2';
+                            el.querySelector('.fate-face.front').appendChild(st);
+                            note.innerHTML = 'ОБРАТНАЯ СТОРОНА: эффект карты удвоен';
+                        }, 1200);
+                    }
+                    setTimeout(afterFinal, 1400);
                 }
             });
             grid.appendChild(el);
         });
 
         nextBtn.addEventListener('click', function() {
-            if (!chosen) return;
+            if (!final) return;
             nextBtn.disabled = true;
             nextBtn.classList.add('hidden-btn');
             note.innerHTML = '';
-            var final = Object.assign({}, chosen);
-            escState.fateCards[idx] = final;
-            if (final.group === 'next_time') { escState.skipAmp = escState.skipAmp || {}; escState.skipAmp[idx] = true; }
-            escState.fateHistory.push({ level: escState.level, player: player, card: final.name, type: final.type });
+            clearInterval(cdTimer);
+            var fin = Object.assign({}, final);
+            if (pickNo === 1) escState.fateCards[idx] = [];
+            escState.fateCards[idx].push(fin);
+            fateRegister(idx, fin, player);
+            escState.fateHistory.push({ level: escState.level, player: player, card: fin.name, type: fin.type });
             grid.querySelectorAll('.fate-card').forEach(function(o) { if (o !== chosenEl) o.classList.add('gone'); });
-            burnCard(chosenEl, final.type, function() {
-                escState.currentBreakPlayerIndex++;
-                renderStep();
+            burnCard(chosenEl, fin.type, function() {
+                function cont() {
+                    if (pickNo < ctx.picks) renderCardStep(idx, pickNo + 1, ctx);
+                    else nextPlayer();
+                }
+                if (fin.group === 'madness') renderMadnessStep(idx, cont);
+                else cont();
             });
         });
 
         content.appendChild(grid);
         content.appendChild(note);
         content.appendChild(actions);
+        requestAnimationFrame(function() { grid.querySelectorAll('.fate-card').forEach(fateFitCard); });
+    }
+
+    // БЕЗУМИЕ: активные карты сбрасываются, 3 новые — выполняются две на выбор
+    function renderMadnessStep(idx, done) {
+        var player = escState.players[idx];
+        escState.fateCards[idx] = [];
+        escState.fatePending = fatePend().filter(function(e) {
+            return e.idx !== idx || e.type === 'coup' || e.type === 'death';
+        });
+        escState.skipAmp[idx] = false;
+
+        var bad = ['madness', 'trump', 'out_of_script', 'jester'].concat(escState.reprieve ? ['reprieve'] : []);
+        var groups = {};
+        fateCardsData.forEach(function(c) {
+            if (c.drawable === false || c.type === 'neutral' || bad.indexOf(c.group) !== -1) return;
+            (groups[c.group] = groups[c.group] || []).push(c);
+        });
+        var keys = Object.keys(groups).sort(function() { return Math.random() - 0.5; }).slice(0, 3);
+        var cards = keys.map(function(k) {
+            var v = groups[k];
+            return Object.assign({}, v[Math.floor(Math.random() * v.length)]);
+        });
+
+        content.innerHTML = headerHtml(idx, 'БЕЗУМИЕ', 'Ваши активные карты сброшены. Выберите две из трёх новых карт — они вступят в силу');
+        var grid = document.createElement('div'); grid.className = 'fate-grid';
+        var note = document.createElement('div'); note.className = 'fate-note';
+        note.textContent = 'Выбрано: 0 из 2';
+        var actions = document.createElement('div'); actions.className = 'fate-actions';
+        var nextBtn = document.createElement('button');
+        nextBtn.className = 'next-btn hidden-btn'; nextBtn.disabled = true; nextBtn.innerHTML = 'Далее →';
+        actions.appendChild(nextBtn);
+
+        var selected = [], els = [], timers = [];
+        cards.forEach(function(card, i) {
+            var el = makeFateCard(card);
+            el.classList.add('selectable');
+            els.push(el);
+            setTimeout(function() {
+                el.classList.add('opened');
+                fateFitCard(el);
+                setTimeout(function() { timers.push(fateTypeText(el.querySelector('.fate-desc'), card.desc)); }, 1500);
+            }, 400 + i * 600);
+            el.addEventListener('click', function() {
+                if (!el.classList.contains('opened')) return;
+                var pos = selected.indexOf(i);
+                if (pos !== -1) selected.splice(pos, 1);
+                else { selected.push(i); if (selected.length > 2) selected.shift(); }
+                els.forEach(function(x, k) { x.classList.toggle('picked', selected.indexOf(k) !== -1); x.classList.toggle('dimmed', selected.length === 2 && selected.indexOf(k) === -1); });
+                note.textContent = 'Выбрано: ' + selected.length + ' из 2';
+                nextBtn.disabled = selected.length !== 2;
+                nextBtn.classList.toggle('hidden-btn', selected.length !== 2);
+            });
+            grid.appendChild(el);
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (selected.length !== 2) return;
+            nextBtn.disabled = true; nextBtn.classList.add('hidden-btn');
+            note.innerHTML = '';
+            timers.forEach(clearInterval);
+            selected.forEach(function(i) {
+                var fin = Object.assign({}, cards[i]);
+                escState.fateCards[idx].push(fin);
+                fateRegister(idx, fin, player);
+                escState.fateHistory.push({ level: escState.level, player: player, card: fin.name, type: fin.type });
+            });
+            els.forEach(function(el, k) { if (selected.indexOf(k) === -1) el.classList.add('gone'); });
+            var called = false;
+            selected.forEach(function(i) {
+                els[i].classList.remove('picked');
+                burnCard(els[i], cards[i].type, function() { if (!called) { called = true; done(); } });
+            });
+        });
+
+        content.appendChild(grid);
+        content.appendChild(note);
+        content.appendChild(actions);
+        requestAnimationFrame(function() { els.forEach(fateFitCard); });
     }
 
     modal.appendChild(content);
@@ -4871,7 +5351,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fateCards: {}, fateHistory: [], reprieve: null, currentEquipPlayerIndex: 0,
+                    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, skipAmp: {}, fatePending: [], fateRound: 0, fateIntroShown: false, forcedTrial: null, fateCards: {}, fateHistory: [], reprieve: null, currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
                     // [NEW]
                     initialPlayerCount: 0,
