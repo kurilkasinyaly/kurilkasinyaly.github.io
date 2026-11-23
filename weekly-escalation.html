@@ -1726,6 +1726,29 @@
             .save-load-modal h2 { font-size: 1.15rem; }
             .save-load-modal .actions button { width: 100%; }
         }
+
+        /* ===== ОЧКИ / ОЦЕНКИ / БОНУС / ПОПЫТКИ ЗАМЕНЫ ===== */
+        .vc-attempts { font-size:0.8rem; color:#c2b9d4; display:flex; align-items:center; gap:4px; }
+        .vc-attempts strong { color:#2ecc71; margin-left:3px; }
+        .vc-attempts.empty, .vc-attempts.empty strong { color:#ff6666; }
+        .vc-pips { display:inline-flex; gap:5px; margin-left:8px; vertical-align:middle; }
+        .vc-pip { width:10px; height:10px; border-radius:50%; background:#2ecc71; box-shadow:0 0 7px rgba(46,204,113,.8); transition:all .4s; }
+        .vc-pip.used { background:transparent; border:1px solid #666; box-shadow:none; }
+        .vrep-left { color:#c2b9d4; font-size:.85rem; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:center; gap:4px; }
+        .vrep-left strong { color:#2ecc71; margin-left:3px; }
+
+        .info-grades-row { display:grid; gap:10px 12px; padding:12px; border:1px dashed rgba(220,90,50,.3); border-radius:12px; background:rgba(0,0,0,.2); }
+        .info-grade-nick { font-size:.82rem; font-weight:700; color:#ffbc9a; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+        .info-grade-select { width:100%; background:rgba(0,0,0,.35); border:1px solid rgba(220,90,50,.25); border-radius:12px; padding:11px 10px; color:#f0eef7; font-size:.95rem; font-family:inherit; outline:none; cursor:pointer; text-align:center; transition:border-color .3s; }
+        .info-grade-select:focus { border-color:#e16d48; }
+        .info-grade-select.chosen { border-color:#2ecc71; }
+        .info-grade-select option { background:#1a1a2e; color:#f0eef7; }
+        .amp-card.bonus-card { border-color:rgba(241,196,15,.7); background:linear-gradient(160deg,rgba(60,45,10,.9),rgba(20,15,28,.9)); box-shadow:0 4px 18px rgba(241,196,15,.25); }
+        .amp-card.bonus-card:hover { border-color:#f1c40f; box-shadow:0 8px 28px rgba(241,196,15,.5); }
+        .bonus-card .bonus-icon { font-size:2.2rem; color:#f1c40f; margin-bottom:8px; }
+        .bonus-card .amp-title { color:#f1c40f; letter-spacing:2px; font-weight:900; }
+        .bonus-card .bonus-text { font-size:.78rem; color:#ffe9a6; margin-top:8px; line-height:1.35; font-weight:600; }
+        .pts-badge { font-size:.65rem; color:#f1c40f; background:rgba(241,196,15,.1); border:1px solid rgba(241,196,15,.3); padding:2px 10px; border-radius:12px; white-space:nowrap; flex-shrink:0; }
     </style>
 </head>
 <body>
@@ -1922,6 +1945,11 @@
                 <div class="info-form-hint" id="infoTimeHint">Введите время в формате ММ:СС (например 02:46)</div>
             </div>
 
+            <div class="info-form-group full-width" id="infoGradesGroup">
+                <label><i class="fas fa-star"></i> Оценки игроков</label>
+                <div class="info-grades-row" id="infoGradesRow"></div>
+            </div>
+
             <div class="info-form-group full-width">
                 <label><i class="fas fa-map"></i> Испытание</label>
                 <input type="text" id="infoTrialInput" class="readonly-field" readonly>
@@ -1937,7 +1965,7 @@
 
         <div class="info-modal-actions">
             <button class="btn-secondary" id="infoModalCancel">Отмена</button>
-            <button class="btn-primary" id="infoModalSave" disabled>Продолжить →</button>
+            <button class="btn-primary" id="infoModalSave" disabled>Сохранить и продолжить →</button>
         </div>
     </div>
 </div>
@@ -2095,6 +2123,29 @@ const STORAGE_KEY = 'weekly_escalation_save_v1';
 const HISTORY_KEY = 'weekly_variator_history'; // Ключ для истории выпадений
 
 // ============================================================
+// ОЧКИ И ОЦЕНКИ
+// ============================================================
+// Порядок важен: он же — порядок в выпадающем списке
+var GRADES = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
+var GRADE_POINTS = {
+    'A+': 1500, 'A': 1400, 'A-': 1300,
+    'B+': 1200, 'B': 1100, 'B-': 1000,
+    'C+': 900,  'C': 800,  'C-': 700,
+    'D+': 600,  'D': 500,  'D-': 400
+};
+
+// БОНУС при выборе АМФ (вместо амфы может выпасть бонус с очками)
+var BONUS_VALUES = [100, 200, 300, 400, 500, 600, 700, 800];
+
+// Таблица (лист) с очками в SheetDB. Столбцы листа: id, Date, Mode, PlayerName, Platform, Points
+var POINTS_SHEET = 'points';
+
+function getPoints(i) { return (escState.points && escState.points[i]) || 0; }
+function setPoints(i, v) { escState.points = escState.points || {}; escState.points[i] = Math.max(0, Math.round(v)); }
+function addPoints(i, d) { setPoints(i, getPoints(i) + d); }
+
+
+// ============================================================
 // СОСТОЯНИЕ
 // ============================================================
 let escState = {
@@ -2115,7 +2166,7 @@ let escState = {
     isFirstRun: true,
     usedBigTrials: [],
     usedSmallTrials: [],
-    nostophobiaCount: 0, replacedVariators: [],
+    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, points: {},
     weeklyVariator: null,
     initialPlayerCount: 0,
     pendingNewPlayer: null,
@@ -2127,6 +2178,7 @@ let escState = {
 };
 
 var infoFormState = {
+    grades: {},
     levelNum: null,
     trialName: null,
     trialObj: null,
@@ -3331,6 +3383,7 @@ function generateEscResult() {
     
     var effectiveCount = isCoopMode() ? escState.players.length : 1;
     escState.variators = getVariatorsForLevel(escState.level, mapName, effectiveCount);
+    escState.replaceLeft = 2;   // 2 попытки замены на каждое испытание
 
     document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
 
@@ -3390,10 +3443,26 @@ function isWeeklyCurrent(v) {
     var w = escState.weeklyVariator ? escState.weeklyVariator.name : (typeof WEEKLY_VARIATOR_NAME !== 'undefined' ? WEEKLY_VARIATOR_NAME : null);
     return !!w && !!v && v.name === w;
 }
-function isLockedVariator(v) { return isWeeklyCurrent(v) || NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1; }
 
 var replaceState = { active: false, selectedIndex: null };
-var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II', 'Психохирургия', 'Двойные задания'];
+// Эти вариаторы заменить нельзя (никаких пометок — они просто не выделяются)
+var NON_REPLACEABLE_VARIATORS = ['Враги сильнее', 'Враги Сильнее', 'Враги Сильнее II', 'Враги сильнее II', 'Психохирургия', 'Двойные задания', 'Двойные Задания'];
+var REPLACE_ATTEMPTS = 2;
+
+function getReplaceLeft() { return escState.replaceLeft == null ? REPLACE_ATTEMPTS : escState.replaceLeft; }
+
+function isNonReplaceableName(name) {
+    var n = String(name || '').toLowerCase().trim();
+    return NON_REPLACEABLE_VARIATORS.some(function(x) { return x.toLowerCase() === n; });
+}
+// заменить нельзя: еженедельный вариатор + Враги Сильнее (I, II) + Психохирургия + Двойные задания
+function isLockedVariator(v) { return !!v && (isWeeklyCurrent(v) || isNonReplaceableName(v.name)); }
+
+function replacePipsHtml() {
+    var left = getReplaceLeft(), h = '<span class="vc-pips">';
+    for (var i = 0; i < REPLACE_ATTEMPTS; i++) h += '<span class="vc-pip' + (i < left ? '' : ' used') + '"></span>';
+    return h + '</span>';
+}
 
 function renderResultVariators(swapIndex) {
     var rv = document.getElementById('escResultVariators');
@@ -3406,8 +3475,9 @@ function renderResultVariators(swapIndex) {
         if (v.replaced) item.classList.add('replaced');
         if (swapIndex === idx) item.classList.add('swap-in');
         if (replaceState.active) {
-            item.classList.add(locked ? 'locked' : 'selectable');
-            if (replaceState.selectedIndex === idx) item.classList.add('selected');
+            // недоступные для замены вариаторы остаются без каких-либо пометок
+            if (!locked) item.classList.add('selectable');
+            if (!locked && replaceState.selectedIndex === idx) item.classList.add('selected');
         }
         var fsMap = {'ПСИХОХИРУРГИЯ':'0.63rem','ДВОЙНЫЕ ЗАДАНИЯ':'0.65rem','ГАЛЛЮЦИНАЦИИ':'0.65rem'};
         var fontSize = fsMap[v.name.toUpperCase()] || (v.name.length > 14 ? '0.6rem' : '0.75rem');
@@ -3416,9 +3486,7 @@ function renderResultVariators(swapIndex) {
                 '<img src="' + v.image + '" alt="' + escapeHtml(v.name) + '" style="width:60px;height:60px;object-fit:contain;" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
             '</div>' +
             '<span style="font-size:' + fontSize + '; color:#ffbc9a; text-align:center; max-width:130px; line-height:1.3; font-weight:700; text-transform:uppercase; word-break:break-word;">' + escapeHtml(v.name.toUpperCase()) + '</span>' +
-            (isWeeklyCurrent(v) ? '<span class="var-badge" style="color:#f1c40f;"><i class="fas fa-star"></i> еженедельный</span>' : '') +
-            (v.replaced ? '<span class="var-badge"><i class="fas fa-exchange-alt"></i> заменён</span>' : '') +
-            (replaceState.active && locked && !isWeeklyCurrent(v) ? '<span class="var-badge" style="color:#888;"><i class="fas fa-lock"></i> обязательный</span>' : '');
+            (v.replaced ? '<span class="var-badge"><i class="fas fa-exchange-alt"></i> заменён</span>' : '');
         if (replaceState.active && !locked) {
             item.addEventListener('click', function() { replaceState.selectedIndex = idx; renderResultVariators(); });
         }
@@ -3431,10 +3499,17 @@ function renderVariatorControls() {
     var c = document.getElementById('escVariatorControls');
     if (!c) return;
     c.innerHTML = '';
+    var att = document.createElement('div');
+    att.className = 'vc-attempts' + (getReplaceLeft() <= 0 ? ' empty' : '');
+    att.innerHTML = getReplaceLeft() > 0
+        ? 'Попыток замены осталось: <strong>' + getReplaceLeft() + ' из ' + REPLACE_ATTEMPTS + '</strong>' + replacePipsHtml()
+        : 'Попытки замены закончились ' + replacePipsHtml();
+    c.appendChild(att);
     if (!replaceState.active) {
         var open = document.createElement('button');
         open.className = 'vc-btn';
         open.innerHTML = '<i class="fas fa-exchange-alt"></i> Заменить вариатор';
+        open.disabled = getReplaceLeft() <= 0;
         open.addEventListener('click', function() {
             showReplaceWarning(function() {
                 replaceState.active = true;
@@ -3481,6 +3556,7 @@ function showReplaceWarning(onConfirm) {
             '<ol><li>Нажмите на несовместимый вариатор — он будет выделен.</li>' +
             '<li>Нажмите «Поменять вариатор».</li>' +
             '<li>Сайт заново проверит правила и сам подберёт замену только для выделенного вариатора.</li></ol>' +
+            '<div class="vrep-left">Осталось попыток замены: <strong>' + getReplaceLeft() + ' из ' + REPLACE_ATTEMPTS + '</strong>' + replacePipsHtml() + '</div>' +
             '<div class="vrep-actions"><button class="vc-btn" id="vrepCancel">Отмена</button>' +
             '<button class="vc-btn primary" id="vrepOk">Понимаю, продолжить</button></div>' +
         '</div>';
@@ -3501,7 +3577,7 @@ function pickReplacementVariator(oldV, others) {
         if (v.name === oldV.name || names.indexOf(v.name) !== -1) return false;
         if (isExcludedVariator(v.name) || gates.indexOf(v.name) !== -1) return false;
         if (isWeeklyVariatorName(v.name)) return false;
-        if (NON_REPLACEABLE_VARIATORS.indexOf(v.name) !== -1) return false;
+        if (isNonReplaceableName(v.name)) return false;
         if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
         if (isSideQuestVariator(v.name) !== oldIsSide) return false;
         return true;
@@ -3519,11 +3595,13 @@ function performVariatorReplace() {
     var idx = replaceState.selectedIndex;
     if (idx === null || !escState.variators[idx]) return;
     var oldV = escState.variators[idx];
-    if (isLockedVariator(oldV)) { showToast('Этот вариатор нельзя заменить', '#e74c3c'); return; }
+    if (isLockedVariator(oldV)) return;
+    if (getReplaceLeft() <= 0) { showToast('Попытки замены на это испытание закончились', '#e74c3c'); return; }
     var others = escState.variators.filter(function(_, i) { return i !== idx; });
     var newV = pickReplacementVariator(oldV, others);
-    if (!newV) { showToast('Не удалось подобрать подходящую замену', '#e74c3c'); return; }
+    if (!newV) { showToast('Не удалось подобрать подходящую замену (попытка не потрачена)', '#e74c3c'); return; }
     escState.variators[idx] = Object.assign({}, newV, { replaced: true, originalName: oldV.name });
+    escState.replaceLeft = getReplaceLeft() - 1;
     escState.replacedVariators = escState.replacedVariators || [];
     escState.replacedVariators.push({ level: escState.level, from: oldV.name, to: newV.name });
     var h = getVariatorHistory();
@@ -3534,7 +3612,7 @@ function performVariatorReplace() {
     replaceState.active = false;
     replaceState.selectedIndex = null;
     renderResultVariators(idx);
-    showToast('«' + oldV.name + '» заменён на «' + newV.name + '»', '#2ecc71');
+    showToast('«' + oldV.name + '» заменён на «' + newV.name + '» · осталось попыток: ' + getReplaceLeft(), '#2ecc71');
 }
 
 function renderEscResultPlayers() {
@@ -3578,6 +3656,7 @@ function renderEscResultPlayers() {
                 <i class="fas fa-user" style="color: #e16d48; font-size: 1rem; flex-shrink: 0;"></i>
                 <span title="${escapeHtml(player)}" style="font-weight: 700; color: #ffbc9a; font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">${escapeHtml(player)}</span>
                 <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
+                <span class="pts-badge" title="Очки">★ ${getPoints(idx)}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
                 ${equipData ? `<img src="${equipData.image}" alt="${equip}" style="width:32px; height:32px; object-fit:contain; border-radius:8px; background:rgba(0,0,0,0.3); padding:3px;" onerror="this.style.display='none'">` : ''}
@@ -3614,6 +3693,13 @@ function renderEscResultPlayers() {
             </div>
         `;
         innerContent.appendChild(equipBlock);
+
+        var ptsBlock = document.createElement('div');
+        ptsBlock.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(241,196,15,0.06); border-radius:12px; margin-bottom:12px; border:1px solid rgba(241,196,15,0.2);';
+        ptsBlock.innerHTML = '<i class="fas fa-coins" style="color:#f1c40f; font-size:1.3rem;"></i><div>' +
+            '<div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Очки</div>' +
+            '<div style="font-size:1.1rem; color:#f1c40f; font-weight:700;">' + getPoints(idx) + '</div></div>';
+        innerContent.appendChild(ptsBlock);
 
         var ampsGrid = document.createElement('div');
         ampsGrid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;';
@@ -3785,6 +3871,7 @@ function removePlayerDuringEscalation(idx) {
     escState.usedAmps        = remap(escState.usedAmps);
     escState.unlockedAmps    = remap(escState.unlockedAmps);
     escState.allAmpsUsed     = remap(escState.allAmpsUsed);
+    escState.points          = remap(escState.points || {});
 
     if (escState.pendingNewPlayer && escState.pendingNewPlayer.index === idx) {
         escState.pendingNewPlayer = null;
@@ -3995,7 +4082,7 @@ function openInfoModal() {
     var modal = document.getElementById('infoModal');
     if (!modal) return;
 
-    infoFormState = { levelNum: escState.level, trialName: null, trialObj: null, variatorNames: [], time: '' };
+    infoFormState = { grades: {}, levelNum: escState.level, trialName: null, trialObj: null, variatorNames: [], time: '' };
 
     var levelInput = document.getElementById('infoLevelNum');
     levelInput.value = escState.level;
@@ -4025,6 +4112,7 @@ function openInfoModal() {
     }
     infoFormState.variatorNames = preselected.slice();
 
+    renderGradeInputs();
     renderReadonlyVariators();
     updateInfoModalSaveButton();
 
@@ -4034,6 +4122,50 @@ function openInfoModal() {
 function closeInfoModal() {
     var modal = document.getElementById('infoModal');
     if (modal) modal.classList.remove('active');
+}
+
+// Ряд оценок: сверху ники игроков (1–4), под ними выпадающие списки оценок
+function renderGradeInputs() {
+    var row = document.getElementById('infoGradesRow');
+    if (!row) return;
+    var n = Math.max(1, Math.min(4, escState.players.length));
+    row.style.gridTemplateColumns = 'repeat(' + n + ', minmax(0, 1fr))';
+    row.innerHTML = '';
+    escState.players.forEach(function(nick) {
+        var d = document.createElement('div');
+        d.className = 'info-grade-nick';
+        d.title = nick;
+        d.textContent = nick;
+        row.appendChild(d);
+    });
+    escState.players.forEach(function(nick, i) {
+        var sel = document.createElement('select');
+        sel.className = 'info-grade-select';
+        sel.setAttribute('aria-label', 'Оценка: ' + nick);
+        sel.innerHTML = '<option value="" disabled selected>Оценка</option>' +
+            GRADES.map(function(g) { return '<option value="' + g + '">' + g + '</option>'; }).join('');
+        sel.addEventListener('change', function() {
+            infoFormState.grades[i] = sel.value;
+            sel.classList.add('chosen');
+            updateInfoModalSaveButton();
+        });
+        row.appendChild(sel);
+    });
+}
+
+function infoGradesComplete() {
+    return escState.players.length > 0 && escState.players.every(function(_, i) { return !!(infoFormState.grades && infoFormState.grades[i]); });
+}
+
+// начисляет очки за испытание по оценкам. Оценки в итоговую таблицу не записываются.
+function awardTrialPoints() {
+    var parts = [];
+    escState.players.forEach(function(nick, i) {
+        var pts = GRADE_POINTS[infoFormState.grades[i]] || 0;
+        addPoints(i, pts);
+        parts.push(nick + ' +' + pts);
+    });
+    return parts;
 }
 
 function renderReadonlyVariators() {
@@ -4080,7 +4212,7 @@ function updateInfoModalSaveButton() {
     var levelOk = infoFormState.levelNum && infoFormState.levelNum > 0;
     var trialOk = infoFormState.trialName && infoFormState.trialName.length > 0;
     var timeOk = isValidTimeFormat(infoFormState.time);
-    btn.disabled = !(levelOk && trialOk && timeOk);
+    btn.disabled = !(levelOk && trialOk && timeOk && infoGradesComplete());
 }
 
 // ============================================================
@@ -4241,7 +4373,9 @@ function saveEscalation() {
                 initialPlayerCount: escState.initialPlayerCount,
                 pendingNewPlayer: escState.pendingNewPlayer ? JSON.parse(JSON.stringify(escState.pendingNewPlayer)) : null,
                 catchUpQueue: JSON.parse(JSON.stringify(escState.catchUpQueue || [])),
-                catchUpMode: escState.catchUpMode
+                catchUpMode: escState.catchUpMode,
+                replaceLeft: escState.replaceLeft,
+                points: JSON.parse(JSON.stringify(escState.points || {}))
             },
             collectedRecords: JSON.parse(JSON.stringify(collectedRecords))
         };
@@ -4327,6 +4461,8 @@ function applySavedEscalation(data) {
     escState.pendingNewPlayer = s.pendingNewPlayer || null;
     escState.catchUpQueue = s.catchUpQueue || [];
     escState.catchUpMode = s.catchUpMode || null;
+    escState.replaceLeft = (s.replaceLeft == null) ? 2 : s.replaceLeft;
+    escState.points = s.points || {};
 
     collectedRecords = (data.collectedRecords || []).slice();
 
@@ -4416,7 +4552,7 @@ function checkSavedOnStart() {
                     unlockedAmps: {}, allAmpsUsed: {}, currentStep: 1,
                     map: null, trial: null, difficulty: null, variators: [],
                     isFirstRun: true, usedBigTrials: [], usedSmallTrials: [],
-                    nostophobiaCount: 0, replacedVariators: [], currentEquipPlayerIndex: 0,
+                    nostophobiaCount: 0, replacedVariators: [], replaceLeft: 2, points: {}, currentEquipPlayerIndex: 0,
                     currentAmpPlayerIndex: 0, currentBreakPlayerIndex: 0,
                     initialPlayerCount: 0, pendingNewPlayer: null,
                     catchUpQueue: [], catchUpMode: null
@@ -4612,6 +4748,11 @@ function doInit() {
                 alert('Пожалуйста, введите корректное время в формате ММ:СС (например 02:46)');
                 return;
             }
+            if (!infoGradesComplete()) {
+                alert('Выберите оценку для каждого игрока.');
+                return;
+            }
+            var pointsParts = awardTrialPoints();
 
             var record = {
                 levelNum: infoFormState.levelNum,
@@ -4624,6 +4765,7 @@ function doInit() {
             };
             collectedRecords.push(record);
             closeInfoModal();
+            showToast('Очки: ' + pointsParts.join(' · '), '#b8860b');
 
             escState.level++;
             updateLevelCounter();
@@ -4667,6 +4809,7 @@ function doInit() {
                 const playerName = escState.players[pIdx];
                 const platformId = escState.playerPlatforms[pIdx] || 'steam';
                 await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, platformId);
+                await sendPointsToDB(MODE_NAME, playerName, platformId, getPoints(pIdx));
             }
 
             closeSummaryModal();
@@ -5002,7 +5145,33 @@ function showBreakModal() {
         grid.className = 'player-break-grid';
         grid.style.cssText = 'display: flex; gap: 30px; justify-content: center; flex-wrap: nowrap; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 50px;';
 
-        display.forEach(function(amp) {
+        // БОНУС: вместо амфы может выпасть блок с очками
+        // всегда ровно 3 карточки: от 0 до 3 бонусов, остальные — амфы
+        var bonusCount = Math.floor(Math.random() * 4);
+        bonusCount = Math.max(bonusCount, 3 - display.length);
+        var slots = display.slice(0, 3 - bonusCount).map(function(a) { return { amp: a }; });
+        while (slots.length < 3) slots.push({ bonus: BONUS_VALUES[Math.floor(Math.random() * BONUS_VALUES.length)] });
+        slots.sort(function() { return Math.random() - 0.5; });
+
+        slots.forEach(function(slot) {
+            if (slot.bonus) {
+                var bi = document.createElement('div');
+                bi.className = 'amp-card bonus-card';
+                bi.style.flex = '1 1 0';
+                bi.style.maxWidth = '180px';
+                bi.innerHTML = '<div class="bonus-icon"><i class="fas fa-coins"></i></div>' +
+                    '<div class="amp-title">БОНУС</div>' +
+                    '<div class="bonus-text">+ ' + slot.bonus + ' очков к общему счету</div>';
+                bi.addEventListener('click', function() {
+                    addPoints(idx, slot.bonus);
+                    showToast('БОНУС: +' + slot.bonus + ' очков — ' + escState.players[idx], '#b8860b');
+                    escState.currentBreakPlayerIndex++;
+                    renderStep();
+                });
+                grid.appendChild(bi);
+                return;
+            }
+            var amp = slot.amp;
             var item = document.createElement('div');
             item.className = 'amp-card';
             item.style.flex = '1 1 0';
@@ -5055,6 +5224,50 @@ function showBreakModal() {
 // ============================================================
 // ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB)
 // ============================================================
+// Запись очков игрока в лист «points» (для лидерборда). У игрока в режиме остаётся одна запись.
+async function sendPointsToDB(mode, playerName, platform, points) {
+    try {
+        const sheet = 'sheet=' + encodeURIComponent(POINTS_SHEET);
+        console.log(`[БД/points] Отправка очков для ${playerName}: ${points}`);
+
+        const checkRes = await fetch(`${API_URL}/search?${sheet}&Mode=${mode}&PlayerName=${encodeURIComponent(playerName)}`);
+        const existing = await checkRes.json();
+        if (existing && existing.length > 0) {
+            await fetch(`${API_URL}/PlayerName/${encodeURIComponent(playerName)}?${sheet}&Mode=${mode}`, { method: 'DELETE' });
+        }
+
+        let newId = 1;
+        try {
+            const allRes = await fetch(`${API_URL}?${sheet}`);
+            const all = await allRes.json();
+            if (all && all.length > 0) newId = Math.max(...all.map(r => parseInt(r.id) || 0)) + 1;
+        } catch (e) { console.warn('[БД/points] Не удалось получить ID, ставим 1'); }
+
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU');
+
+        const res = await fetch(`${API_URL}?${sheet}`, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                data: [{
+                    id: newId,
+                    Date: "'" + formattedDate,
+                    Mode: mode,
+                    PlayerName: playerName,
+                    Platform: platform || 'steam',
+                    Points: String(points || 0)
+                }]
+            })
+        });
+        const result = await res.json();
+        if (result.created) console.log(`[БД/points] Очки для ${playerName} сохранены.`);
+        else console.error('[БД/points] Ошибка записи. Проверьте, что лист «' + POINTS_SHEET + '» существует и есть столбцы id, Date, Mode, PlayerName, Platform, Points.');
+    } catch (error) {
+        console.error('[БД/points] КРИТИЧЕСКАЯ ОШИБКА:', error);
+    }
+}
+
 async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
     try {
         console.log(`[БД] Начинаем отправку для ${playerName} (${platform})...`);
