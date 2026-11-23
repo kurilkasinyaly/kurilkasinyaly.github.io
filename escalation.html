@@ -3975,12 +3975,11 @@ function renderEscResultPlayers() {
         var toggle = document.createElement('div');
         toggle.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: rgba(0,0,0,0.15); gap:10px; min-width: 0;';
         toggle.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; flex-wrap: nowrap; overflow: hidden;">
                 <i class="fas fa-user" style="color: #e16d48; font-size: 1rem; flex-shrink: 0;"></i>
-                <span title="${escapeHtml(player)}" style="font-weight: 700; color: #ffbc9a; font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">${escapeHtml(player)}</span>
-                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
+                <span title="${escapeHtml(player)}" style="font-weight: 700; color: #ffbc9a; font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 40px; max-width: 160px; flex: 0 1 auto;">${escapeHtml(player)}</span>
+                <span style="font-size: 0.65rem; color: #888; background: rgba(0,0,0,0.3); padding: 2px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;">${allUsed ? '✅ Все амфы' : '⏳ В процессе'}</span>
                 <span class="pts-badge" title="Очки">★ ${getPoints(idx)}</span>
-                <span class="pts-badge" style="color:#c2b9d4; background:rgba(0,0,0,.3); border-color:rgba(255,255,255,.12);" title="Карты (максимум ${FATE_MAX_CARDS})">Карты ${fateActive(idx).length}/${FATE_MAX_CARDS}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
                 ${eData ? `<img src="${eData.image}" alt="${equip}" style="width:32px; height:32px; object-fit:contain; border-radius:8px; background:rgba(0,0,0,0.3); padding:3px;" onerror="this.style.display='none'">` : ''}
@@ -4018,6 +4017,13 @@ function renderEscResultPlayers() {
             </div>
         `;
         inner.appendChild(eqBlock);
+
+        var nickBlock = document.createElement('div');
+        nickBlock.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.05);';
+        nickBlock.innerHTML = '<i class="fas fa-user" style="color:#e16d48; font-size:1.3rem;"></i><div style="min-width:0;">' +
+            '<div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Игрок · ' + escapeHtml(getPlatformById(escState.playerPlatforms[idx] || 'steam').name) + '</div>' +
+            '<div style="font-size:1.1rem; color:#ffbc9a; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + escapeHtml(player) + '</div></div>';
+        inner.insertBefore(nickBlock, inner.firstChild);
 
         var ptsBlock = document.createElement('div');
         ptsBlock.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(241,196,15,0.06); border-radius:12px; margin-bottom:12px; border:1px solid rgba(241,196,15,0.2);';
@@ -5482,10 +5488,11 @@ function showBreakModal() {
         agrid.className = 'player-break-grid';
         agrid.style.cssText = 'display:flex; gap:30px; justify-content:center; flex-wrap:nowrap; width:100%; max-width:980px; margin:0 auto; padding-bottom:50px;';
         // БОНУС: дополнительные блоки с очками (вместо выбора амфы)
-        var slots = display.map(function(a) { return { amp: a }; });
-        for (var bk = 0; bk < 2; bk++) {
-            if (Math.random() < BONUS_CHANCE) slots.push({ bonus: BONUS_VALUES[Math.floor(Math.random() * BONUS_VALUES.length)] });
-        }
+        // всегда ровно 3 карточки: от 0 до 3 бонусов, остальные — амфы
+        var bonusCount = Math.floor(Math.random() * 4);
+        bonusCount = Math.max(bonusCount, 3 - display.length);
+        var slots = display.slice(0, 3 - bonusCount).map(function(a) { return { amp: a }; });
+        while (slots.length < 3) slots.push({ bonus: BONUS_VALUES[Math.floor(Math.random() * BONUS_VALUES.length)] });
         slots.sort(function() { return Math.random() - 0.5; });
         slots.forEach(function(slot) {
             if (slot.bonus) {
