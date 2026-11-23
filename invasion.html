@@ -625,8 +625,7 @@
                 setTimeout(function() { 
                     updateLastUpdatedDate();
                     updateTableContent(); 
-                    loadEscalationDataFromDB();
-                    loadPointsFromDB();
+                    loadDataFromDB(); // Измененный вызов
                 }, 100);
             }
         });
@@ -662,8 +661,7 @@
                     document.body.classList.add('scroll-enabled');
                     updateLastUpdatedDate();
                     updateTableContent();
-                    loadEscalationDataFromDB();
-                    loadPointsFromDB();
+                    loadDataFromDB(); // Измененный вызов
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -814,8 +812,6 @@
         // ===== НАСТРОЙКИ БАЗЫ ДАННЫХ (SheetDB) =====================
         // ============================================================
         const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
-        // Лист с очками. Столбцы: id, Date, Mode, PlayerName, Platform, Points
-        const POINTS_SHEET = 'points';
 
         var escalationDBData = {
             weekly: [],
@@ -867,7 +863,8 @@
             return cutoffDate;
         }
 
-        async function loadEscalationDataFromDB() {
+        // [ИСПРАВЛЕНО] Объединенная функция загрузки данных (и таблица, и очки)
+        async function loadDataFromDB() {
             try {
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -875,6 +872,9 @@
                 
                 escalationDBData.weekly = [];
                 escalationDBData.infinite = [];
+                
+                var weeklyMap = {};
+                var infiniteMap = {};
 
                 var cutoffDate = getWeeklyCutoffDate();
 
@@ -888,19 +888,27 @@
                     const time = row.TotalTime || 'unranked';
                     const platform = row.Platform || 'steam';
                     const rowDateStr = row.Date;
+                    
+                    // Парсим очки из той же строки
+                    var pts = parseInt(String(row.Points == null ? '' : row.Points).replace(/[^\d-]/g, ''), 10);
+                    if (isNaN(pts)) pts = 0;
+                    var pointEntry = { name: playerName, points: pts, platform: platform };
 
                     if (mode === 'Infinite') {
-                        // [FIX] Бесконечная — без фильтрации по дате
                         escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
+                        
+                        var prevI = infiniteMap[pointEntry.name];
+                        if (!prevI || pointEntry.points > prevI.points) infiniteMap[pointEntry.name] = pointEntry;
                     } else if (mode === 'Weekly') {
-                        // [NEW] Фильтрация по дате (только для Weekly)
                         var rowDate = parseDBDate(rowDateStr);
-                        if (rowDate) {
-                            if (rowDate.getTime() < cutoffDate.getTime()) {
-                                return;
-                            }
+                        if (rowDate && rowDate.getTime() < cutoffDate.getTime()) {
+                            return;
                         }
+                        
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
+                        
+                        var prevW = weeklyMap[pointEntry.name];
+                        if (!prevW || pointEntry.points > prevW.points) weeklyMap[pointEntry.name] = pointEntry;
                     }
                 });
 
@@ -948,6 +956,10 @@
                     p.rank = currentRankI;
                 });
 
+                // Сортировка очков
+                escalationDBData.weeklyPoints = sortAndRankByPoints(Object.keys(weeklyMap).map(function(k) { return weeklyMap[k]; }));
+                escalationDBData.infinitePoints = sortAndRankByPoints(Object.keys(infiniteMap).map(function(k) { return infiniteMap[k]; }));
+
                 updateTableContent();
             } catch (error) {
                 console.error('Ошибка загрузки из БД:', error);
@@ -955,10 +967,8 @@
         }
 
         // ============================================================
-        // ===== ОЧКИ ЭСКАЛАЦИИ (лист «points», столбец Points) ======
+        // ===== ОЧКИ ЭСКАЛАЦИИ ======================================
         // ============================================================
-        // Сортировка: по очкам (больше — выше). Равные очки = одно место,
-        // внутри одного места игроки идут по алфавиту.
         function sortAndRankByPoints(list) {
             list.sort(function(a, b) {
                 if (b.points !== a.points) return b.points - a.points;
@@ -970,46 +980,6 @@
                 p.rank = rank;
             });
             return list;
-        }
-
-        async function loadPointsFromDB() {
-            try {
-                const response = await fetch(API_URL + '?sheet=' + encodeURIComponent(POINTS_SHEET));
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                if (!Array.isArray(data)) throw new Error('Unexpected points response');
-
-                var cutoffDate = getWeeklyCutoffDate();
-                var weeklyMap = {};
-                var infiniteMap = {};
-
-                data.forEach(function(row) {
-                    if (!row.PlayerName) return;
-                    if (row.PlayerName === 'Garlik_Darlik') return;
-
-                    var pts = parseInt(String(row.Points == null ? '' : row.Points).replace(/[^\d-]/g, ''), 10);
-                    if (isNaN(pts)) pts = 0;
-                    var entry = { name: row.PlayerName, points: pts, platform: row.Platform || 'steam' };
-
-                    if (row.Mode === 'Infinite') {
-                        // у игрока одна запись на режим; если вдруг их несколько — берём большую
-                        var prevI = infiniteMap[entry.name];
-                        if (!prevI || entry.points > prevI.points) infiniteMap[entry.name] = entry;
-                    } else if (row.Mode === 'Weekly') {
-                        var rowDate = parseDBDate(row.Date);
-                        if (rowDate && rowDate.getTime() < cutoffDate.getTime()) return;
-                        var prevW = weeklyMap[entry.name];
-                        if (!prevW || entry.points > prevW.points) weeklyMap[entry.name] = entry;
-                    }
-                });
-
-                escalationDBData.weeklyPoints = sortAndRankByPoints(Object.keys(weeklyMap).map(function(k) { return weeklyMap[k]; }));
-                escalationDBData.infinitePoints = sortAndRankByPoints(Object.keys(infiniteMap).map(function(k) { return infiniteMap[k]; }));
-
-                updateTableContent();
-            } catch (error) {
-                console.error('Ошибка загрузки очков из БД:', error);
-            }
         }
 
         // Таблица очков (используется для еженедельной и бесконечной эскалации)
