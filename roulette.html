@@ -274,22 +274,59 @@
             max-width: 700px;
             text-align: left;
         }
-        .mission-trial-block .map-image-wrap {
-            width: 220px; height: 220px;
-            border-radius: 20px;
-            border: 3px solid rgba(220, 90, 50, 0.5);
-            overflow: hidden;
-            background: #1a1a2e;
-            display: flex;
-            align-items: center; justify-content: center;
+
+        /* ===== РАМКИ ИСПЫТАНИЙ (МК-стимуляция / Генезис) — как в эскалации ===== */
+        .trial-frame {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
             flex-shrink: 0;
-            box-shadow: 0 8px 30px rgba(220, 90, 50, 0.2);
+            --frame-inset-top: 7%;
+            --frame-inset-right: 7%;
+            --frame-inset-bottom: 7%;
+            --frame-inset-left: 7%;
         }
-        .mission-trial-block .map-image-wrap img {
-            width: 100%; height: 100%;
-            object-fit: contain;
+        .trial-frame .trial-frame-border {
+            display: block;
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .trial-frame .trial-frame-window {
+            position: absolute;
+            top: var(--frame-inset-top);
+            right: var(--frame-inset-right);
+            bottom: var(--frame-inset-bottom);
+            left: var(--frame-inset-left);
+            overflow: hidden;
+            z-index: 2;
+            background: transparent;
+        }
+        .trial-frame .trial-frame-window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
+        .trial-frame.frame-mk {
+            --frame-inset-top: 15%;
+            --frame-inset-right: 7.5%;
+            --frame-inset-bottom: 21%;
+            --frame-inset-left: 7.5%;
+        }
+        .trial-frame.frame-genesis {
+            --frame-inset-top: 9.5%;
+            --frame-inset-right: 9.5%;
+            --frame-inset-bottom: 11.5%;
+            --frame-inset-left: 10%;
+        }
+        .mission-trial-block .trial-frame {
+            width: 260px;
+            max-width: 100%;
+        }
+
         .mission-trial-block .trial-info {
             flex: 1;
             display: flex;
@@ -835,7 +872,7 @@
             .escalation-rule-card .rule-variator-slot { width: 60px; height: 60px; }
             .weekly-timer-badge { font-size: 0.8rem; gap: 6px; }
             .weekly-timer-badge img { width: 20px; height: 20px; }
-            .mission-trial-block .map-image-wrap { width: 150px; height: 150px; }
+            .mission-trial-block .trial-frame { width: 220px; }
             .mission-trial-block .trial-info .trial-name { font-size: 1.3rem; }
             .mission-trial-block .trial-info .trial-desc { font-size: 0.85rem; padding: 0.5rem 0.7rem; }
             .mission-variators-block .variator-items { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
@@ -1227,29 +1264,50 @@ window.toggleMainMusic = toggleMainMusic;
 window.toggleVolumeDropdown = toggleVolumeDropdown;
 
 // ================================================================
-//  ЗАДАНИЕ ДНЯ (ЛОГИКА ИЗ ЭСКАЛАЦИИ)
+//  ЗАДАНИЕ ДНЯ — ЛОГИКА ВЫПАДЕНИЯ ВАРИАТОРОВ 1-в-1 КАК В ЭСКАЛАЦИИ
 // ================================================================
 
+// Параметры, под которые генерируется задание дня (как «уровень» и «состав группы» в эскалации).
+// Уровень 21+ даёт максимум вариаторов (8) и включает «Психохирургию» + «Двойные задания», как в эскалации.
+// Если поставить, например, 10 — будет 5 вариаторов; 18 — 6 и т.д. (getMaxVariatorsForLevel).
+var DAILY_LEVEL = 21;
+var DAILY_PLAYER_COUNT = 1; // 1 = задание подходит и для соло, и для кооператива
+var DAILY_STORAGE_KEY = 'dailyMissionV3';
+var DAILY_HISTORY_KEY = 'daily_variator_history'; // антиповтор для задания дня (отдельно от эскалации)
+
+// ---------- КОНСТАНТЫ (копия из эскалации) ----------
 var SIDE_QUEST_VARIATORS = [
-    "Сбор Подарков", "Сбор Крыс", "Сбор Амулетов", "Доставьте Компоненты",
-    "Извлеките Образцы Органов", "Разбейте Телевизоры", "Находите Радиопередатчики",
-    "Собирайте Схемы", "Найдите Трансляцию", "Соберите Коробки С Уликами",
-    "Расшифруйте Вещание", "Потушите Огонь", "Экстракция Крови", "Остановите Утечку", "Случайное Побочное Задание"
+    "Сбор Подарков", "Сбор Крыс", "Сбор Амулетов",
+    "Доставьте Компоненты", "Извлеките Образцы Органов",
+    "Разбейте Телевизоры", "Находите Радиопередатчики",
+    "Собирайте Схемы", "Найдите Трансляцию",
+    "Соберите Коробки С Уликами", "Расшифруйте Вещание",
+    "Потушите Огонь", "Соберите плакаты", "Экстракция Крови", "Перекройте Краны", "Случайное Побочное Задание"
+];
+
+var EXCLUDED_VARIATORS = [
+    'Ностофобия', 'Лиланд Койл', 'Матушка Гусбери',
+    'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова','Закрытые Откатные Ворота'
+];
+
+// Ловушки, которые не могут выпасть вместе (только 1 за генерацию)
+var TRAP_VARIATORS = [
+    'Больше Ловушек', 'Больше Ловушек II', 'Смертельные Ловушки', 'Больше Мин Психоза',
+    'Больше Звуковых Ловушек', 'Дополнительные Ловушки Главного Актива', 'Тошнотные Ловушки',
+    'Больше Дверных Ловушек', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины',
+    'Острое Стекло', 'Опасные Трубы', 'Огнеметы'
 ];
 
 function isExcludedVariator(name) {
     if (!name) return false;
-    var excluded = ['Ностофобия', 'Лиланд Койл', 'Матушка Гуссбери', 'Франко Барби', 'Близнецы Кресс', 'Лилия Богомолова', 'Сильнее Вместе', 'Без Рации'];
-    if (excluded.indexOf(name) !== -1) return true;
+    if (EXCLUDED_VARIATORS.indexOf(name) !== -1) return true;
     if (typeof allVariatorsData !== 'undefined') {
         var v = allVariatorsData.find(function(x) { return x.name === name; });
         if (v && (v.category === 'boss' || v.category === 'main_asset')) return true;
     }
     return false;
 }
-
 function isSideQuestVariator(name) { return SIDE_QUEST_VARIATORS.indexOf(name) !== -1; }
-
 function shuffleArray(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -1259,187 +1317,338 @@ function shuffleArray(arr) {
     return a;
 }
 
-// ПОЛНАЯ СОВМЕСТИМОСТЬ ИЗ ЭСКАЛАЦИИ
-function isVariatorCompatible(variator, selectedVariators, trialName, playerCount, level) {
-    var variatorName = variator.name;
-    var selectedNames = selectedVariators.map(function(v) { return v.name; });
+// ---------- ИСТОРИЯ ВЫПАДЕНИЙ (антиповтор) ----------
+function getVariatorHistory() {
+    try {
+        var raw = localStorage.getItem(DAILY_HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+function saveVariatorHistory(history) {
+    try {
+        localStorage.setItem(DAILY_HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {}
+}
+
+// ---------- ВАРИАТОР СЛОЖНОСТИ ----------
+function getDifficultyVariator(level, available) {
+    if (level < 5) return null;
+    if (level >= 5 && level <= 20) {
+        if (level >= 16) {
+            var s2 = available.find(function(v) { return v.name === 'Враги Сильнее II' || v.name === 'Враги сильнее II'; });
+            if (s2) return s2;
+        }
+        var s = available.find(function(v) { return v.name === 'Враги сильнее' || v.name === 'Враги Сильнее'; });
+        if (s) return s;
+        return {
+            id: 'enemies_stronger_fallback',
+            name: level >= 16 ? 'Враги Сильнее II' : 'Враги сильнее',
+            image: 'images/враги сильнее.webp',
+            category: 'difficulty'
+        };
+    }
+    return null;
+}
+
+// ---------- СОВМЕСТИМОСТЬ ВАРИАТОРОВ ----------
+function isVariatorCompatible(v, selected, trialName, playerCount, level) {
+    var name = v.name;
+    var names = selected.map(function(x) { return x.name; });
     var i;
 
-    if (selectedNames.indexOf(variatorName) !== -1) return false;
+    if (names.indexOf(name) !== -1) return false;
+
+    // Проверка на ловушки (только одна ловушка за раз)
+    if (TRAP_VARIATORS.indexOf(name) !== -1) {
+        for (var t = 0; t < TRAP_VARIATORS.length; t++) {
+            if (names.indexOf(TRAP_VARIATORS[t]) !== -1) return false;
+        }
+    }
+
+    var badTripGroup = ['Бэд Трип', 'Бэд Трип II', 'Галлюцинации'];
+    if (badTripGroup.indexOf(name) !== -1) {
+        for (i = 0; i < badTripGroup.length; i++) {
+            if (badTripGroup[i] !== name && names.indexOf(badTripGroup[i]) !== -1) return false;
+        }
+    }
 
     var trophyBlocked = ['Урон Перезапускает Снаряжение', 'Ограниченное Снаряжение', 'Без Улучшения Снаряжения'];
-    if (variatorName === 'Трофейное Снаряжение') {
-        for (i = 0; i < trophyBlocked.length; i++) if (selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
+    if (name === 'Трофейное Снаряжение') {
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
     }
-    if (trophyBlocked.indexOf(variatorName) !== -1) {
-        if (selectedNames.indexOf('Трофейное Снаряжение') !== -1) return false;
-        for (i = 0; i < trophyBlocked.length; i++) if (trophyBlocked[i] !== variatorName && selectedNames.indexOf(trophyBlocked[i]) !== -1) return false;
+    if (trophyBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Трофейное Снаряжение') !== -1) return false;
+        for (i = 0; i < trophyBlocked.length; i++) {
+            if (trophyBlocked[i] !== name && names.indexOf(trophyBlocked[i]) !== -1) return false;
+        }
     }
 
     var psychoBlocked = ['Без Имён', 'Экстремальный Психоз', 'Враги Сильнее', 'Враги Сильнее II', 'Повышенная Угроза', 'Повышенная Угроза II', 'Враги сильнее', 'Враги сильнее II', 'Повышенная угроза', 'Повышенная угроза II'];
-    if (variatorName === 'Психохирургия') {
-        for (i = 0; i < psychoBlocked.length; i++) if (selectedNames.indexOf(psychoBlocked[i]) !== -1) return false;
+    if (name === 'Психохирургия') {
+        for (i = 0; i < psychoBlocked.length; i++) {
+            if (names.indexOf(psychoBlocked[i]) !== -1) return false;
+        }
     }
-    if (psychoBlocked.indexOf(variatorName) !== -1) {
-        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
-    }
-
-    if (variatorName === 'Не Шумите' && selectedNames.indexOf('Разъяренные Враги') !== -1) return false;
-    if (variatorName === 'Разъяренные Враги' && selectedNames.indexOf('Не Шумите') !== -1) return false;
-
-    var mainLotteryGroup = ['Главная Рулетка', 'Самое Главное'];
-    var antiLotteryGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
-    if (mainLotteryGroup.indexOf(variatorName) !== -1) {
-        for (i = 0; i < mainLotteryGroup.length; i++) if (mainLotteryGroup[i] !== variatorName && selectedNames.indexOf(mainLotteryGroup[i]) !== -1) return false;
-        for (i = 0; i < antiLotteryGroup.length; i++) if (selectedNames.indexOf(antiLotteryGroup[i]) !== -1) return false;
-    }
-    if (antiLotteryGroup.indexOf(variatorName) !== -1) {
-        for (i = 0; i < mainLotteryGroup.length; i++) if (selectedNames.indexOf(mainLotteryGroup[i]) !== -1) return false;
-        for (i = 0; i < antiLotteryGroup.length; i++) if (antiLotteryGroup[i] !== variatorName && selectedNames.indexOf(antiLotteryGroup[i]) !== -1) return false;
+    if (psychoBlocked.indexOf(name) !== -1) {
+        if (names.indexOf('Психохирургия') !== -1) return false;
     }
 
-    var mineVariators = ['Больше Мин Психоза', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины'];
-    if (mineVariators.indexOf(variatorName) !== -1) {
-        for (i = 0; i < mineVariators.length; i++) if (mineVariators[i] !== variatorName && selectedNames.indexOf(mineVariators[i]) !== -1) return false;
+    if (name === 'Не Шумите' && names.indexOf('Разъяренные Враги') !== -1) return false;
+    if (name === 'Разъяренные Враги' && names.indexOf('Не Шумите') !== -1) return false;
+
+    var mainGroup = ['Главная Рулетка', 'Самое Главное'];
+    var antiGroup = ['Егерь', 'Больше Толкачей', 'Больше Притворщиков', 'Больше Бросателей'];
+
+    if (mainGroup.indexOf(name) !== -1) {
+        for (i = 0; i < mainGroup.length; i++) if (mainGroup[i] !== name && names.indexOf(mainGroup[i]) !== -1) return false;
+        for (i = 0; i < antiGroup.length; i++) if (names.indexOf(antiGroup[i]) !== -1) return false;
+    }
+    if (antiGroup.indexOf(name) !== -1) {
+        for (i = 0; i < mainGroup.length; i++) if (names.indexOf(mainGroup[i]) !== -1) return false;
+        for (i = 0; i < antiGroup.length; i++) if (antiGroup[i] !== name && names.indexOf(antiGroup[i]) !== -1) return false;
     }
 
-    var firstLevelBlocked = ['Сломанный Реагент', 'Без Снаряжения', 'Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Без Амф', 'Без Рецептов', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение', 'Трофейное Снаряжение'];
-    if (variatorName === 'Первый Уровень') { for (i = 0; i < firstLevelBlocked.length; i++) if (selectedNames.indexOf(firstLevelBlocked[i]) !== -1) return false; }
-    if (firstLevelBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Первый Уровень') !== -1) return false; }
-
-    var brokenReagentBlocked = ['Первый Уровень', 'Без Снаряжения', 'Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Без Амф', 'Без Рецептов', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение', 'Трофейное Снаряжение'];
-    if (variatorName === 'Сломанный Реагент') { for (i = 0; i < brokenReagentBlocked.length; i++) if (selectedNames.indexOf(brokenReagentBlocked[i]) !== -1) return false; }
-    if (brokenReagentBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Сломанный Реагент') !== -1) return false; }
-
-    var noEquipmentBlocked = ['Без Улучшения Снаряжения', 'Увеличенная Перезарядка Снаряжения', 'Ограниченное Снаряжение', 'Урон Перезапускает Снаряжение', 'Урон Отключает Снаряжение'];
-    if (variatorName === 'Без Снаряжения') { for (i = 0; i < noEquipmentBlocked.length; i++) if (selectedNames.indexOf(noEquipmentBlocked[i]) !== -1) return false; }
-    if (noEquipmentBlocked.indexOf(variatorName) !== -1) { if (selectedNames.indexOf('Без Снаряжения') !== -1) return false; }
-
-    if (variatorName === 'Все На Выход') {
-        if (trialName === 'Раздавите бригадира' || trialName === 'Устранение устаревшего оборудования') return false;
+    var mines = ['Больше Мин Психоза', 'Взрывчатка', 'Ледяные Мины', 'Огненные Мины'];
+    if (mines.indexOf(name) !== -1) {
+        for (i = 0; i < mines.length; i++) if (mines[i] !== name && names.indexOf(mines[i]) !== -1) return false;
     }
 
-    if (variatorName === 'Сильнее Вместе') {
+    var firstBlocked = ['Сломанный Реагент','Без Снаряжения','Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Без Амф','Без Рецептов','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение','Трофейное Снаряжение'];
+    if (name === 'Первый Уровень') { for (i = 0; i < firstBlocked.length; i++) if (names.indexOf(firstBlocked[i]) !== -1) return false; }
+    if (firstBlocked.indexOf(name) !== -1) { if (names.indexOf('Первый Уровень') !== -1) return false; }
+
+    var brokenBlocked = ['Первый Уровень','Без Снаряжения','Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Без Амф','Без Рецептов','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение','Трофейное Снаряжение'];
+    if (name === 'Сломанный Реагент') { for (i = 0; i < brokenBlocked.length; i++) if (names.indexOf(brokenBlocked[i]) !== -1) return false; }
+    if (brokenBlocked.indexOf(name) !== -1) { if (names.indexOf('Сломанный Реагент') !== -1) return false; }
+
+    var noEquipBlocked = ['Без Улучшения Снаряжения','Увеличенная Перезарядка Снаряжения','Ограниченное Снаряжение','Урон Перезапускает Снаряжение','Урон Отключает Снаряжение'];
+    if (name === 'Без Снаряжения') { for (i = 0; i < noEquipBlocked.length; i++) if (names.indexOf(noEquipBlocked[i]) !== -1) return false; }
+    if (noEquipBlocked.indexOf(name) !== -1) { if (names.indexOf('Без Снаряжения') !== -1) return false; }
+
+    if (name === 'Все На Выход') {
+        if (['Раздавите бригадира','Устранение устаревшего оборудования','Ударьте начальника'].indexOf(trialName) !== -1) return false;
+    }
+
+    if (name === 'Сильнее Вместе') {
+        if (['Освободите заключенных','Сожгите секс-игрушки','Заберите наркотики'].indexOf(trialName) !== -1) return false;
         if (playerCount === 1) return false;
         if (playerCount === 2 || playerCount === 3) {
-            var forbiddenMaps = ['Сожгите секс-игрушки', 'Обработайте фабрику газом', 'Освободите заключенных', 'Заберите наркотики'];
-            if (forbiddenMaps.indexOf(trialName) !== -1) return false;
+            var forbidden = ['Сожгите секс-игрушки','Обработайте фабрику газом','Освободите заключенных','Заберите наркотики'];
+            if (forbidden.indexOf(trialName) !== -1) return false;
         }
     }
 
-    if (variatorName === 'Вечная Мерзлота') {
-        if (selectedNames.indexOf('Резкое Похолодание') !== -1) return false;
-        if (selectedNames.indexOf('Токсический Шок') !== -1) return false;
+    if (name === 'Вечная Мерзлота') {
+        if (names.indexOf('Резкое Похолодание') !== -1) return false;
+        if (names.indexOf('Токсический Шок') !== -1) return false;
     }
-    if (variatorName === 'Резкое Похолодание' || variatorName === 'Токсический Шок') {
-        if (selectedNames.indexOf('Вечная Мерзлота') !== -1) return false;
+    if (name === 'Резкое Похолодание' || name === 'Токсический Шок') {
+        if (names.indexOf('Вечная Мерзлота') !== -1) return false;
     }
 
-    if (variatorName === 'Таймер Бомбы' || variatorName === 'Таймер бомбы') {
+    if (name === 'Таймер Бомбы' || name === 'Таймер бомбы') {
         if (trialName === 'Устранение устаревшего оборудования') return false;
-        if (selectedNames.indexOf('Разбейте Телевизоры') !== -1) return false;
+        if (names.indexOf('Разбейте Телевизоры') !== -1) return false;
     }
-    if (variatorName === 'Разбейте Телевизоры') {
-        if (selectedNames.indexOf('Таймер Бомбы') !== -1) return false;
-        if (selectedNames.indexOf('Таймер бомбы') !== -1) return false;
-    }
-
-    if (variatorName === 'Токсический Шок') { if (selectedNames.indexOf('Глубокий Ожог') !== -1) return false; }
-    if (variatorName === 'Глубокий Ожог') { if (selectedNames.indexOf('Токсический Шок') !== -1) return false; }
-
-    var densityAndThreat = ['Низкая Плотность Врагов', 'Много Противников', 'Повышенная Угроза', 'Повышенная угроза II'];
-    if (variatorName === 'Враги сильнее' || variatorName === 'Враги Сильнее' || variatorName === 'Враги сильнее II' || variatorName === 'Враги Сильнее II') {
-        for (i = 0; i < densityAndThreat.length; i++) if (selectedNames.indexOf(densityAndThreat[i]) !== -1) return false;
+    if (name === 'Разбейте Телевизоры') {
+        if (names.indexOf('Таймер Бомбы') !== -1) return false;
+        if (names.indexOf('Таймер бомбы') !== -1) return false;
     }
 
-    if (densityAndThreat.indexOf(variatorName) !== -1) {
-        if (selectedNames.indexOf('Враги сильнее') !== -1) return false;
-        if (selectedNames.indexOf('Враги Сильнее') !== -1) return false;
-        if (selectedNames.indexOf('Враги сильнее II') !== -1) return false;
-        if (selectedNames.indexOf('Враги Сильнее II') !== -1) return false;
-        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
+    if (name === 'Токсический Шок') { if (names.indexOf('Глубокий Ожог') !== -1) return false; }
+    if (name === 'Глубокий Ожог') { if (names.indexOf('Токсический Шок') !== -1) return false; }
+
+    if (name === 'Экстракция Крови' && names.indexOf('Токсический Шок') !== -1) return false;
+    if (name === 'Токсический Шок' && names.indexOf('Экстракция Крови') !== -1) return false;
+
+    var density = ['Низкая Плотность Врагов','Много Противников','Повышенная Угроза','Повышенная угроза II'];
+    if (name === 'Враги сильнее' || name === 'Враги Сильнее' || name === 'Враги сильнее II' || name === 'Враги Сильнее II') {
+        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
+    }
+    if (density.indexOf(name) !== -1) {
+        if (names.indexOf('Враги сильнее') !== -1) return false;
+        if (names.indexOf('Враги Сильнее') !== -1) return false;
+        if (names.indexOf('Враги сильнее II') !== -1) return false;
+        if (names.indexOf('Враги Сильнее II') !== -1) return false;
+        if (names.indexOf('Психохирургия') !== -1) return false;
+    }
+    if (name === 'Психохирургия') {
+        if (names.indexOf('Враги сильнее') !== -1) return false;
+        if (names.indexOf('Враги Сильнее') !== -1) return false;
+        if (names.indexOf('Враги сильнее II') !== -1) return false;
+        if (names.indexOf('Враги Сильнее II') !== -1) return false;
+        for (i = 0; i < density.length; i++) if (names.indexOf(density[i]) !== -1) return false;
+    }
+    if (name === 'Враги сильнее' || name === 'Враги Сильнее' || name === 'Враги сильнее II' || name === 'Враги Сильнее II') {
+        if (names.indexOf('Психохирургия') !== -1) return false;
     }
 
-    if (variatorName === 'Психохирургия') {
-        if (selectedNames.indexOf('Враги сильнее') !== -1) return false;
-        if (selectedNames.indexOf('Враги Сильнее') !== -1) return false;
-        if (selectedNames.indexOf('Враги сильнее II') !== -1) return false;
-        if (selectedNames.indexOf('Враги Сильнее II') !== -1) return false;
-        for (i = 0; i < densityAndThreat.length; i++) {
-            if (selectedNames.indexOf(densityAndThreat[i]) !== -1) return false;
-        }
-    }
-
-    if (variatorName === 'Враги сильнее' || variatorName === 'Враги Сильнее' || variatorName === 'Враги сильнее II' || variatorName === 'Враги Сильнее II') {
-        if (selectedNames.indexOf('Психохирургия') !== -1) return false;
-    }
-
-    var sameTypeGroups = [
-        ['Ограниченный Инвентарь', 'Ограниченный Инвентарь II'],
-        ['Повышенная Угроза', 'Повышенная угроза II'],
-        ['Ограниченные Укрытия', 'Ограниченные Укрытия II'],
-        ['Ограниченные предметы', 'Ограниченные предметы II']
+    var pairs = [
+        ['Ограниченный Инвентарь','Ограниченный Инвентарь II'],
+        ['Повышенная Угроза','Повышенная угроза II'],
+        ['Ограниченные Укрытия','Ограниченные Укрытия II'],
+        ['Ограниченные предметы','Ограниченные предметы II']
     ];
-
-    for (var g = 0; g < sameTypeGroups.length; g++) {
-        var group = sameTypeGroups[g];
-        if (group.indexOf(variatorName) !== -1) {
-            for (i = 0; i < group.length; i++) {
-                if (group[i] !== variatorName && selectedNames.indexOf(group[i]) !== -1) return false;
-            }
+    for (var p = 0; p < pairs.length; p++) {
+        var g = pairs[p];
+        if (g.indexOf(name) !== -1) {
+            for (i = 0; i < g.length; i++) if (g[i] !== name && names.indexOf(g[i]) !== -1) return false;
         }
     }
 
-    var itemRestrictionGroup = [
-        'Без Предметов В Испытании', 'Ограниченные Предметы', 'Ограниченные Предметы II',
-        'Ограниченные предметы', 'Ограниченные предметы II', 'Без Медицинских Предметов',
-        'Без Технических Предметов', 'Закрытые Предметы', 'Только Предметы Для Бросания'
+    var itemGroup = [
+        'Без Предметов В Испытании',
+        'Ограниченные Предметы', 'Ограниченные Предметы II',
+        'Ограниченные предметы', 'Ограниченные предметы II',
+        'Без Медицинских Предметов', 'Без Технических Предметов',
+        'Закрытые Предметы', 'Только Предметы Для Бросания'
     ];
-
-    if (itemRestrictionGroup.indexOf(variatorName) !== -1) {
-        for (i = 0; i < itemRestrictionGroup.length; i++) {
-            if (itemRestrictionGroup[i] !== variatorName && selectedNames.indexOf(itemRestrictionGroup[i]) !== -1) {
-                return false;
-            }
+    if (itemGroup.indexOf(name) !== -1) {
+        for (i = 0; i < itemGroup.length; i++) {
+            if (itemGroup[i] !== name && names.indexOf(itemGroup[i]) !== -1) return false;
         }
     }
 
-    if (playerCount === 1) {
-        if (variatorName === 'Без Имён' || variatorName === 'Без Рации') return false;
-    }
-    if (variatorName === 'Низкая Плотность Врагов' && level > 5) return false;
-    if (level < 21) {
-        if (variatorName === 'Ностофобия' || variatorName === 'Психохирургия') return false;
-    }
+    if (playerCount === 1) { if (name === 'Без Имён' || name === 'Без Рации') return false; }
+    if (name === 'Низкая Плотность Врагов' && level > 5) return false;
+    if (level < 21) { if (name === 'Ностофобия' || name === 'Психохирургия') return false; }
 
     return true;
 }
 
-function generateDailyVariators(count, trialName) {
+// ---------- ЛИМИТ ВАРИАТОРОВ ПО УРОВНЮ ----------
+function getMaxVariatorsForLevel(level) {
+    if (level >= 1 && level <= 3) return 3;
+    if (level >= 4 && level <= 5) return 4;
+    if (level >= 6 && level <= 15) return 5;
+    if (level >= 16 && level <= 20) return 6;
+    return 8;
+}
+
+// ---------- ГЕНЕРАЦИЯ ВАРИАТОРОВ (порядок и логика как в эскалации) ----------
+function getVariatorsForLevel(level, mapName, playerCount, trialName) {
     if (typeof allVariatorsData === 'undefined') return [];
 
+    var MAX_VARIATORS = getMaxVariatorsForLevel(level);
+    trialName = trialName || '';
+
     var available = allVariatorsData.filter(function(v) {
-        return !isExcludedVariator(v.name);
+        if (isExcludedVariator(v.name)) return false;
+        var gates = ['Ворота С Детектором Звука','Дистанционные Ворота','Бесконтактные Ворота','Времянные Ворота','Закрытые Ворота'];
+        if (gates.indexOf(v.name) !== -1) return false;
+        if (v.name === 'Низкая Плотность Врагов' && level > 5) return false;
+        return true;
     });
 
     var result = [];
-    var shuffled = shuffleArray(available);
+    var used = [];
 
-    for (var i = 0; i < shuffled.length && result.length < count; i++) {
-        if (isVariatorCompatible(shuffled[i], result, trialName, 1, 10)) {
-            result.push(shuffled[i]);
+    // 1. Вариатор сложности (или Психохирургия + Двойные задания после 20 уровня)
+    if (result.length < MAX_VARIATORS) {
+        if (level > 20) {
+            var psycho = available.find(function(v) { return v.name === "Психохирургия"; });
+            var doubleT = available.find(function(v) { return v.name === "Двойные задания"; });
+            if (psycho) { result.push(psycho); used.push(psycho.name); }
+            else { result.push({ id: 'psycho_fallback', name: "Психохирургия", image: "images/психохирургия.webp", category: "psycho" }); used.push("Психохирургия"); }
+            if (doubleT && result.length < MAX_VARIATORS) { result.push(doubleT); used.push(doubleT.name); }
+            else if (result.length < MAX_VARIATORS) { result.push({ id: 'double_fallback', name: "Двойные задания", image: "images/двойные задания.webp", category: "collection_special" }); used.push("Двойные задания"); }
+        } else {
+            var diffVar = getDifficultyVariator(level, available);
+            if (diffVar && used.indexOf(diffVar.name) === -1) { result.push(diffVar); used.push(diffVar.name); }
         }
     }
+
+    // 2. Одно побочное задание (до 20 уровня включительно)
+    if (result.length < MAX_VARIATORS && level <= 20) {
+        var sidePool = available.filter(function(v) {
+            if (!isVariatorCompatible(v, result, trialName, playerCount, level)) return false;
+            if (SIDE_QUEST_VARIATORS.indexOf(v.name) === -1) return false;
+            if (used.indexOf(v.name) !== -1) return false;
+            return true;
+        });
+        if (sidePool.length > 0) {
+            var chosen = sidePool[Math.floor(Math.random() * sidePool.length)];
+            result.push(chosen); used.push(chosen.name);
+        }
+    }
+
+    // 3. Остальные вариаторы: перемешивание + сортировка по истории (антиповтор)
+    var filtered = available.filter(function(v) {
+        if (used.indexOf(v.name) !== -1) return false;
+        if (isSideQuestVariator(v.name)) return false;
+        if (v.name === "Психохирургия" || v.name === "Двойные задания") return false;
+        if (v.name === "Враги сильнее" || v.name === "Враги Сильнее" || v.name === "Враги Сильнее II" || v.name === "Враги сильнее II") return false;
+        return true;
+    });
+
+    var shuffled = shuffleArray(filtered);
+
+    var history = getVariatorHistory();
+    shuffled.sort(function(a, b) {
+        var indexA = history.lastIndexOf(a.name);
+        var indexB = history.lastIndexOf(b.name);
+
+        var weightA = indexA === -1 ? -1 : indexA;
+        var weightB = indexB === -1 ? -1 : indexB;
+
+        return weightA - weightB;
+    });
+
+    for (var i = 0; i < shuffled.length && result.length < MAX_VARIATORS; i++) {
+        if (isVariatorCompatible(shuffled[i], result, trialName, playerCount, level)) {
+            result.push(shuffled[i]); used.push(shuffled[i].name);
+        }
+    }
+
+    // 4. Добор, если не хватило
+    if (result.length < MAX_VARIATORS) {
+        var remaining = available.filter(function(v) {
+            return used.indexOf(v.name) === -1 && !isSideQuestVariator(v.name)
+                && v.name !== "Психохирургия" && v.name !== "Двойные задания"
+                && v.name !== "Враги сильнее" && v.name !== "Враги Сильнее"
+                && v.name !== "Враги Сильнее II" && v.name !== "Враги сильнее II";
+        });
+        var shufRem = shuffleArray(remaining);
+        for (var j = 0; j < shufRem.length && result.length < MAX_VARIATORS; j++) {
+            if (used.indexOf(shufRem[j].name) === -1 && isVariatorCompatible(shufRem[j], result, trialName, playerCount, level)) {
+                result.push(shufRem[j]); used.push(shufRem[j].name);
+            }
+        }
+    }
+
+    if (result.length < MAX_VARIATORS) {
+        var anyRem = allVariatorsData.filter(function(v) { return used.indexOf(v.name) === -1 && !isExcludedVariator(v.name); });
+        for (var k = 0; k < anyRem.length && result.length < MAX_VARIATORS; k++) {
+            if (used.indexOf(anyRem[k].name) === -1 && isVariatorCompatible(anyRem[k], result, trialName, playerCount, level)) { result.push(anyRem[k]); used.push(anyRem[k].name); }
+        }
+    }
+
+    result = result.filter(function(v) { return !isExcludedVariator(v.name); });
+    if (result.length > MAX_VARIATORS) result = result.slice(0, MAX_VARIATORS);
+
+    // Записываем историю
+    result.forEach(function(v) {
+        var idx = history.indexOf(v.name);
+        if (idx !== -1) history.splice(idx, 1);
+        history.push(v.name);
+    });
+    if (history.length > 30) history = history.slice(history.length - 30);
+    saveVariatorHistory(history);
 
     return result;
 }
 
+// ---------- ЗАДАНИЕ ДНЯ ----------
 function getDailyMission() {
     var now = new Date();
     var dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var dayKey = dayStart.getTime().toString();
 
-    var saved = localStorage.getItem('dailyMissionV2');
+    var saved = localStorage.getItem(DAILY_STORAGE_KEY);
     if (saved) {
         try {
             var parsed = JSON.parse(saved);
@@ -1457,8 +1666,8 @@ function getDailyMission() {
     if (!mapData || !mapData.trials || mapData.trials.length === 0) return null;
 
     var trial = mapData.trials[Math.floor(Math.random() * mapData.trials.length)];
-    
-    var variators = generateDailyVariators(8, trial.name);
+
+    var variators = getVariatorsForLevel(DAILY_LEVEL, mapName, DAILY_PLAYER_COUNT, trial.name);
 
     var missionData = {
         mapName: mapName,
@@ -1467,7 +1676,7 @@ function getDailyMission() {
         variators: variators
     };
 
-    localStorage.setItem('dailyMissionV2', JSON.stringify({ dayKey: dayKey, data: missionData }));
+    localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify({ dayKey: dayKey, data: missionData }));
     return missionData;
 }
 
@@ -1483,6 +1692,11 @@ function renderDailyMission() {
 
     var displayImage = mission.trial.image || mission.mapImage || '';
 
+    // Тип рамки: большие испытания (название ЗАГЛАВНЫМИ) — Генезис, остальные — МК-стимуляция (как в эскалации)
+    var isBigTrial = mission.trial.name === mission.trial.name.toUpperCase();
+    var frameSrc = isBigTrial ? 'images/Генезис-рамка.webp' : 'images/МК-рамка.webp';
+    var frameClass = isBigTrial ? 'frame-genesis' : 'frame-mk';
+
     var variatorsHTML = mission.variators.map(function(v) {
         return `
             <div class="variator-item">
@@ -1496,8 +1710,11 @@ function renderDailyMission() {
 
     container.innerHTML = `
         <div class="mission-trial-block">
-            <div class="map-image-wrap">
-                <img src="${displayImage}" alt="${mission.trial.name}" onerror="this.src='https://placehold.co/220x220/1a1a2e/e16d48?text=?'">
+            <div class="trial-frame ${frameClass}">
+                <div class="trial-frame-window">
+                    <img src="${displayImage}" alt="${mission.trial.name}" onerror="this.src='https://placehold.co/200x200/1a1a2e/e16d48?text=${encodeURIComponent(mission.trial.name)}'">
+                </div>
+                <img class="trial-frame-border" src="${frameSrc}" alt="">
             </div>
             <div class="trial-info">
                 <div class="map-name"><i class="fas fa-map"></i> ${mission.mapName.toUpperCase()}</div>
