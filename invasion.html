@@ -626,6 +626,7 @@
                     updateLastUpdatedDate();
                     updateTableContent(); 
                     loadEscalationDataFromDB();
+                    loadPointsFromDB();
                 }, 100);
             }
         });
@@ -662,6 +663,7 @@
                     updateLastUpdatedDate();
                     updateTableContent();
                     loadEscalationDataFromDB();
+                    loadPointsFromDB();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -812,10 +814,14 @@
         // ===== НАСТРОЙКИ БАЗЫ ДАННЫХ (SheetDB) =====================
         // ============================================================
         const API_URL = 'https://sheetdb.io/api/v1/9dtvdj6zwab90';
+        // Лист с очками. Столбцы: id, Date, Mode, PlayerName, Platform, Points
+        const POINTS_SHEET = 'points';
 
         var escalationDBData = {
             weekly: [],
-            infinite: []
+            infinite: [],
+            weeklyPoints: [],
+            infinitePoints: []
         };
 
         // [NEW] Парсинг даты из базы данных (устойчивый к апострофам и пробелам)
@@ -840,6 +846,27 @@
             return null;
         }
 
+        // Начало текущего еженедельного периода: последний вторник 19:00 МСК
+        function getWeeklyCutoffDate() {
+            var now = new Date();
+            var mskTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3 * 3600000));
+
+            var dayOfWeek = mskTime.getDay();
+            var hours = mskTime.getHours();
+
+            var daysSinceTuesday = 0;
+            if (dayOfWeek === 2) {
+                daysSinceTuesday = (hours < 19) ? 7 : 0;
+            } else {
+                daysSinceTuesday = (dayOfWeek + 7 - 2) % 7;
+            }
+
+            var cutoffDate = new Date(mskTime);
+            cutoffDate.setDate(cutoffDate.getDate() - daysSinceTuesday);
+            cutoffDate.setHours(19, 0, 0, 0);
+            return cutoffDate;
+        }
+
         async function loadEscalationDataFromDB() {
             try {
                 const response = await fetch(API_URL);
@@ -849,31 +876,7 @@
                 escalationDBData.weekly = [];
                 escalationDBData.infinite = [];
 
-                // ============================================================
-                // [NEW] ВЫЧИСЛЯЕМ ДАТУ ПОСЛЕДНЕГО ВТОРНИКА 19:00 МСК
-                // ============================================================
-                var now = new Date();
-                var mskTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3 * 3600000));
-                
-                var dayOfWeek = mskTime.getDay();
-                var hours = mskTime.getHours();
-                
-                var daysSinceTuesday = 0;
-                if (dayOfWeek === 2) {
-                    if (hours < 19) {
-                        daysSinceTuesday = 7;
-                    } else {
-                        daysSinceTuesday = 0;
-                    }
-                } else {
-                    daysSinceTuesday = (dayOfWeek + 7 - 2) % 7;
-                }
-                
-                var cutoffDate = new Date(mskTime);
-                cutoffDate.setDate(cutoffDate.getDate() - daysSinceTuesday);
-                cutoffDate.setHours(19, 0, 0, 0);
-                
-                // ============================================================
+                var cutoffDate = getWeeklyCutoffDate();
 
                 data.forEach(row => {
                     if (!row.PlayerName) return;
@@ -949,6 +952,99 @@
             } catch (error) {
                 console.error('Ошибка загрузки из БД:', error);
             }
+        }
+
+        // ============================================================
+        // ===== ОЧКИ ЭСКАЛАЦИИ (лист «points», столбец Points) ======
+        // ============================================================
+        // Сортировка: по очкам (больше — выше). Равные очки = одно место,
+        // внутри одного места игроки идут по алфавиту.
+        function sortAndRankByPoints(list) {
+            list.sort(function(a, b) {
+                if (b.points !== a.points) return b.points - a.points;
+                return a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' });
+            });
+            var rank = 1;
+            list.forEach(function(p, i) {
+                if (i > 0 && p.points !== list[i - 1].points) rank = i + 1;
+                p.rank = rank;
+            });
+            return list;
+        }
+
+        async function loadPointsFromDB() {
+            try {
+                const response = await fetch(API_URL + '?sheet=' + encodeURIComponent(POINTS_SHEET));
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                if (!Array.isArray(data)) throw new Error('Unexpected points response');
+
+                var cutoffDate = getWeeklyCutoffDate();
+                var weeklyMap = {};
+                var infiniteMap = {};
+
+                data.forEach(function(row) {
+                    if (!row.PlayerName) return;
+                    if (row.PlayerName === 'Garlik_Darlik') return;
+
+                    var pts = parseInt(String(row.Points == null ? '' : row.Points).replace(/[^\d-]/g, ''), 10);
+                    if (isNaN(pts)) pts = 0;
+                    var entry = { name: row.PlayerName, points: pts, platform: row.Platform || 'steam' };
+
+                    if (row.Mode === 'Infinite') {
+                        // у игрока одна запись на режим; если вдруг их несколько — берём большую
+                        var prevI = infiniteMap[entry.name];
+                        if (!prevI || entry.points > prevI.points) infiniteMap[entry.name] = entry;
+                    } else if (row.Mode === 'Weekly') {
+                        var rowDate = parseDBDate(row.Date);
+                        if (rowDate && rowDate.getTime() < cutoffDate.getTime()) return;
+                        var prevW = weeklyMap[entry.name];
+                        if (!prevW || entry.points > prevW.points) weeklyMap[entry.name] = entry;
+                    }
+                });
+
+                escalationDBData.weeklyPoints = sortAndRankByPoints(Object.keys(weeklyMap).map(function(k) { return weeklyMap[k]; }));
+                escalationDBData.infinitePoints = sortAndRankByPoints(Object.keys(infiniteMap).map(function(k) { return infiniteMap[k]; }));
+
+                updateTableContent();
+            } catch (error) {
+                console.error('Ошибка загрузки очков из БД:', error);
+            }
+        }
+
+        // Таблица очков (используется для еженедельной и бесконечной эскалации)
+        function renderPointsTable(list, emptyText) {
+            if (!list || list.length === 0) {
+                return `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
+                    <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
+                    ${emptyText}
+                </div>`;
+            }
+            var html = `<table>
+                <thead>
+                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ОЧКИ</th></tr>
+                </thead>
+                <tbody>`;
+            list.forEach(function(player) {
+                var platform = getPlatformForPlayer(player.name);
+                var rank = player.rank;
+                var rankDisplay = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+                var color = rank === 1 ? '#ffd700' : rank === 2 ? '#c0c0c0' : rank === 3 ? '#cd7f32' : '#7dd3fc';
+                html += `
+                    <tr class="${getRankClass(rank)}">
+                        <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
+                        <td style="font-weight: ${rank <= 3 ? '600' : 'normal'}; text-align: left;">
+                            <span class="player-name">
+                                ${getPlatformIcon(platform)}
+                                ${player.name}
+                            </span>
+                        </td>
+                        <td style="font-weight: 700; color: ${color};">${player.points.toLocaleString('ru-RU')}</td>
+                    </tr>
+                `;
+            });
+            html += `</tbody></table>`;
+            return html;
         }
 
         function timeToSeconds(timeStr) {
@@ -1169,74 +1265,17 @@
                 }
 
                 if (currentCommunity === 'kurilka') {
+                    // Таблица очков: данные из листа «points», сортировка по очкам
                     if (currentSubTab === 'weekly') {
-                        var dataK = escalationDBData.weekly;
-                        if (dataK.length === 0) {
-                            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
-                                <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
-                                Данные появятся после первого прохождения<br>еженедельной эскалации участниками Курилки.
-                            </div>`;
-                        } else {
-                            var htmlK = `<table>
-                                <thead>
-                                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ПРОЙДЕНО</th><th>ВРЕМЯ</th></tr>
-                                </thead>
-                                <tbody>`;
-                            dataK.forEach(function(player) {
-                                var platform = getPlatformForPlayer(player.name);
-                                var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                                var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                                htmlK += `
-                                    <tr class="${getRankClass(player.rank)}">
-                                        <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                        <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                            <span class="player-name">
-                                                ${getPlatformIcon(platform)}
-                                                ${player.name}
-                                            </span>
-                                        </td>
-                                        <td>${player.completed}</td>
-                                        <td>${formatCell(player.time)}</td>
-                                    </tr>
-                                `;
-                            });
-                            htmlK += `</tbody></table>`;
-                            container.innerHTML = htmlK;
-                        }
+                        container.innerHTML = renderPointsTable(
+                            escalationDBData.weeklyPoints,
+                            'Данные появятся после первого прохождения<br>еженедельной эскалации участниками Курилки.'
+                        );
                     } else {
-                        var dataKI = escalationDBData.infinite;
-                        if (dataKI.length === 0) {
-                            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
-                                <i class="fas fa-hourglass-half" style="font-size:2rem; color:#e25d32; margin-bottom:10px; display:block;"></i>
-                                Данные появятся после первого прохождения<br>бесконечной эскалации участниками Курилки.
-                            </div>`;
-                        } else {
-                            var htmlKI = `<table>
-                                <thead>
-                                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>МАКСИМУМ (УРОВЕНЬ)</th><th>ВРЕМЯ</th></tr>
-                                </thead>
-                                <tbody>`;
-                            dataKI.forEach(function(player) {
-                                var platform = getPlatformForPlayer(player.name);
-                                var rankDisplay = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '#' + player.rank;
-                                var color = player.rank === 1 ? '#ffd700' : player.rank === 2 ? '#c0c0c0' : player.rank === 3 ? '#cd7f32' : '#7dd3fc';
-                                htmlKI += `
-                                    <tr class="${getRankClass(player.rank)}">
-                                        <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
-                                        <td style="font-weight: ${player.rank <= 3 ? '600' : 'normal'}; text-align: left;">
-                                            <span class="player-name">
-                                                ${getPlatformIcon(platform)}
-                                                ${player.name}
-                                            </span>
-                                        </td>
-                                        <td>${player.level}</td>
-                                        <td>${formatCell(player.time)}</td>
-                                    </tr>
-                                `;
-                            });
-                            htmlKI += `</tbody></table>`;
-                            container.innerHTML = htmlKI;
-                        }
+                        container.innerHTML = renderPointsTable(
+                            escalationDBData.infinitePoints,
+                            'Данные появятся после первого прохождения<br>бесконечной эскалации участниками Курилки.'
+                        );
                     }
                 } else {
                     // === ГЛОБАЛЬНАЯ ТАБЛИЦА ===
