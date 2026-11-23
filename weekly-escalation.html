@@ -2137,9 +2137,6 @@ var GRADE_POINTS = {
 // БОНУС при выборе АМФ (вместо амфы может выпасть бонус с очками)
 var BONUS_VALUES = [100, 200, 300, 400, 500, 600, 700, 800];
 
-// Таблица (лист) с очками в SheetDB. Столбцы листа: id, Date, Mode, PlayerName, Platform, Points
-var POINTS_SHEET = 'points';
-
 function getPoints(i) { return (escState.points && escState.points[i]) || 0; }
 function setPoints(i, v) { escState.points = escState.points || {}; escState.points[i] = Math.max(0, Math.round(v)); }
 function addPoints(i, d) { setPoints(i, getPoints(i) + d); }
@@ -4808,8 +4805,7 @@ function doInit() {
             for (let pIdx = 0; pIdx < escState.players.length; pIdx++) {
                 const playerName = escState.players[pIdx];
                 const platformId = escState.playerPlatforms[pIdx] || 'steam';
-                await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, platformId);
-                await sendPointsToDB(MODE_NAME, playerName, platformId, getPoints(pIdx));
+                await sendResultToDB(MODE_NAME, playerName, levelsCompleted, totalTimeStr, platformId, getPoints(pIdx));
             }
 
             closeSummaryModal();
@@ -5224,51 +5220,7 @@ function showBreakModal() {
 // ============================================================
 // ОТПРАВКА ДАННЫХ В БАЗУ (SheetDB)
 // ============================================================
-// Запись очков игрока в лист «points» (для лидерборда). У игрока в режиме остаётся одна запись.
-async function sendPointsToDB(mode, playerName, platform, points) {
-    try {
-        const sheet = 'sheet=' + encodeURIComponent(POINTS_SHEET);
-        console.log(`[БД/points] Отправка очков для ${playerName}: ${points}`);
-
-        const checkRes = await fetch(`${API_URL}/search?${sheet}&Mode=${mode}&PlayerName=${encodeURIComponent(playerName)}`);
-        const existing = await checkRes.json();
-        if (existing && existing.length > 0) {
-            await fetch(`${API_URL}/PlayerName/${encodeURIComponent(playerName)}?${sheet}&Mode=${mode}`, { method: 'DELETE' });
-        }
-
-        let newId = 1;
-        try {
-            const allRes = await fetch(`${API_URL}?${sheet}`);
-            const all = await allRes.json();
-            if (all && all.length > 0) newId = Math.max(...all.map(r => parseInt(r.id) || 0)) + 1;
-        } catch (e) { console.warn('[БД/points] Не удалось получить ID, ставим 1'); }
-
-        const now = new Date();
-        const formattedDate = now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU');
-
-        const res = await fetch(`${API_URL}?${sheet}`, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: [{
-                    id: newId,
-                    Date: "'" + formattedDate,
-                    Mode: mode,
-                    PlayerName: playerName,
-                    Platform: platform || 'steam',
-                    Points: String(points || 0)
-                }]
-            })
-        });
-        const result = await res.json();
-        if (result.created) console.log(`[БД/points] Очки для ${playerName} сохранены.`);
-        else console.error('[БД/points] Ошибка записи. Проверьте, что лист «' + POINTS_SHEET + '» существует и есть столбцы id, Date, Mode, PlayerName, Platform, Points.');
-    } catch (error) {
-        console.error('[БД/points] КРИТИЧЕСКАЯ ОШИБКА:', error);
-    }
-}
-
-async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform) {
+async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, platform, points) {
     try {
         console.log(`[БД] Начинаем отправку для ${playerName} (${platform})...`);
 
@@ -5313,7 +5265,8 @@ async function sendResultToDB(mode, playerName, levelsCompleted, totalTime, plat
                     PlayerName: playerName,                   // Ник
                     LevelsCompleted: levelsCompleted.toString(), // Уровни
                     TotalTime: "'" + totalTime,               // Апостроф сохраняет текст "25:30"
-                    Platform: platform || 'steam'             // Платформа
+                    Platform: platform || 'steam',            // Платформа
+                    Points: String(points || 0)               // Очки
                 }]
             })
         });
