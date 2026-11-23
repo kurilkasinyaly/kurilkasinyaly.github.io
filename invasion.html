@@ -625,7 +625,7 @@
                 setTimeout(function() { 
                     updateLastUpdatedDate();
                     updateTableContent(); 
-                    loadDataFromDB(); // Измененный вызов
+                    loadDataFromDB(); 
                 }, 100);
             }
         });
@@ -661,7 +661,7 @@
                     document.body.classList.add('scroll-enabled');
                     updateLastUpdatedDate();
                     updateTableContent();
-                    loadDataFromDB(); // Измененный вызов
+                    loadDataFromDB(); 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -820,7 +820,6 @@
             infinitePoints: []
         };
 
-        // [NEW] Парсинг даты из базы данных (устойчивый к апострофам и пробелам)
         function parseDBDate(dateStr) {
             if (!dateStr) return null;
             var cleanStr = String(dateStr).replace(/'/g, '').trim();
@@ -842,7 +841,6 @@
             return null;
         }
 
-        // Начало текущего еженедельного периода: последний вторник 19:00 МСК
         function getWeeklyCutoffDate() {
             var now = new Date();
             var mskTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3 * 3600000));
@@ -863,7 +861,7 @@
             return cutoffDate;
         }
 
-        // [ИСПРАВЛЕНО] Объединенная функция загрузки данных (и таблица, и очки)
+        // Загрузка данных и очков из одной таблицы
         async function loadDataFromDB() {
             try {
                 const response = await fetch(API_URL);
@@ -889,24 +887,21 @@
                     const platform = row.Platform || 'steam';
                     const rowDateStr = row.Date;
                     
-                    // Парсим очки из той же строки
                     var pts = parseInt(String(row.Points == null ? '' : row.Points).replace(/[^\d-]/g, ''), 10);
                     if (isNaN(pts)) pts = 0;
-                    var pointEntry = { name: playerName, points: pts, platform: platform };
+
+                    // Сохраняем полные данные для таблицы очков
+                    var pointEntry = { name: playerName, points: pts, level: levels, time: time, platform: platform };
 
                     if (mode === 'Infinite') {
                         escalationDBData.infinite.push({ name: playerName, level: levels, time: time, platform: platform });
-                        
                         var prevI = infiniteMap[pointEntry.name];
                         if (!prevI || pointEntry.points > prevI.points) infiniteMap[pointEntry.name] = pointEntry;
                     } else if (mode === 'Weekly') {
                         var rowDate = parseDBDate(rowDateStr);
-                        if (rowDate && rowDate.getTime() < cutoffDate.getTime()) {
-                            return;
-                        }
+                        if (rowDate && rowDate.getTime() < cutoffDate.getTime()) return;
                         
                         escalationDBData.weekly.push({ name: playerName, completed: levels, time: time, platform: platform });
-                        
                         var prevW = weeklyMap[pointEntry.name];
                         if (!prevW || pointEntry.points > prevW.points) weeklyMap[pointEntry.name] = pointEntry;
                     }
@@ -925,12 +920,8 @@
                 escalationDBData.weekly.forEach((p, i) => {
                     if (i > 0) {
                         let prev = escalationDBData.weekly[i - 1];
-                        if (p.completed !== prev.completed || timeToSeconds(p.time) !== timeToSeconds(prev.time)) {
-                            currentRankW = i + 1;
-                        }
-                    } else {
-                        currentRankW = 1;
-                    }
+                        if (p.completed !== prev.completed || timeToSeconds(p.time) !== timeToSeconds(prev.time)) currentRankW = i + 1;
+                    } else currentRankW = 1;
                     p.rank = currentRankW;
                 });
 
@@ -947,16 +938,11 @@
                 escalationDBData.infinite.forEach((p, i) => {
                     if (i > 0) {
                         let prev = escalationDBData.infinite[i - 1];
-                        if (p.level !== prev.level || timeToSeconds(p.time) !== timeToSeconds(prev.time)) {
-                            currentRankI = i + 1;
-                        }
-                    } else {
-                        currentRankI = 1;
-                    }
+                        if (p.level !== prev.level || timeToSeconds(p.time) !== timeToSeconds(prev.time)) currentRankI = i + 1;
+                    } else currentRankI = 1;
                     p.rank = currentRankI;
                 });
 
-                // Сортировка очков
                 escalationDBData.weeklyPoints = sortAndRankByPoints(Object.keys(weeklyMap).map(function(k) { return weeklyMap[k]; }));
                 escalationDBData.infinitePoints = sortAndRankByPoints(Object.keys(infiniteMap).map(function(k) { return infiniteMap[k]; }));
 
@@ -966,9 +952,6 @@
             }
         }
 
-        // ============================================================
-        // ===== ОЧКИ ЭСКАЛАЦИИ ======================================
-        // ============================================================
         function sortAndRankByPoints(list) {
             list.sort(function(a, b) {
                 if (b.points !== a.points) return b.points - a.points;
@@ -982,7 +965,7 @@
             return list;
         }
 
-        // Таблица очков (используется для еженедельной и бесконечной эскалации)
+        // Вывод таблицы очков (теперь с полными колонками)
         function renderPointsTable(list, emptyText) {
             if (!list || list.length === 0) {
                 return `<div style="text-align:center; padding: 40px; color: #888; font-style: italic; font-size:1.1rem;">
@@ -992,7 +975,13 @@
             }
             var html = `<table>
                 <thead>
-                    <tr><th>УРОВЕНЬ</th><th>ИДЕНТИФИКАТОР ИГРОКА</th><th>ОЧКИ</th></tr>
+                    <tr>
+                        <th>УРОВЕНЬ</th>
+                        <th>ИДЕНТИФИКАТОР ИГРОКА</th>
+                        <th>ПРОЙДЕНО ИСПЫТАНИЙ</th>
+                        <th>ВРЕМЯ</th>
+                        <th>ОЧКИ</th>
+                    </tr>
                 </thead>
                 <tbody>`;
             list.forEach(function(player) {
@@ -1000,6 +989,10 @@
                 var rank = player.rank;
                 var rankDisplay = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
                 var color = rank === 1 ? '#ffd700' : rank === 2 ? '#c0c0c0' : rank === 3 ? '#cd7f32' : '#7dd3fc';
+                
+                // Обработка времени (если unranked или 0, выводим прочерк)
+                var timeDisplay = (player.time === 'unranked' || player.time === '0' || !player.time) ? '-' : player.time;
+
                 html += `
                     <tr class="${getRankClass(rank)}">
                         <td style="font-weight: bold; color: ${color};">${rankDisplay}</td>
@@ -1009,7 +1002,9 @@
                                 ${player.name}
                             </span>
                         </td>
-                        <td style="font-weight: 700; color: ${color};">${player.points.toLocaleString('ru-RU')}</td>
+                        <td style="font-weight: 700; color: #8aa8d0;">${player.level}</td>
+                        <td style="font-weight: 700; color: #8aa8d0;">${timeDisplay}</td>
+                        <td style="font-weight: 800; color: #f1c40f;">${player.points.toLocaleString('ru-RU')}</td>
                     </tr>
                 `;
             });
