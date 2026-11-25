@@ -6373,8 +6373,9 @@ function checkSavedOnStart() {
                     renderEscAmps();
                 } else if (escState.currentStep >= 6 && escState.trial && escState.map) {
                     document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
-                    showFullResult();
+                    // сначала готовим карточку испытания (она скрывает блок), потом показываем
                     prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
+                    showFullResult();
                     // [NEW] если в сохранении был незавершённый догон — продолжим
                     if (escState.pendingNewPlayer) {
                         setTimeout(function() { processCatchUpQueue(); }, 400);
