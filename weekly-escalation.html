@@ -4408,6 +4408,29 @@ function saveEscalation() {
     }
 }
 
+// Начало текущего еженедельного периода: последний вторник 19:00 МСК (= 16:00 UTC, у Москвы нет перехода на летнее время)
+function getWeeklyPeriodStart(nowMs) {
+    var now = new Date(nowMs == null ? Date.now() : nowMs);
+    var start = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 16, 0, 0, 0);
+    var daysSinceTuesday = (now.getUTCDay() + 5) % 7;           // 0 = вторник
+    start -= daysSinceTuesday * 86400000;
+    if (start > now.getTime()) start -= 7 * 86400000;           // во вторник до 19:00 МСК действует прошлый период
+    return start;
+}
+
+function isSaveExpired(data) {
+    if (!data || !data.savedAt) return false;
+    return data.savedAt < getWeeklyPeriodStart();
+}
+
+// если вкладка открыта в момент сброса — удаляем устаревшее сохранение
+setInterval(function() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw && isSaveExpired(JSON.parse(raw))) localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+}, 30000);
+
 function loadSavedEscalation() {
     try {
         var raw = localStorage.getItem(STORAGE_KEY);
@@ -4416,27 +4439,11 @@ function loadSavedEscalation() {
         var data = JSON.parse(raw);
         if (!data || !data.escState) return null;
 
-        // Проверка на смену еженедельного периода
-        // Если с момента сохранения прошел вторник 19:00 МСК, удаляем сохранение
-        if (data.savedAt) {
-            var savedDate = new Date(data.savedAt);
-            var now = new Date();
-            
-            // Находим последний вторник 19:00 МСК относительно текущего времени
-            var lastTuesday = new Date();
-            lastTuesday.setUTCHours(16, 0, 0, 0); // 19:00 МСК = 16:00 UTC
-            var day = lastTuesday.getUTCDay(); // 0 = Вс, 1 = Пн, 2 = Вт
-            
-            // Отматываем назад до вторника
-            var daysSinceTuesday = (day >= 2) ? (day - 2) : (day + 5);
-            lastTuesday.setUTCDate(lastTuesday.getUTCDate() - daysSinceTuesday);
-
-            // Если сохранение было сделано до начала текущего периода — оно устарело
-            if (savedDate < lastTuesday) {
-                console.log('[Сохранение] Наступил новый еженедельный период. Старое сохранение удалено.');
-                localStorage.removeItem(STORAGE_KEY);
-                return null;
-            }
+        // Сохранения сбрасываются каждый вторник в 19:00 по Москве
+        if (isSaveExpired(data)) {
+            console.log('[Сохранение] Наступил новый еженедельный период (вторник 19:00 МСК). Старое сохранение удалено.');
+            localStorage.removeItem(STORAGE_KEY);
+            return null;
         }
 
         return data;
