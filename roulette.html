@@ -1095,26 +1095,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ================================================================
-//  ТАЙМЕР ДО ОБНОВЛЕНИЯ ЕЖЕНЕДЕЛЬНОГО ВАРИАТОРА (ВТОРНИК 19:00 МСК)
+//  ТАЙМЕР ДО ОБНОВЛЕНИЯ ЕЖЕНЕДЕЛЬНОГО ВАРИАТОРА (ВТОРНИК 21:00 ПО КАЗАХСТАНУ)
 // ================================================================
+// 21:00 по Казахстану (UTC+5) = 16:00 UTC = 19:00 МСК. Считаем по UTC, чтобы время
+// не зависело от часового пояса устройства.
+var WEEKLY_RESET_UTC_HOUR = 16;
 function updateWeeklyTimer() {
     var timerText = document.getElementById('weeklyTimerText');
     if (!timerText) return;
 
     var now = new Date();
     var targetDay = 2; // Вторник
-    var targetHour = 19; // 19:00
 
-    var targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var daysUntilTuesday = (targetDay + 7 - now.getDay()) % 7;
-    
-    // Если сегодня вторник, но время уже больше 19:00, ждем следующего вторника
-    if (daysUntilTuesday === 0 && now.getHours() >= targetHour) {
-        daysUntilTuesday = 7;
+    var daysUntilTuesday = (targetDay + 7 - now.getUTCDay()) % 7;
+    var targetDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilTuesday, WEEKLY_RESET_UTC_HOUR, 0, 0, 0));
+
+    // Если сегодня вторник, но время уже прошло, ждём следующего вторника
+    if (targetDate <= now) {
+        targetDate = new Date(targetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
     }
-    
-    targetDate.setDate(targetDate.getDate() + daysUntilTuesday);
-    targetDate.setHours(targetHour, 0, 0, 0);
 
     var diff = targetDate - now;
     
