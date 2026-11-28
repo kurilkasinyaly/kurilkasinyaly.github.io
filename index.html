@@ -920,6 +920,205 @@
             .volume-slider { width: 100px; }
             .volume-dropdown { min-width: 170px; padding: 0.8rem 1rem; }
         }
+
+        /* =====================================================
+           🎄 НОВОГОДНЕЕ ОФОРМЛЕНИЕ
+           Чтобы убрать — удалите этот блок CSS и модуль festive()
+           ===================================================== */
+        .header { position: relative; margin-top: 14px; }
+
+        /* --- Гирлянда --- */
+        .garland {
+            position: absolute; left: 0; top: 0; width: 100%; height: 46px;
+            pointer-events: none; z-index: 6;
+        }
+        .garland svg { width: 100%; height: 100%; overflow: visible; display: block; }
+        .garland .wire { fill: none; stroke: #0d0d12; stroke-width: 2.2; stroke-linecap: round; }
+        .garland .wire-hl { fill: none; stroke: rgba(255,255,255,0.12); stroke-width: 0.8; transform: translateY(-0.8px); }
+        .bulb { animation: bulbGlow 1.8s ease-in-out infinite; }
+        .bulb.b1 { animation-delay: -0.45s; }
+        .bulb.b2 { animation-delay: -0.9s; }
+        .bulb.b3 { animation-delay: -1.35s; }
+        @keyframes bulbGlow {
+            0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 11px currentColor); }
+            50%      { opacity: 0.32; filter: drop-shadow(0 0 1px currentColor); }
+        }
+
+        /* --- Шапка Деда Мороза на логотипе --- */
+        .logo { position: relative; }
+        .logo::before {
+            content: ""; position: absolute; left: -9px; top: -17px;
+            width: 36px; height: 36px; z-index: 7; pointer-events: none;
+            transform: rotate(-16deg);
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 46C14 20 30 8 52 14C46 18 44 28 54 46Z' fill='%23d8262b'/%3E%3Crect x='4' y='41' width='54' height='13' rx='6.5' fill='%23fff'/%3E%3Ccircle cx='53' cy='14' r='7' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+
+        /* --- Снежные шапки на карточках --- */
+        .snowcap { position: relative; }
+        .snowcap::after {
+            content: ""; position: absolute; top: 0; left: var(--cap-inset, 16px); right: var(--cap-inset, 16px);
+            height: 15px; pointer-events: none; z-index: 4;
+            background:
+                radial-gradient(circle at 12px 0, #ffffff 9px, transparent 10px) 0 0 / 34px 16px repeat-x,
+                radial-gradient(circle at 6px 0, #dcecff 6px, transparent 7px) 9px 0 / 23px 12px repeat-x;
+            filter: drop-shadow(0 2px 3px rgba(150, 200, 255, 0.35));
+        }
+        .stat-card.snowcap { --cap-inset: 26px; }
+        .player-card.snowcap { --cap-inset: 18px; }
+        .news-slider-block.snowcap, .social-block.snowcap { --cap-inset: 46px; }
+
+        /* --- Холст со снегом --- */
+        #snowCanvas {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9990;
+        }
+
+        /* --- Обратный отсчёт --- */
+        .ny-countdown {
+            max-width: 760px; margin: 0 auto 2rem; text-align: center;
+            padding: 1.3rem 1.5rem 1.5rem; border-radius: 36px;
+            background: linear-gradient(160deg, rgba(40, 14, 20, 0.7), rgba(10, 22, 20, 0.7));
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 30px rgba(216, 38, 43, 0.12), 0 0 30px rgba(59, 209, 111, 0.1);
+            position: relative; overflow: hidden;
+        }
+        .ny-countdown::before {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.07) 50%, transparent 65%);
+            background-size: 250% 100%; animation: nyShine 6s linear infinite;
+        }
+        @keyframes nyShine { 0% { background-position: 150% 0; } 100% { background-position: -100% 0; } }
+        .ny-title {
+            font-size: 1.05rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            color: #ffd9c7; margin-bottom: 1rem;
+        }
+        .ny-title b {
+            background: linear-gradient(90deg, #ff6b6b, #ffd23f, #3bd16f, #3b9bff, #ff6b6b);
+            background-size: 300% auto; -webkit-background-clip: text; background-clip: text;
+            color: transparent; animation: nyRainbow 5s linear infinite;
+        }
+        @keyframes nyRainbow { to { background-position: 300% center; } }
+        .ny-cells { display: flex; justify-content: center; gap: 0.9rem; flex-wrap: wrap; }
+        .ny-cell {
+            min-width: 92px; padding: 0.8rem 0.6rem; border-radius: 20px;
+            background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .ny-cell span {
+            display: block; font-size: 2.1rem; font-weight: 800; line-height: 1;
+            font-variant-numeric: tabular-nums; color: #fff;
+            text-shadow: 0 0 14px rgba(255, 190, 140, 0.45);
+        }
+        .ny-cell small {
+            display: block; margin-top: 0.4rem; font-size: 0.68rem; font-weight: 600;
+            letter-spacing: 1.5px; text-transform: uppercase; color: #a99bbd;
+        }
+        .ny-greeting { font-size: 1.6rem; font-weight: 800; color: #fff; padding: 0.5rem 0; }
+
+        @media (max-width: 850px) {
+            .ny-cell { min-width: 70px; } .ny-cell span { font-size: 1.6rem; }
+            .ny-title { font-size: 0.85rem; letter-spacing: 1px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .bulb, .ny-countdown::before, .ny-title b { animation: none; }
+        }
+
+        /* ===== ✨ ВТОРАЯ ВОЛНА УКРАШЕНИЙ ===== */
+        /* северное сияние */
+        .aurora {
+            position: fixed; inset: -10% -10% 30% -10%; pointer-events: none; z-index: 0;
+            mix-blend-mode: screen; opacity: 0.55; filter: blur(34px);
+            background:
+                radial-gradient(ellipse 55% 38% at 20% 5%, rgba(60, 255, 160, 0.45), transparent 70%),
+                radial-gradient(ellipse 50% 36% at 78% 8%, rgba(80, 140, 255, 0.45), transparent 70%),
+                radial-gradient(ellipse 38% 28% at 50% 0%, rgba(255, 80, 170, 0.32), transparent 70%);
+            animation: auroraMove 16s ease-in-out infinite alternate;
+        }
+        @keyframes auroraMove {
+            0%   { transform: translateX(-5%) scaleY(0.9); filter: blur(34px) hue-rotate(0deg); }
+            100% { transform: translateX(5%) scaleY(1.3);  filter: blur(40px) hue-rotate(50deg); }
+        }
+        /* мерцающие звёзды */
+        .stars {
+            position: fixed; left: 0; right: 0; top: 0; height: 55vh; pointer-events: none; z-index: 0;
+            background-image:
+                radial-gradient(1.5px 1.5px at 30px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 120px 110px, #fff, transparent),
+                radial-gradient(2px 2px at 210px 30px, #ffe9a8, transparent),
+                radial-gradient(1px 1px at 260px 170px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 80px 200px, #bfe3ff, transparent);
+            background-size: 290px 230px;
+            -webkit-mask-image: linear-gradient(#000 30%, transparent);
+            mask-image: linear-gradient(#000 30%, transparent);
+            animation: starTwinkle 3.5s ease-in-out infinite alternate;
+        }
+        @keyframes starTwinkle { 0% { opacity: 0.3; } 100% { opacity: 0.95; } }
+
+        /* сугроб внизу экрана */
+        .drift {
+            position: fixed; left: 0; right: 0; bottom: -2px; height: 22px;
+            pointer-events: none; z-index: 9989; opacity: 0.93;
+            background:
+                radial-gradient(circle at 22px 100%, #fff 20px, transparent 21px) 0 0 / 58px 22px repeat-x,
+                radial-gradient(circle at 8px 100%, #dbeaff 15px, transparent 16px) 27px 0 / 43px 18px repeat-x;
+            filter: drop-shadow(0 -2px 6px rgba(150, 200, 255, 0.45));
+        }
+
+        /* новогодние шары на ниточках */
+        .orn {
+            position: absolute; top: 100%; width: 0; height: 0; z-index: 6; pointer-events: none;
+            transform-origin: 50% 0; animation: ornSwing 3.4s ease-in-out infinite;
+        }
+        .orn .str { position: absolute; left: -0.5px; top: -2px; width: 1px; height: calc(var(--len) + 2px); background: rgba(255, 255, 255, 0.5); }
+        .orn .ball {
+            position: absolute; left: -11px; top: var(--len); width: 22px; height: 22px; border-radius: 50%;
+            background:
+                radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0 7%, transparent 18%),
+                radial-gradient(circle at 50% 45%, var(--c) 35%, rgba(0,0,0,0.55) 130%);
+            box-shadow: 0 0 14px var(--c), inset -2px -3px 5px rgba(0,0,0,0.35);
+        }
+        .orn .ball::before {
+            content: ""; position: absolute; left: 7px; top: -4px; width: 8px; height: 5px;
+            border-radius: 2px; background: linear-gradient(#ffe38a, #b8860b);
+        }
+        @keyframes ornSwing { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+
+        /* заголовок: красно-белая-зелёная переливающаяся надпись */
+        .hero-title h2 {
+            background-image: linear-gradient(90deg, #ffffff 0%, #ff7a6b 22%, #ffffff 45%, #5be08c 70%, #ffffff 100%);
+            background-size: 220% auto;
+            animation: heroFest 7s linear infinite;
+            filter: drop-shadow(0 0 16px rgba(255, 120, 100, 0.28));
+        }
+        @keyframes heroFest { to { background-position: 220% center; } }
+
+        /* отсчёт: цветное неоновое свечение */
+        .ny-countdown { animation: nyGlow 6s linear infinite; }
+        @keyframes nyGlow {
+            0%, 100% { box-shadow: 0 0 34px rgba(255, 70, 70, 0.28), inset 0 0 22px rgba(255, 70, 70, 0.06); border-color: rgba(255, 110, 110, 0.4); }
+            33%      { box-shadow: 0 0 34px rgba(70, 230, 130, 0.28), inset 0 0 22px rgba(70, 230, 130, 0.06); border-color: rgba(100, 235, 150, 0.4); }
+            66%      { box-shadow: 0 0 34px rgba(90, 160, 255, 0.3), inset 0 0 22px rgba(90, 160, 255, 0.06); border-color: rgba(120, 175, 255, 0.4); }
+        }
+        .ny-cell:nth-child(1) span { text-shadow: 0 0 16px rgba(255, 90, 90, 0.7); }
+        .ny-cell:nth-child(2) span { text-shadow: 0 0 16px rgba(255, 210, 63, 0.7); }
+        .ny-cell:nth-child(3) span { text-shadow: 0 0 16px rgba(70, 230, 130, 0.7); }
+        .ny-cell:nth-child(4) span { text-shadow: 0 0 16px rgba(90, 160, 255, 0.7); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .aurora, .stars, .orn, .hero-title h2, .ny-countdown { animation: none; }
+        }
+
+        /* ===== 🗓 ПРАЗДНИК ПО РАСПИСАНИЮ: без класса body.ny-on всё скрыто ===== */
+        body:not(.ny-on) .garland, body:not(.ny-on) .orn, body:not(.ny-on) .aurora,
+        body:not(.ny-on) .stars, body:not(.ny-on) .drift, body:not(.ny-on) #snowCanvas,
+        body:not(.ny-on) .ny-countdown { display: none !important; }
+        body:not(.ny-on) .snowcap::after, body:not(.ny-on) .logo::before { display: none !important; }
+        body:not(.ny-on) .header { margin-top: 0; }
+        body:not(.ny-on) .hero-title h2 {
+            background-image: linear-gradient(135deg, #fff, #e25d32);
+            background-size: auto; animation: none; filter: none;
+        }
     </style>
 </head>
 <body>
@@ -927,6 +1126,9 @@
 <div class="bg-slider" id="bgSlider"></div>
 <div class="bg-overlay"></div>
 <div class="smoke-overlay"></div>
+<div class="aurora" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
+<div class="drift" aria-hidden="true"></div>
 
 <audio id="bgAudio" loop preload="auto" style="display:none;"></audio>
 
@@ -1265,6 +1467,18 @@
             <h2>Добро пожаловать в Курилку Синьялы!</h2>
         </div>
 
+        <!-- ====== 🎄 ОБРАТНЫЙ ОТСЧЁТ ДО НОВОГО ГОДА ====== -->
+        <div class="ny-countdown" id="nyCountdown">
+            <div class="ny-title" id="nyTitle">🎄 До Нового <b id="nyYear">2027</b> года осталось</div>
+            <div class="ny-cells" id="nyCells">
+                <div class="ny-cell"><span id="nyD">0</span><small>дней</small></div>
+                <div class="ny-cell"><span id="nyH">00</span><small>часов</small></div>
+                <div class="ny-cell"><span id="nyM">00</span><small>минут</small></div>
+                <div class="ny-cell"><span id="nyS">00</span><small>секунд</small></div>
+            </div>
+            <div class="ny-greeting" id="nyGreeting" style="display:none;"></div>
+        </div>
+
         <!-- ====== СЛАЙДЕР НОВОСТЕЙ ====== -->
         <div class="news-slider-block">
             <div class="news-slider-container">
@@ -1387,8 +1601,8 @@
 
                 <div class="player-card">
                     <div class="player-emblem" style="background-image:url('images/эмблема 2.webp');"></div>
-                    <div class="player-name">Homo Area</div>
-                    <div class="player-stat">Очки вторжения <span class="stat-value">145.435</span></div>
+                    <div class="player-name" id="invasionTopName">Майор Гом 2.0</div>
+                    <div class="player-stat">Очки вторжения <span class="stat-value" id="invasionTopScore">158.925</span></div>
                 </div>
 
                 <div class="player-card">
@@ -1799,6 +2013,321 @@
     }
 
     window.WeeklyBanner = { refresh: renderBanner };
+})();
+</script>
+
+<canvas id="snowCanvas" aria-hidden="true"></canvas>
+
+<!-- ===== 🎅 НОВОГОДНИЙ МОДУЛЬ ===== -->
+<script>
+(function festive() {
+    'use strict';
+    var KEY = 'kurilka_festive';
+    var COLORS = ['#ff3b3b', '#ffd23f', '#3bd16f', '#3b9bff', '#ff7bd5'];
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Праздник идёт с 08.12.2026 21:00 до 12.01.2027 21:00 по Казахстану (UTC+5)
+    var START = Date.parse('2026-12-08T21:00:00+05:00');
+    var END   = Date.parse('2027-01-12T21:00:00+05:00');
+    var SLIDE_OLD = 'images/новость 0.webp';
+    var BANNER_BASE = 'images/баннер новый год';
+    var on = null, bannerUrl = null;
+
+    function findBanner(cb) {                          // имя файла без расширения — пробуем популярные
+        if (bannerUrl) return cb(bannerUrl);
+        var exts = ['webp', 'png', 'jpg', 'jpeg'], i = 0;
+        (function next() {
+            if (i >= exts.length) return cb(null);
+            var u = encodeURI(BANNER_BASE + '.' + exts[i++]), im = new Image();
+            im.onload = function () { bannerUrl = u; cb(u); };
+            im.onerror = next; im.src = u;
+        })();
+    }
+    function setSlide(isOn) {
+        var img = document.querySelector('.news-slide.no-text .news-slide-image img');
+        if (!img) return;
+        if (isOn) {
+            findBanner(function (u) { if (u && on) { img.src = u; img.alt = 'С Новым годом!'; } });
+        } else {
+            img.src = SLIDE_OLD; img.alt = 'Курилка Синьялы';
+        }
+    }
+    function check() {
+        var now = Date.now(), should = now >= START && now < END;
+        if (should === on) return;
+        on = should;
+        document.body.classList.toggle('ny-on', on);
+        setSlide(on);
+    }
+    check(); setInterval(check, 5000);
+
+    /* ---------- гирлянда (SVG по кривым Безье) ---------- */
+    function buildGarland() {
+        var header = document.querySelector('.header');
+        if (!header) return;
+        var w = header.offsetWidth;
+        if (!w) return;                               // шапка скрыта (экран подключения)
+        var inset = w < 850 ? 56 : 30, span = w - inset * 2;
+        if (span < 100) return;
+        var n = Math.max(2, Math.round(span / (w < 600 ? 120 : 170)));
+        var sw = span / n, sag = 18, y0 = 3, wire = '', bulbs = '', idx = 0;
+
+        for (var i = 0; i < n; i++) {
+            var x0 = inset + i * sw, x1 = x0 + sw, cx = (x0 + x1) / 2, cy = y0 + sag * 2;
+            wire += 'M' + x0.toFixed(1) + ' ' + y0 + 'Q' + cx.toFixed(1) + ' ' + cy + ' ' + x1.toFixed(1) + ' ' + y0;
+            var cnt = Math.max(3, Math.round(sw / 30));
+            for (var k = 1; k < cnt; k++) {
+                var t = k / cnt, m = 1 - t;
+                var bx = m * m * x0 + 2 * m * t * cx + t * t * x1;
+                var by = m * m * y0 + 2 * m * t * cy + t * t * y0;
+                var dx = 2 * m * (cx - x0) + 2 * t * (x1 - cx);
+                var dy = 2 * m * (cy - y0) + 2 * t * (y0 - cy);
+                var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+                bulbs += '<g transform="translate(' + bx.toFixed(1) + ' ' + by.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')">' +
+                    '<g class="bulb b' + (idx % 4) + '" style="color:' + COLORS[idx % COLORS.length] + '">' +
+                    '<rect x="-2" y="0" width="4" height="5" rx="1" fill="#2a2a32"/>' +
+                    '<path d="M-3.6 5 Q-4 12 0 15.5 Q4 12 3.6 5 Z" fill="currentColor"/>' +
+                    '<ellipse cx="-1.2" cy="8.5" rx="0.9" ry="2" fill="rgba(255,255,255,0.55)"/>' +
+                    '</g></g>';
+                idx++;
+            }
+        }
+        var g = header.querySelector('.garland');
+        if (!g) { g = document.createElement('div'); g.className = 'garland'; header.insertBefore(g, header.firstChild); }
+        header.querySelectorAll('.orn').forEach(function (o) { o.remove(); });
+        var oc = Math.max(2, Math.floor(w / 210)), od = '';
+        for (var q = 0; q < oc; q++) {
+            od += '<div class="orn" style="left:' + ((q + 0.5) * w / oc + (q % 2 ? 40 : -40)).toFixed(0) + 'px;--len:' +
+                (9 + (q * 7) % 12) + 'px;--c:' + COLORS[(q * 2 + 1) % COLORS.length] + ';animation-delay:-' + (q * 0.7).toFixed(1) + 's"><i class="str"></i><b class="ball"></b></div>';
+        }
+        header.insertAdjacentHTML('beforeend', od);
+        g.innerHTML = '<svg viewBox="0 0 ' + w + ' 46" preserveAspectRatio="none">' +
+            '<path class="wire" d="' + wire + '"/><path class="wire-hl" d="' + wire + '"/>' + bulbs + '</svg>';
+    }
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(buildGarland, 150); });
+    // шапка появляется после экрана подключения — следим за её размером
+    if (window.ResizeObserver) {
+        var hdr = document.querySelector('.header');
+        if (hdr) new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(buildGarland, 60); }).observe(hdr);
+    }
+    buildGarland();
+
+    /* ---------- снежные шапки ---------- */
+    document.querySelectorAll('.stat-card, .player-card, .news-slider-block, .social-block')
+        .forEach(function (el) { el.classList.add('snowcap'); });
+
+    /* ---------- снегопад + искры по клику ---------- */
+    var cv = document.getElementById('snowCanvas'), ctx = cv.getContext('2d');
+    var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var flakes = [], sparks = [], wind = 0, windTarget = 0, running = true;
+
+    // заранее нарисованные мягкие «светящиеся» снежинки (быстро и красиво)
+    var spriteCache = {};
+    function sprite(rgb) {
+        if (spriteCache[rgb]) return spriteCache[rgb];
+        var c = document.createElement('canvas'); c.width = c.height = 64;
+        var x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+        g.addColorStop(0, 'rgba(' + rgb + ',1)');
+        g.addColorStop(0.3, 'rgba(' + rgb + ',0.9)');
+        g.addColorStop(0.65, 'rgba(' + rgb + ',0.28)');
+        g.addColorStop(1, 'rgba(' + rgb + ',0)');
+        x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+        return (spriteCache[rgb] = c);
+    }
+    var TINTS = ['255,255,255', '255,255,255', '255,255,255', '255,255,255', '205,230,255', '255,225,240'];
+
+    function resize() {
+        W = window.innerWidth; H = window.innerHeight;
+        cv.width = W * DPR; cv.height = H * DPR;
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        var count = Math.min(230, Math.round(W * H / 8000));
+        while (flakes.length < count) flakes.push(makeFlake(true));
+        flakes.length = count;
+    }
+    function makeFlake(randomY) {
+        var d = Math.pow(Math.random(), 1.4);               // глубина: 0 — далеко, 1 — близко
+        return {
+            d: d, x: Math.random() * W, y: randomY ? Math.random() * H : -20 - Math.random() * 60,
+            r: 1 + d * 4.2, v: 0.45 + d * 1.5,
+            amp: 0.25 + d * 0.8, ph: Math.random() * 6.28, fr: 0.008 + Math.random() * 0.012,
+            rot: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.02,
+            crystal: d > 0.55 && Math.random() < 0.35,
+            tint: TINTS[(Math.random() * TINTS.length) | 0]
+        };
+    }
+    window.addEventListener('resize', resize); resize();
+
+    window.addEventListener('mousemove', function (e) {
+        windTarget = (e.clientX / W - 0.5) * 2.4;
+        if (reduce || !on || Math.random() > 0.4) return;
+        sparks.push({ x: e.clientX, y: e.clientY, vx: (Math.random() - 0.5) * 1.2, vy: Math.random() * 0.8,
+            life: 0.8, c: COLORS[(Math.random() * COLORS.length) | 0], r: 1.2 + Math.random() * 1.3 });
+    }, { passive: true });
+    window.addEventListener('mouseleave', function () { windTarget = 0; });
+
+    document.addEventListener('click', function (e) {
+        if (reduce || !on) return;
+        if (e.target.closest && e.target.closest('input, select, textarea')) return;
+        for (var i = 0; i < 22; i++) {
+            var a = Math.random() * 6.28, s = 1.5 + Math.random() * 3.5;
+            sparks.push({ x: e.clientX, y: e.clientY, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1,
+                life: 1, c: COLORS[i % COLORS.length], r: 1.5 + Math.random() * 2 });
+        }
+    });
+
+    function drawCrystal(f, alpha) {
+        var L = f.r * 2.1;
+        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot);
+        ctx.globalAlpha = alpha * 0.5;
+        ctx.drawImage(sprite(f.tint), -L * 1.3, -L * 1.3, L * 2.6, L * 2.6);   // мягкое свечение
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = 'rgb(' + f.tint + ')'; ctx.lineWidth = 0.7 + f.d * 0.7; ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (var k = 0; k < 6; k++) {
+            ctx.rotate(1.0472);
+            ctx.moveTo(0, 0); ctx.lineTo(L, 0);
+            ctx.moveTo(L * 0.55, 0); ctx.lineTo(L * 0.8, L * 0.26);        // боковые веточки
+            ctx.moveTo(L * 0.55, 0); ctx.lineTo(L * 0.8, -L * 0.26);
+        }
+        ctx.stroke(); ctx.restore();
+    }
+
+    var last = 0;
+    function frame(ts) {
+        if (!running) return;
+        requestAnimationFrame(frame);
+        if (!on) { if (flakes.length) ctx.clearRect(0, 0, W, H); return; }
+        var dt = Math.min((ts - last) / 16.67 || 1, 3); last = ts;
+        // плавные порывы ветра + ветер от мыши
+        var gust = Math.sin(ts * 0.0004) * 0.6 + Math.sin(ts * 0.00113 + 1.3) * 0.4;
+        wind += (windTarget + gust * 0.55 - wind) * 0.02 * dt;
+        ctx.clearRect(0, 0, W, H);
+
+        for (var i = 0; i < flakes.length; i++) {
+            var f = flakes[i];
+            f.ph += f.fr * dt;
+            f.rot += f.spin * dt;
+            f.y += f.v * dt * (1 + 0.15 * Math.sin(f.ph * 0.7));
+            f.x += (Math.sin(f.ph) * f.amp + Math.sin(f.ph * 2.3 + 1.7) * f.amp * 0.4 + wind * (0.3 + f.d * 0.9)) * dt;
+
+            if (f.y > H + 20 || f.x < -30 || f.x > W + 30) {
+                var nf = makeFlake(false);
+                if (f.x < -30) nf.x = W + 15; else if (f.x > W + 30) nf.x = -15;
+                flakes[i] = nf; continue;
+            }
+            var a = 0.3 + f.d * 0.6;
+            if (f.y < 50) a *= Math.max(0, (f.y + 20) / 70);                // плавное появление
+            if (f.y > H - 60) a *= Math.max(0, (H + 20 - f.y) / 80);        // растворяются у земли
+            if (f.d < 0.5) a *= 0.75 + 0.25 * Math.sin(f.ph * 40);          // мерцание дальних
+
+            if (f.crystal) { drawCrystal(f, a); continue; }
+            var sz = f.r * 2.6, al = a;
+            if (f.d > 0.85) { sz *= 1.7; al *= 0.55; }                      // ближние — мягкий боке-эффект
+            ctx.globalAlpha = al;
+            ctx.drawImage(sprite(f.tint), f.x - sz / 2, f.y - sz / 2, sz, sz);
+        }
+
+        for (var j = sparks.length - 1; j >= 0; j--) {
+            var p = sparks[j];
+            p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.09 * dt; p.vx *= 0.985; p.life -= 0.02 * dt;
+            if (p.life <= 0) { sparks.splice(j, 1); continue; }
+            ctx.globalAlpha = p.life; ctx.fillStyle = p.c;
+            ctx.shadowColor = p.c; ctx.shadowBlur = 8;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life + 0.4, 0, 6.2832); ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+        ctx.globalAlpha = 1;
+    }
+    document.addEventListener('visibilitychange', function () {
+        running = !document.hidden;
+        if (running) { last = performance.now(); requestAnimationFrame(frame); }
+    });
+    requestAnimationFrame(frame);
+
+    /* ---------- обратный отсчёт до Нового года ---------- */
+    var el = { y: document.getElementById('nyYear'), d: document.getElementById('nyD'), h: document.getElementById('nyH'),
+               m: document.getElementById('nyM'), s: document.getElementById('nyS') };
+    var box = document.getElementById('nyCountdown');
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function tick() {
+        if (!box) return;
+        var now = new Date(), y = now.getFullYear();
+        var title = document.getElementById('nyTitle'), cells = document.getElementById('nyCells'), gr = document.getElementById('nyGreeting');
+        if (now.getMonth() === 0) {                                    // январь — поздравляем
+            title.style.display = 'none'; cells.style.display = 'none';
+            gr.style.display = ''; gr.textContent = '🎆 С Новым ' + y + ' годом, Курилка! 🎆';
+            return;
+        }
+        title.style.display = ''; cells.style.display = ''; gr.style.display = 'none';
+        var target = new Date(y + 1, 0, 1);
+        var diff = Math.max(0, target - now), sec = Math.floor(diff / 1000);
+        el.y.textContent = target.getFullYear();
+        el.d.textContent = Math.floor(sec / 86400);
+        el.h.textContent = pad(Math.floor(sec % 86400 / 3600));
+        el.m.textContent = pad(Math.floor(sec % 3600 / 60));
+        el.s.textContent = pad(sec % 60);
+    }
+    tick(); setInterval(tick, 1000);
+})();
+</script>
+
+<!-- ===== 🏆 ЛИДЕР ВТОРЖЕНИЯ — из invasion.html раз в неделю (вт, 21:00 по Казахстану) ===== -->
+<script>
+(function topInvasionPlayer() {
+    'use strict';
+    var nameEl = document.getElementById('invasionTopName');
+    var scoreEl = document.getElementById('invasionTopScore');
+    if (!nameEl || !scoreEl) return;
+
+    var KZ = 5 * 3600e3, WEEK = 7 * 864e5;             // Казахстан: UTC+5 (без перехода на летнее время)
+    var CACHE_KEY = 'kurilka_invasion_top';
+
+    // Начало текущей «недели»: последний вторник 21:00 по Казахстану
+    function weekStart(now) {
+        var k = new Date(now + KZ), back = (k.getUTCDay() - 2 + 7) % 7;
+        var t = Date.UTC(k.getUTCFullYear(), k.getUTCMonth(), k.getUTCDate() - back, 21, 0, 0);
+        if (t > k.getTime()) t -= WEEK;                 // сегодня вторник, но 21:00 ещё не наступило
+        return t - KZ;
+    }
+    function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+    function digits(v) { return parseInt(String(v).replace(/\D/g, ''), 10) || 0; }
+    function show(top) { nameEl.textContent = top.name; scoreEl.textContent = top.score; }
+    function readCache() { try { return JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) { return null; } }
+    function saveCache(v) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch (e) {} }
+
+    // Лидер = игрок с максимумом очков в массиве invasionGeneralData (вкладка «Вторжение → Общая»)
+    function parseLeader(html) {
+        var scope = html, m = html.match(/invasionGeneralData\s*=\s*\[([\s\S]*?)\]\s*;/);
+        if (m) scope = m[1];
+        var re = /name\s*:\s*(["'])((?:\\.|(?!\1)[^\\])*)\1[^{}]*?points\s*:\s*["']?(\d[\d.,\s]*)/g, best = null, r;
+        while ((r = re.exec(scope))) {
+            var pts = digits(r[3]);
+            if (!best || pts > best.pts) best = { name: r[2].replace(/\\(["'])/g, '$1'), pts: pts };
+        }
+        return best ? { name: best.name, score: fmt(best.pts) } : null;
+    }
+
+    function update() {
+        var ws = weekStart(Date.now()), cached = readCache();
+        if (cached && cached.name) show(cached);                       // сразу показываем сохранённое
+        if (cached && cached.week === ws) return;                      // за эту неделю уже загружено
+
+        fetch('invasion.html?_=' + Date.now(), { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+            .then(function (html) {
+                var top = parseLeader(html);
+                if (!top) return;
+                top.week = ws; saveCache(top); show(top);
+            })
+            .catch(function () { /* оставляем предыдущее значение */ });
+    }
+
+    // следующее обновление — ровно в следующий вторник в 21:00 (если страница открыта)
+    function schedule() {
+        var delay = weekStart(Date.now()) + WEEK - Date.now() + 3000;
+        if (delay > 0 && delay < 2147483647) setTimeout(function () { update(); schedule(); }, delay);
+    }
+    update(); schedule();
 })();
 </script>
 </body>
