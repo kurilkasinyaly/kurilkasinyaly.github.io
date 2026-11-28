@@ -3374,6 +3374,7 @@ function generateEscResult() {
 
     escState.map = { name: mapName, image: mapImage };
     escState.trial = trial;
+    escState.currentStep = 6;   // экран результата: именно его нужно восстанавливать при загрузке сохранения
 
     var difficulty = getDifficultyByLevel(escState.level);
     escState.difficulty = difficulty.name;
@@ -4035,7 +4036,22 @@ function openCatchUpAmpModal() {
     var modal = document.createElement('div');
     modal.className = 'catchup-modal';
 
-    var cardsHtml = display.map(function(amp) {
+    // Как и в обычном перерыве: всегда 3 блока, от 0 до 3 из них — БОНУС с очками (иначе амфы)
+    var bonusCount = Math.floor(Math.random() * 4);
+    bonusCount = Math.max(bonusCount, 3 - display.length);
+    var slots = display.slice(0, 3 - bonusCount).map(function(a) { return { amp: a }; });
+    while (slots.length < 3) slots.push({ bonus: BONUS_VALUES[Math.floor(Math.random() * BONUS_VALUES.length)] });
+    slots.sort(function() { return Math.random() - 0.5; });
+
+    var cardsHtml = slots.map(function(slot) {
+        if (slot.bonus) {
+            return '<div class="amp-card bonus-card" data-bonus="' + slot.bonus + '">' +
+                '<div class="bonus-icon"><i class="fas fa-coins"></i></div>' +
+                '<div class="amp-title">БОНУС</div>' +
+                '<div class="bonus-text">+ ' + slot.bonus + ' очков к общему счету</div>' +
+            '</div>';
+        }
+        var amp = slot.amp;
         return '<div class="amp-card" data-amp="' + amp.name + '">' +
             '<div class="tooltip-box"><div class="tt-type">[АМФА]</div><div class="tt-name">' + amp.name + '</div><div class="tt-desc">' + (amp.desc || '') + '</div></div>' +
             '<img src="' + amp.image + '" alt="' + amp.name + '" onerror="this.src=\'https://placehold.co/80x80/1a1a2e/e16d48?text=?\'">' +
@@ -4046,9 +4062,9 @@ function openCatchUpAmpModal() {
 
     modal.innerHTML =
         '<div class="catchup-header">' +
-            '<h2><i class="fas fa-capsules"></i> ' + escapeHtml(name) + ' — амфы</h2>' +
+            '<h2><i class="fas fa-capsules"></i> ' + escapeHtml(name) + ' — амфы и бонусы</h2>' +
         '</div>' +
-        '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong></div>' +
+        '<div class="catchup-step">Раунд ' + currentRound + ' из ' + totalRounds + ' · категория: <strong style="color:#e16d48;">' + randCat + '</strong> · очки: <strong style="color:#f1c40f;">' + getPoints(idx) + '</strong></div>' +
         '<div class="catchup-cards">' + cardsHtml + '</div>';
 
     overlay.appendChild(modal);
@@ -4056,6 +4072,14 @@ function openCatchUpAmpModal() {
 
     modal.querySelectorAll('.amp-card').forEach(function(card) {
         card.addEventListener('click', function() {
+            if (this.dataset.bonus) {
+                var bonus = parseInt(this.dataset.bonus, 10) || 0;
+                addPoints(idx, bonus);
+                showToast('БОНУС: +' + bonus + ' очков — ' + name, '#b8860b');
+                overlay.remove();
+                processCatchUpQueue();
+                return;
+            }
             var ampName = this.dataset.amp;
             var ampObj = ampsData.find(function(a) { return a.name === ampName; });
             var cat = ampObj ? ampObj.category : randCat;
@@ -4357,7 +4381,7 @@ function saveEscalation() {
                 usedAmps: JSON.parse(JSON.stringify(escState.usedAmps)),
                 unlockedAmps: JSON.parse(JSON.stringify(escState.unlockedAmps)),
                 allAmpsUsed: JSON.parse(JSON.stringify(escState.allAmpsUsed)),
-                currentStep: escState.currentStep,
+                currentStep: (escState.trial && escState.map) ? Math.max(escState.currentStep || 0, 6) : escState.currentStep,
                 map: escState.map ? JSON.parse(JSON.stringify(escState.map)) : null,
                 trial: escState.trial ? JSON.parse(JSON.stringify(escState.trial)) : null,
                 difficulty: escState.difficulty,
@@ -4518,6 +4542,9 @@ function checkSavedOnStart() {
             function() {
                 applySavedEscalation(saved);
                 updateLevelCounter();
+                // Сохранение делается только с экрана результата, поэтому если в нём есть испытание —
+                // открываем его же (в т.ч. для старых сохранений, где шаг остался равным 5)
+                if (escState.trial && escState.map && escState.currentStep < 6) escState.currentStep = 6;
                 if (escState.currentStep === 3) {
                     goToEscStep(3);
                     renderEscPlatforms();
@@ -4528,8 +4555,10 @@ function checkSavedOnStart() {
                     goToEscStep(5);
                     renderEscAmps();
                 } else if (escState.currentStep >= 6 && escState.trial && escState.map) {
-                    showFullResult();
+                    // то же испытание и те же вариаторы, что были при сохранении (ничего не генерируем заново)
+                    document.querySelectorAll('.step-container').forEach(function(el) { el.classList.add('hidden'); });
                     prepareFullResult(escState.map.name, escState.map.image, escState.trial, { name: escState.difficulty });
+                    showFullResult();
                     if (escState.pendingNewPlayer) {
                         setTimeout(function() { processCatchUpQueue(); }, 400);
                     }
